@@ -5,6 +5,7 @@ import { signInWithEmailAndPassword } from "firebase/auth"
 import "./LoginPage.css"
 
 export const LoginPage = () => {
+
     const navigate = useNavigate()
 
     const [email, setEmail] = useState("")
