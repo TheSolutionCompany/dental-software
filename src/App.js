@@ -1,11 +1,26 @@
 import "./App.css"
-import React from "react"
-import LoginPage from "./pages/LoginPage/LoginPage"
+import LoginPage from "./components/LoginPage"
+import { BrowserRouter, Route, Routes } from "react-router-dom"
+import ProtectedRoute from "./components/ProtectedRoute"
+import AdminDashboard from "./components/AdminDashboard"
 
 function App() {
     return (
         <div className="App">
-            <LoginPage />
+            <BrowserRouter>
+                <Routes>
+                    <Route path="/" element={<LoginPage />} />
+                    {/* <Route path="/AdminDashboard" element={<AdminDashboard />} /> */}
+                    <Route
+                        path="/AdminDashboard"
+                        element={
+                            <ProtectedRoute>
+                                <AdminDashboard />
+                            </ProtectedRoute>
+                        }
+                    />
+                </Routes>
+            </BrowserRouter>
         </div>
     )
 }
