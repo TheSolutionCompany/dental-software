@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import firebase from "../firebase"
+import { auth } from "../firebase"
+import { signInWithEmailAndPassword } from "firebase/auth"
 import "./LoginPage.css"
 
 export const LoginPage = () => {
@@ -23,11 +24,12 @@ export const LoginPage = () => {
         setError("")
 
         try {
-            await firebase.auth().signInWithEmailAndPassword(email, password)
+            await signInWithEmailAndPassword(auth, email, password)
             // Login successful, you can redirect to another page here
             navigate("/AdminDashboard")
         } catch (error) {
-            setError("Wrong email or password!")
+            setError(error.message)
+            //setError("Wrong email or password!")
         }
     }
     return (

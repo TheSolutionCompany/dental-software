@@ -1,9 +1,9 @@
 import React from "react"
 import { Navigate } from "react-router-dom"
-import firebase from "../firebase"
+import { auth } from "../firebase"
 
-const ProtectedRoute = ({children}) => {
-    if (firebase.auth().currentUser == null) {
+const ProtectedRoute = ({ children }) => {
+    if (auth.currentUser == null) {
         return <Navigate to="/" replace />
     }
 
