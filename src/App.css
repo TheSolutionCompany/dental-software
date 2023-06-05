@@ -29,7 +29,7 @@
 }
 
 .login-container {
-  @apply max-w-[500px] max-h-[250px] p-5 border border-gray-400 rounded-lg bg-white;
+  @apply max-w-[500px] p-5 border border-gray-400 rounded-lg bg-white;
   /* max-width: 400px;
   margin: 0 auto;
   padding: 20px;
@@ -67,6 +67,10 @@ input {
   cursor: pointer; */
 }
 
+.button-gray {
+  @apply cursor-pointer px-4 py-2 bg-gray-300 text-black
+  hover:bg-gray-600 hover:text-white;
+}
 
 .error-message {
   color: red;

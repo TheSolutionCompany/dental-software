@@ -6,6 +6,8 @@ import { onAuthStateChanged } from "firebase/auth"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import ProtectedRoute from "./components/ProtectedRoute"
 import AdminDashboard from "./components/AdminDashboard"
+import SignUp from "./components/SignUp"
+import SignUpSuccess from "./components/SignUpSuccess"
 
 function App() {
     useEffect(() => {
@@ -24,6 +26,8 @@ function App() {
             <BrowserRouter>
                 <Routes>
                     <Route path="/" element={<LoginPage />} />
+                    <Route path="/SignUp" element={<SignUp /> }/>
+                    <Route path="/SignUpSuccess" element={<SignUpSuccess /> }/>
                     <Route
                         path="/AdminDashboard"
                         element={
