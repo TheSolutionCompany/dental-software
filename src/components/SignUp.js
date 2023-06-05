@@ -50,7 +50,7 @@ export const SignUp = ({ history }) => {
                     </div>
                 </form>
                 <div class="mt-4">
-                <p className="text-gray-600">Don't have an account? <button onClick={handleLogin} className="text-blue-500">Login now</button></p>
+                <p className="text-gray-600">Already have an account? <button onClick={handleLogin} className="text-blue-500">Login now</button></p>
                 </div>
             </div>
         </div>
