@@ -52,7 +52,7 @@ export const LoginPage = () => {
                     </div>
                 </div>
                 <div className="mt-4">
-                    <button className="w-full button-green rounded-3xl" type="submit">Login</button>
+                    <button className="button-green rounded" type="submit">Login</button>
                 </div>
             </form>
             {error && <div className="error-message">{error}</div>}
