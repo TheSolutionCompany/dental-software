@@ -25,7 +25,7 @@ const Header = ({ handleLogout }) => {
                         <ul 
                             onMouseEnter={() => setIsShown(true)} 
                             onMouseLeave={() => setIsShown(false)}
-                            className="cursor-pointer absolute text-white top-16 bg-gray-800"
+                            className="cursor-pointer absolute text-white top-14 bg-gray-800"
                         >
                             <li className="px-4 py-2 hover:bg-gray-700">Profile</li>
                             <li className="px-4 py-2 hover:bg-gray-700">Settings</li>
