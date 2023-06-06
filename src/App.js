@@ -20,7 +20,7 @@ function App() {
 
 
     return (
-        <div className="App">
+        <div className="App h-[100vh]">
             <BrowserRouter>
                 <Routes>
                     <Route path="/" element={<LoginPage />} />

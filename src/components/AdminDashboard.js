@@ -27,9 +27,9 @@ export const AdminDashboard = () => {
     }
 
     return (
-        <div>
+        <div className="flex flex-col h-full">
             <Header className="z-50" handleLogout={handleLogout} />
-            <div className="flex">
+            <div className="flex h-full">
                 <SideBar />
                 <div class="container mx-aut bg-gray-200 rounded-xl shadow border">
                     <p class="text-3xl text-gray-700 font-bold mb-5">Hi {email}</p>
