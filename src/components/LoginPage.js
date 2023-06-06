@@ -33,24 +33,24 @@ export const LoginPage = () => {
         }
     }
     return (
-        <div class="h-[100vh] bg-gray-200 flex flex-col">
-            <div class="flex items-center justify-between p-4 bg-gray-800">
-                <div class="flex items-center">
-                    <div class="w-8 h-8 rounded-full icon"></div>
-                    <h1 class="ml-2 text-white font-bold text-3xl">Dental</h1>
+        <div className="h-[100vh] bg-gray-200 flex flex-col">
+            <div className="flex items-center justify-between p-4 bg-gray-800">
+                <div className="flex items-center">
+                    <div className="w-8 h-8 rounded-full icon"></div>
+                    <h1 className="ml-2 text-white font-bold text-3xl select-none">Dental</h1>
                 </div>
             </div>
             <div className="flex justify-center items-center h-full">
                 <div className="login-container">
-                    <h2 className="text-xl font-bold p-2 mb-6">Login with your account</h2>
+                    <h2 className="text-xl font-bold p-2 mb-6 select-none">Login with your account</h2>
                     <form className="" onSubmit={handleLogin}>
                         <div className="flex flex-col">
                             <div className="flex items-center justify-start h-full">
-                                <label className="">Email:</label>
+                                <label className="select-none">Email:</label>
                             </div>
                             <input className="" type="email" value={email} onChange={handleEmailChange} />
                             <div className="flex items-center justify-start h-full">
-                                <label className="">Password:</label>
+                                <label className="select-none">Password:</label>
                             </div>
                             <input type="password" value={password} onChange={handlePasswordChange} />
                         </div>
