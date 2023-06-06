@@ -29,7 +29,7 @@
 }
 
 .login-container {
-  @apply max-w-[500px] max-h-[250px] p-5 border border-gray-400 rounded-lg bg-white;
+  @apply min-w-[400px] max-w-[600px] p-5 border border-gray-400 rounded-lg bg-white;
   /* max-width: 400px;
   margin: 0 auto;
   padding: 20px;
