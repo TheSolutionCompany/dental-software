@@ -8,8 +8,8 @@ const SideBar = () => {
             className="top-0 left-0 w-64 h-full bg-gray-700 border-r border-gray-200"
             aria-label="Sidebar"
         >
-            <div class="h-full px-3 py-3 overflow-y-auto bg-gray-600">
-                <ul class="space-y-2 font-medium">
+            <div className="h-full px-3 py-3 overflow-y-auto bg-gray-600">
+                <ul className="space-y-2 font-medium">
                     <RegisterExisting />
                     <li className="cursor-pointer select-none">
                         <button
