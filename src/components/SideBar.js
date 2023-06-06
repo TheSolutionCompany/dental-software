@@ -1,5 +1,5 @@
 import React from "react";
-import { Register } from "./Register";
+import { RegisterExisting } from "./RegisterExisting";
 
 const SideBar = () => {
     return (
@@ -10,7 +10,7 @@ const SideBar = () => {
         >
             <div class="h-full px-3 py-3 overflow-y-auto bg-gray-600">
                 <ul class="space-y-2 font-medium">
-                    <Register />
+                    <RegisterExisting />
                     <li className="cursor-pointer select-none">
                         <button
                             class="flex w-full items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
