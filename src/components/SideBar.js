@@ -1,5 +1,5 @@
 import React from "react";
-import { Register } from "./Register";
+import { RegisterExisting } from "./RegisterExisting";
 
 const SideBar = () => {
     return (
@@ -8,9 +8,9 @@ const SideBar = () => {
             className="top-0 left-0 w-64 h-full bg-gray-700 border-r border-gray-200"
             aria-label="Sidebar"
         >
-            <div className="h-full px-3 py-3 overflow-y-auto bg-gray-600">
-                <ul className="space-y-2 font-medium">
-                    <Register />
+            <div class="h-full px-3 py-3 overflow-y-auto bg-gray-600">
+                <ul class="space-y-2 font-medium">
+                    <RegisterExisting />
                     <li className="cursor-pointer select-none">
                         <button
                             className="flex w-full items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
