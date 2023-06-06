@@ -31,9 +31,9 @@ export const AdminDashboard = () => {
             <Header className="z-50" handleLogout={handleLogout} />
             <div className="flex h-full">
                 <SideBar />
-                <div class="container mx-aut bg-gray-200 rounded-xl shadow border">
-                    <p class="text-3xl text-gray-700 font-bold mb-5">Hi {email}</p>
-                    <p class="text-gray-500 text-lg">Admin Dashboard</p>
+                <div className="container mx-aut bg-gray-200 rounded-xl shadow border">
+                    <p className="text-3xl text-gray-700 font-bold mb-5">Hi {email}</p>
+                    <p className="text-gray-500 text-lg">Admin Dashboard</p>
                 </div>
             </div>
         </div>
