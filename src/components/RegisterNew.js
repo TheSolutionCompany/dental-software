@@ -84,7 +84,7 @@ const RegisterNew = () => {
     }
 
     return (
-        <div className="App">
+        <div className="">
             <li className="cursor-pointer select-none">
                 <button
                     onClick={toggleModal}
@@ -98,9 +98,12 @@ const RegisterNew = () => {
             </li>
             <Modal isOpen={isOpen} onRequestClose={toggleModal} contentLabel="Register">
                 <form onSubmit={handleCreate}>
-                    <div>
+                    <div className="grid grid-cols-4 gap-4">
+                        
+                    <div className="flex flex-col">
                         <label>Title</label>
-                        <select size="5" onChange={(e) => setTitle(e.target.value)}>
+                        <select className="select-green-border" onChange={(e) => setTitle(e.target.value)}>
+                            <option value="">Select</option>
                             <option value="Mr">Mr</option>
                             <option value="Mrs">Mrs</option>
                             <option value="Ms">Ms</option>
@@ -108,68 +111,74 @@ const RegisterNew = () => {
                             <option value="Dr">Dr</option>
                         </select>
                     </div>
-                    <div>
-                        <label>Name</label>
-                        <input type="text" onChange={(e) => setName(e.target.value)} required />
+                    <div className="flex flex-col">
+                        <label>Name *</label>
+                        <input type="text" onChange={(e) => {
+                            e.target.value = e.target.value.toUpperCase()
+                            setName(e.target.value)}} required />
                     </div>
-                    <div>
-                        <label>IC/Passport number</label>
+                    <div className="flex flex-col">
+                        <label>IC/Passport number *</label>
                         <input type="text" onChange={(e) => setIC(e.target.value)} required />
                     </div>
-                    <div>
+                    <div className="flex flex-col">
                         <label>Gender</label>
-                        <select size="3" onChange={(e) => setGender(e.target.value)}>
-                            <option>Male</option>
-                            <option>Female</option>
-                            <option>Others</option>
+                        <select className="select-green-border" onChange={(e) => setGender(e.target.value)}>
+                            <option value="">Select</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Others">Others</option>
                         </select>
                     </div>
-                    <div>
-                        <label>DOB</label>
+                    <div className="flex flex-col">
+                        <label>DOB *</label>
                         <input type="date" onChange={(e) => setDOB(e.target.value)} required />
                     </div>
-                    <div>
-                        <label>Age</label>
+                    <div className="flex flex-col">
+                        <label>Age *</label>
                         <input type="number" onChange={(e) => setAge(e.target.value)} required />
                     </div>
-                    <div>
+                    <div className="flex flex-col">
                         <label>Mobile number</label>
                         <input type="tel" onChange={(e) => setMobileNumber(e.target.value)} />
                     </div>
-                    <div>
+                    <div className="flex flex-col">
                         <label>Phone number</label>
                         <input type="tel" onChange={(e) => setPhoneNumber(e.target.value)} />
                     </div>
-                    <div>
+                    <div className="flex flex-col">
                         <label>Email</label>
                         <input type="email" onChange={(e) => setEmail(e.target.value)} />
                     </div>
-                    <div>
+                    <div className="flex flex-col">
                         <label>Race</label>
-                        <select size="4" onChange={(e) => setRace(e.target.value)}>
+                        <select className="select-green-border" onChange={(e) => setRace(e.target.value)}>
+                            <option value="">Select</option>
                             <option value="Malay">Malay</option>
                             <option value="Chinese">Chinese</option>
                             <option value="Indian">Indian</option>
                             <option value="Others">Others</option>
                         </select>
                     </div>
-                    <div>
+                    <div className="flex flex-col">
                         <label>Marital status</label>
-                        <select size="4" onChange={(e) => setMaritalStatus(e.target.value)}>
+                        <select className="select-green-border" onChange={(e) => setMaritalStatus(e.target.value)}>
+                            <option value="">Select</option>
                             <option value="Single">Single</option>
                             <option value="Married">Married</option>
                             <option value="Divorced">Divorced</option>
                             <option value="Widowed">Widowed</option>
                         </select>
                     </div>
-                    <div>
+                    <div className="flex flex-col">
                         <label>Nationality</label>
-                        <select size="2" onChange={(e) => setNationality(e.target.value)}>
+                        <select className="select-green-border" onChange={(e) => setNationality(e.target.value)}>
+                            <option value="">Select</option>
                             <option value="Malaysian">Malaysian</option>
                             <option value="Others">Others</option>
                         </select>
                     </div>
-                    <div>
+                    <div className="flex flex-col">
                         <label>Emergency contact name</label>
                         <input type="text" onChange={(e) => setEmergencyContactName(e.target.value)} />
                     </div>
@@ -177,9 +186,10 @@ const RegisterNew = () => {
                         <label>Emergency contact number</label>
                         <input type="tel" onChange={(e) => setEmergencyContactNumber(e.target.value)} />
                     </div>
-                    <div>
+                    <div className="flex flex-col">
                         <label>Blood type</label>
-                        <select size="8" onChange={(e) => setBloodType(e.target.value)}>
+                        <select className="select-green-border" onChange={(e) => setBloodType(e.target.value)}>
+                            <option value="">Select</option>
                             <option value="A+">A+</option>
                             <option value="A-">A-</option>
                             <option value="B+">B+</option>
@@ -190,66 +200,71 @@ const RegisterNew = () => {
                             <option value="O-">O-</option>
                         </select>
                     </div>
-                    <div>
+                    <div className="flex flex-col">
                         <label>Know about us</label>
-                        <select size="4" onChange={(e) => setKnowAboutUs(e.target.value)}>
+                        <select className="select-green-border" onChange={(e) => setKnowAboutUs(e.target.value)}>
+                            <option value="">Select</option>
                             <option value="Facebook">Facebook</option>
                             <option value="Instagram">Instagram</option>
                             <option value="Google">Google</option>
                             <option value="Friends">Friends</option>
                         </select>
                     </div>
-                    <div>
+                    <div className="flex flex-col">
                         <label>Panel company</label>
-                        <select size="4" onChange={(e) => setPanelCompany(e.target.value)}>
+                        <select className="select-green-border" onChange={(e) => setPanelCompany(e.target.value)}>
+                            <option value="">Select</option>
                             <option value="AIA">AIA</option>
                             <option value="Allianz">Allianz</option>
                             <option value="AXA">AXA</option>
                             <option value="Great Eastern">Great Eastern</option>
                         </select>
                     </div>
-                    <div>
+                    <div className="flex flex-col">
                         <label>Occupation</label>
                         <input type="text" onChange={(e) => setOccupation(e.target.value)} />
                     </div>
-                    <div>
+                    <div className="flex flex-col">
                         <label>Preferred language</label>
-                        <select size="3" onChange={(e) => setPreferredLanguage(e.target.value)}>
+                        <select className="select-green-border" onChange={(e) => setPreferredLanguage(e.target.value)}>
+                            <option value="">Select</option>
                             <option value="English">English</option>
                             <option value="Malay">Malay</option>
                             <option value="Chinese">Chinese</option>
                         </select>
                     </div>
-                    <div>
+                    <div className="flex flex-col">
                         <label>Preferred communication</label>
-                        <select size="3" onChange={(e) => setPreferredCommunication(e.target.value)}>
+                        <select className="select-green-border" onChange={(e) => setPreferredCommunication(e.target.value)}>
+                            <option value="">Select</option>
                             <option value="Email">Email</option>
                             <option value="SMS">SMS</option>
                             <option value="WhatsApp">WhatsApp</option>
                         </select>
                     </div>
-                    <div>
+                    <div className="flex flex-col">
                         <label>Refer by</label>
                         <input type="text" onChange={(e) => setReferBy(e.target.value)} />
                     </div>
-                    <div>
+                    <div className="flex flex-col">
                         <label>Address</label>
                         <input type="text" onChange={(e) => setAddress(e.target.value)} />
                     </div>
-                    <div>
+                    <div className="flex flex-col">
                         <label>Second address</label>
                         <input type="text" onChange={(e) => setSecondAddress(e.target.value)} />
                     </div>
-                    <div>
+                    <div className="flex flex-col">
                         <label>Allegy/Medical history</label>
                         <input type="text" onChange={(e) => setAllegy(e.target.value)} />
                     </div>
-                    <div>
+                    <div className="flex flex-col">
                         <label>Remark</label>
                         <input type="text" onChange={(e) => setRemark(e.target.value)} />
                     </div>
                     <div>
                         <button type="submit">Create</button>
+                    </div>
                     </div>
                 </form>
                 <div>
