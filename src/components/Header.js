@@ -19,7 +19,7 @@ const Header = ({ handleLogout }) => {
             <div className="flex items-center cursor-pointer ml-4">
                 <div className="w-8 mr-2"><img src={HeaderIcon} alt="header icon" /></div>
                 <h1 className="text-white font-bold text-3xl select-none">
-                    Welcome, {email}
+                    Welcome,&nbsp;{email}
                 </h1>
             </div>
             <div className="h-full w-full flex items-center justify-end font-bold">
