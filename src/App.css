@@ -47,6 +47,10 @@
   margin-bottom: 10px;
 }
 
+.select-green-border {
+  @apply w-full h-full border border-green-500 rounded;
+}
+
 label {
   font-weight: bold;
 }
