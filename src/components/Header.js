@@ -15,11 +15,11 @@ const Header = ({ handleLogout }) => {
     })
 
     return (
-        <header className="flex items-center justify-between bg-gray-800">
-            <div className="flex items-center cursor-pointer ml-4">
-                <div className="w-8 mr-2"><img src={HeaderIcon} alt="header icon" /></div>
-                <h1 className="text-white font-bold text-3xl select-none">
-                    Welcome, {email}
+        <header className="flex items-center justify-between bg-gray-800 h-14">
+            <div className="h-full flex items-center cursor-pointer ml-4">
+                <img className="h-10 w-10" src={HeaderIcon} alt="header icon" />
+                <h1 className="w-full pl-2 text-white font-bold text-xl select-none">
+                    Welcome,{email}
                 </h1>
             </div>
             <div className="h-full w-full flex items-center justify-end font-bold">
