@@ -92,7 +92,7 @@ export const RegisterExisting = () => {
             <Modal isOpen={isOpen} onRequestClose={toggleModal} contentLabel="Register">
                 <div>
                     <label>Search By Name:</label>
-                    <input type="text" defaultValue={""} onChange={handleSearchByName} />
+                    <input type="text" defaultValue={""} onChange={handleSearchByName} autoFocus />
                 </div>
                 <div>
                     <label>Search By IC:</label>

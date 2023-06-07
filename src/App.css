@@ -55,7 +55,7 @@ label {
   font-weight: bold;
 }
 
-input {
+input, textarea {
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
