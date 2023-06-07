@@ -7,31 +7,73 @@ Modal.setAppElement("#root")
 
 export const RegisterExisting = () => {
     const [isOpen, setIsOpen] = useState(false)
-    const [searchQuery, setSearchQuery] = useState("")
+    const [searchByName, setSearchByName] = useState("")
+    const [searchByIC, setSearchByIC] = useState("")
+    const [searchByPhone, setSearchByPhone] = useState("")
     const [patientsList, setPatientsList] = useState([])
 
     useEffect(() => {
         const handleSearch = async () => {
-            if (searchQuery) {
-                const start = searchQuery
+            if (searchByName) {
+                const start = searchByName
                 const end = start.replace(/.$/, (c) => String.fromCharCode(c.charCodeAt(0) + 1))
-                const q = query(collection(db, "Patients"), where("name", ">=", start), where("name", "<", end))
-                const result = (await getDocs(q)).docs.map((doc) => doc.data().name)
+                const q = query(collection(db, "patients"), where("name", ">=", start), where("name", "<", end))
+                const result = (await getDocs(q)).docs.map((doc) => [
+                    doc.data().name,
+                    doc.data().IC,
+                    doc.data().phoneNumber,
+                ])
+                setPatientsList(Object.values(result.sort()))
+            } else if (searchByIC) {
+                const start = searchByIC
+                const end = start.replace(/.$/, (c) => String.fromCharCode(c.charCodeAt(0) + 1))
+                const q = query(collection(db, "patients"), where("IC", ">=", start), where("IC", "<", end))
+                const result = (await getDocs(q)).docs.map((doc) => [
+                    doc.data().name,
+                    doc.data().IC,
+                    doc.data().phoneNumber,
+                ])
+                setPatientsList(Object.values(result.sort()))
+            } else if (searchByPhone) {
+                const start = searchByPhone
+                const end = start.replace(/.$/, (c) => String.fromCharCode(c.charCodeAt(0) + 1))
+                const q = query(
+                    collection(db, "patients"),
+                    where("phoneNumber", ">=", start),
+                    where("phoneNumber", "<", end)
+                )
+                const result = (await getDocs(q)).docs.map((doc) => [
+                    doc.data().name,
+                    doc.data().IC,
+                    doc.data().phoneNumber,
+                ])
                 setPatientsList(Object.values(result.sort()))
             } else {
                 setPatientsList([])
             }
         }
-
         handleSearch()
-    }, [searchQuery])
+    }, [searchByName, searchByIC, searchByPhone])
 
     const toggleModal = () => {
         setIsOpen(!isOpen)
     }
 
-    const handleQueryChange = async (event) => {
-        setSearchQuery(event.target.value)
+    const toUpperCase = (event) => {
+        event.target.value = event.target.value.toUpperCase()
+    }
+
+    const handleSearchByName = (event) => {
+        toUpperCase(event)
+        setSearchByName(event.target.value)
+    }
+
+    const handleSearchByIC = (event) => {
+        setSearchByIC(event.target.value)
+    }
+
+    const handleSearchByPhone = (event) => {
+        setSearchByPhone(event.target.value)
     }
 
     return (
@@ -58,17 +100,39 @@ export const RegisterExisting = () => {
             </li>
             <Modal isOpen={isOpen} onRequestClose={toggleModal} contentLabel="Register">
                 <div>
-                    <label>Search Field:</label>
-                    <input type="text" defaultValue={""} onChange={handleQueryChange} />
+                    <label>Search By Name:</label>
+                    <input type="text" defaultValue={""} onChange={handleSearchByName} />
+                </div>
+                <div>
+                    <label>Search By IC:</label>
+                    <input type="text" defaultValue={""} onChange={handleSearchByIC} />
+                </div>
+                <div>
+                    <label>Search By Phone Number:</label>
+                    <input type="text" defaultValue={""} onChange={handleSearchByPhone} />
                 </div>
                 <button className="" onClick={toggleModal}>
                     Close
                 </button>
-                <ul>
+                <table>
+                    <tr>
+                        <th>Name</th>
+                        <th>IC</th>
+                        <th>Phone Number</th>
+                    </tr>
+                    {patientsList.map((patient) => (
+                        <tr>
+                            <td>{patient[0]}</td>
+                            <td>{patient[1]}</td>
+                            <td>{patient[2]}</td>
+                        </tr>
+                    ))}
+                </table>
+                {/* <ul>
                     {patientsList.map((patient) => (
                         <li>{patient}</li>
                     ))}
-                </ul>
+                </ul> */}
             </Modal>
         </div>
     )
