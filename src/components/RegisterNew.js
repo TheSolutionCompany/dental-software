@@ -88,12 +88,10 @@ const RegisterNew = () => {
             <li className="cursor-pointer select-none">
                 <button
                     onClick={toggleModal}
-                    class="flex w-full items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                    className="flex w-full items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
                     <span class="text-left flex-1 ml-3 whitespace-nowrap">Register New</span>
-                    {/* <span class="inline-flex items-center justify-center px-2 ml-3 text-sm font-medium text-gray-800 bg-gray-200 rounded-full dark:bg-gray-700 dark:text-gray-300">
-                                Pro
-                            </span> */}
+
                 </button>
             </li>
             <Modal isOpen={isOpen} onRequestClose={toggleModal} contentLabel="Register">
