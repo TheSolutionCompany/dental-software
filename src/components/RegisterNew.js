@@ -133,10 +133,8 @@ const RegisterNew = () => {
                     onClick={toggleModal}
                     className="flex w-full items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
-                    <span className="text-left flex-1 ml-3 whitespace-nowrap">Register New</span>
-                    {/* <span className="inline-flex items-center justify-center px-2 ml-3 text-sm font-medium text-gray-800 bg-gray-200 rounded-full dark:bg-gray-700 dark:text-gray-300">
-                                Pro
-                            </span> */}
+                    <span class="text-left flex-1 ml-3 whitespace-nowrap">Register New</span>
+
                 </button>
             </li>
             <Modal isOpen={isOpen} onRequestClose={toggleModal} contentLabel="Register">
@@ -144,7 +142,7 @@ const RegisterNew = () => {
                     <div className="grid grid-cols-4 gap-4">
                         <div className="flex flex-col">
                             <label>Title</label>
-                            <select className="select-green-border" onChange={(e) => setTitle(e.target.value)}>
+                            <select className="select-dropdown" onChange={(e) => setTitle(e.target.value)}>
                                 <option value="">Select</option>
                                 <option value="Mr">Mr</option>
                                 <option value="Mrs">Mrs</option>
@@ -171,7 +169,7 @@ const RegisterNew = () => {
                         </div>
                         <div className="flex flex-col">
                             <label>Gender</label>
-                            <select className="select-green-border" onChange={(e) => setGender(e.target.value)}>
+                            <select className="select-dropdown" onChange={(e) => setGender(e.target.value)}>
                                 <option value="">Select</option>
                                 <option value="Male">Male</option>
                                 <option value="Female">Female</option>
@@ -200,7 +198,7 @@ const RegisterNew = () => {
                         </div>
                         <div className="flex flex-col">
                             <label>Race</label>
-                            <select className="select-green-border" onChange={(e) => setRace(e.target.value)}>
+                            <select className="select-dropdown" onChange={(e) => setRace(e.target.value)}>
                                 <option value="">Select</option>
                                 <option value="Malay">Malay</option>
                                 <option value="Chinese">Chinese</option>
@@ -210,7 +208,7 @@ const RegisterNew = () => {
                         </div>
                         <div className="flex flex-col">
                             <label>Marital status</label>
-                            <select className="select-green-border" onChange={(e) => setMaritalStatus(e.target.value)}>
+                            <select className="select-dropdown" onChange={(e) => setMaritalStatus(e.target.value)}>
                                 <option value="">Select</option>
                                 <option value="Single">Single</option>
                                 <option value="Married">Married</option>
@@ -220,7 +218,7 @@ const RegisterNew = () => {
                         </div>
                         <div className="flex flex-col">
                             <label>Nationality</label>
-                            <select className="select-green-border" onChange={(e) => setNationality(e.target.value)}>
+                            <select className="select-dropdown" onChange={(e) => setNationality(e.target.value)}>
                                 <option value="">Select</option>
                                 <option value="Malaysian">Malaysian</option>
                                 <option value="Others">Others</option>
@@ -236,7 +234,7 @@ const RegisterNew = () => {
                         </div>
                         <div className="flex flex-col">
                             <label>Blood type</label>
-                            <select className="select-green-border" onChange={(e) => setBloodType(e.target.value)}>
+                            <select className="select-dropdown" onChange={(e) => setBloodType(e.target.value)}>
                                 <option value="">Select</option>
                                 <option value="A+">A+</option>
                                 <option value="A-">A-</option>
@@ -250,7 +248,7 @@ const RegisterNew = () => {
                         </div>
                         <div className="flex flex-col">
                             <label>Know about us</label>
-                            <select className="select-green-border" onChange={(e) => setKnowAboutUs(e.target.value)}>
+                            <select className="select-dropdown" onChange={(e) => setKnowAboutUs(e.target.value)}>
                                 <option value="">Select</option>
                                 <option value="Facebook">Facebook</option>
                                 <option value="Instagram">Instagram</option>
@@ -260,7 +258,7 @@ const RegisterNew = () => {
                         </div>
                         <div className="flex flex-col">
                             <label>Panel company</label>
-                            <select className="select-green-border" onChange={(e) => setPanelCompany(e.target.value)}>
+                            <select className="select-dropdown" onChange={(e) => setPanelCompany(e.target.value)}>
                                 <option value="">Select</option>
                                 <option value="AIA">AIA</option>
                                 <option value="Allianz">Allianz</option>
@@ -274,10 +272,7 @@ const RegisterNew = () => {
                         </div>
                         <div className="flex flex-col">
                             <label>Preferred language</label>
-                            <select
-                                className="select-green-border"
-                                onChange={(e) => setPreferredLanguage(e.target.value)}
-                            >
+                            <select className="select-dropdown" onChange={(e) => setPreferredLanguage(e.target.value)}>
                                 <option value="">Select</option>
                                 <option value="English">English</option>
                                 <option value="Malay">Malay</option>
@@ -286,10 +281,7 @@ const RegisterNew = () => {
                         </div>
                         <div className="flex flex-col">
                             <label>Preferred communication</label>
-                            <select
-                                className="select-green-border"
-                                onChange={(e) => setPreferredCommunication(e.target.value)}
-                            >
+                            <select className="select-dropdown" onChange={(e) => setPreferredCommunication(e.target.value)}>
                                 <option value="">Select</option>
                                 <option value="Email">Email</option>
                                 <option value="SMS">SMS</option>
@@ -302,6 +294,7 @@ const RegisterNew = () => {
                         </div>
                         <div className="flex flex-col">
                             <label>Address</label>
+
                             <textarea rows={4} onChange={(e) => setAddress(e.target.value)} />
                         </div>
                         <div className="flex flex-col">
