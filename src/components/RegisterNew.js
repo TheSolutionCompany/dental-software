@@ -1,13 +1,13 @@
-import React from "react"
+import React, { useEffect } from "react"
 import { useState } from "react"
 import { db } from "../firebase"
-import { collection, addDoc } from "firebase/firestore"
+import { collection, addDoc, getDocs } from "firebase/firestore"
 import Modal from "react-modal"
 
 Modal.setAppElement("#root")
 
 const RegisterNew = () => {
-    const [isCreate, setIsCreate] = useState("Create")
+    const [isCreate, setIsCreate] = useState(false)
     const [isOpen, setIsOpen] = useState(false)
     const [title, setTitle] = useState("")
     const [name, setName] = useState("")
@@ -32,17 +32,59 @@ const RegisterNew = () => {
     const [referBy, setReferBy] = useState("")
     const [address, setAddress] = useState("")
     const [secondAddress, setSecondAddress] = useState("")
-    const [allegy, setAllegy] = useState("")
+    const [allergy, setAllergy] = useState("")
     const [remark, setRemark] = useState("")
 
     const toggleModal = () => {
         setIsOpen(!isOpen)
-        setIsCreate("Create")
+        setIsCreate(false)
+    }
+
+    useEffect(() => {
+        if (isCreate) {
+            document.getElementById("createButton").hidden = true
+            document.getElementById("sendToQueueButton").hidden = false
+        }
+    }, [isCreate])
+
+    useEffect(() => {
+        if (IC.length === 12) {
+            let a
+            let dob
+            const year = IC.slice(0, 2)
+            const month = IC.slice(2, 4)
+            const day = IC.slice(4, 6)
+            const currentYear = new Date().getFullYear().toString().slice(2, 4)
+            if (year <= currentYear) {
+                a = currentYear - year
+                dob = "20" + year + "-" + month + "-" + day
+            } else {
+                a = currentYear - year + 100
+                dob = "19" + year + "-" + month + "-" + day
+            }
+            document.getElementById("age").value = a
+            document.getElementById("dob").value = dob
+            setAge(a)
+            setDOB(dob)
+        }
+    }, [IC])
+
+    const checkIC = async (IC) => {
+        const querySnapshot = await getDocs(collection(db, "patients"))
+        for (const doc of querySnapshot.docs) {
+            if (doc.data().IC === IC) {
+                return false // IC already exists, return false
+            }
+        }
+
+        return true
     }
 
     const handleCreate = async (event) => {
         event.preventDefault()
-        if (isCreate === "Create") {
+        const result = await checkIC(IC)
+        console.log(result)
+        if (result) {
             await addDoc(collection(db, "patients"), {
                 title: title,
                 name: name,
@@ -67,18 +109,19 @@ const RegisterNew = () => {
                 referBy: referBy,
                 address: address,
                 secondAddress: secondAddress,
-                allegy: allegy,
+                allergy: allergy,
                 remark: remark,
             })
-            setIsCreate("Created")
+            setIsCreate(true)
+            alert("Patient created successfully")
         } else {
-            alert("The patient has been created")
+            alert("Patient with the same IC/Passport number already exists")
         }
     }
 
     const handleSendToQueue = (event) => {
         event.preventDefault()
-        if (isCreate === "Create") {
+        if (!isCreate) {
             alert("Please create the patient first")
         }
     }
@@ -97,7 +140,6 @@ const RegisterNew = () => {
             <Modal isOpen={isOpen} onRequestClose={toggleModal} contentLabel="Register">
                 <form onSubmit={handleCreate}>
                     <div className="grid grid-cols-4 gap-4">
-
                         <div className="flex flex-col">
                             <label>Title</label>
                             <select className="select-dropdown" onChange={(e) => setTitle(e.target.value)}>
@@ -111,10 +153,15 @@ const RegisterNew = () => {
                         </div>
                         <div className="flex flex-col">
                             <label>Name *</label>
-                            <input type="text" onChange={(e) => {
-                                e.target.value = e.target.value.toUpperCase()
-                                setName(e.target.value)
-                            }} required />
+                            <input
+                                type="text"
+                                onChange={(e) => {
+                                    e.target.value = e.target.value.toUpperCase()
+                                    setName(e.target.value)
+                                }}
+                                required
+                                autoFocus
+                            />
                         </div>
                         <div className="flex flex-col">
                             <label>IC/Passport number *</label>
@@ -131,11 +178,11 @@ const RegisterNew = () => {
                         </div>
                         <div className="flex flex-col">
                             <label>DOB *</label>
-                            <input type="date" onChange={(e) => setDOB(e.target.value)} required />
+                            <input id="dob" type="date" onChange={(e) => setDOB(e.target.value)} required />
                         </div>
                         <div className="flex flex-col">
                             <label>Age *</label>
-                            <input type="number" onChange={(e) => setAge(e.target.value)} required />
+                            <input id="age" type="text" onChange={(e) => setAge(e.target.value)} required />
                         </div>
                         <div className="flex flex-col">
                             <label>Mobile number</label>
@@ -247,41 +294,37 @@ const RegisterNew = () => {
                         </div>
                         <div className="flex flex-col">
                             <label>Address</label>
-                            <input type="text" onChange={(e) => setAddress(e.target.value)} />
+
+                            <textarea rows={4} onChange={(e) => setAddress(e.target.value)} />
                         </div>
                         <div className="flex flex-col">
                             <label>Second address</label>
-                            <input type="text" onChange={(e) => setSecondAddress(e.target.value)} />
+                            <textarea rows={4} onChange={(e) => setSecondAddress(e.target.value)} />
                         </div>
                         <div className="flex flex-col">
-                            <label>Allegy/Medical history</label>
-                            <input type="text" onChange={(e) => setAllegy(e.target.value)} />
+                            <label>Allergy/Medical history</label>
+                            <textarea rows={4} onChange={(e) => setAllergy(e.target.value)} />
                         </div>
                         <div className="flex flex-col">
                             <label>Remark</label>
-                            <input type="text" onChange={(e) => setRemark(e.target.value)} />
-                        </div>
-                        <div>
-
-                        </div>
-                        <div>
-
-                        </div>
-                        <div>
-
-                        </div>
-                        <div>
-                            <button className="button-green w-full" type="submit">
-                                Create
-                            </button>
+                            <textarea rows={4} onChange={(e) => setRemark(e.target.value)} />
                         </div>
                     </div>
+                    <div className="flex flex-row mt-28">
+                        <button id="createButton" className="button-green rounded m-2" type="submit">
+                            Create
+                        </button>
+                        <button
+                            id="sendToQueueButton"
+                            hidden="true"
+                            className="button-green rounded m-2"
+                            type="button"
+                            onClick={handleSendToQueue}
+                        >
+                            Send to queue
+                        </button>
+                    </div>
                 </form>
-                <div className="flex items-center justify-center">
-                    <button className="button-blue" type="button" onClick={handleSendToQueue}>
-                        Send to queue
-                    </button>
-                </div>
             </Modal>
         </div>
     )
