@@ -18,21 +18,13 @@ export const RegisterExisting = () => {
                 const start = searchByName
                 const end = start.replace(/.$/, (c) => String.fromCharCode(c.charCodeAt(0) + 1))
                 const q = query(collection(db, "patients"), where("name", ">=", start), where("name", "<", end))
-                const result = (await getDocs(q)).docs.map((doc) => [
-                    doc.data().name,
-                    doc.data().IC,
-                    doc.data().phoneNumber,
-                ])
+                const result = (await getDocs(q)).docs.map((doc) => doc)
                 setPatientsList(Object.values(result.sort()))
             } else if (searchByIC) {
                 const start = searchByIC
                 const end = start.replace(/.$/, (c) => String.fromCharCode(c.charCodeAt(0) + 1))
                 const q = query(collection(db, "patients"), where("IC", ">=", start), where("IC", "<", end))
-                const result = (await getDocs(q)).docs.map((doc) => [
-                    doc.data().name,
-                    doc.data().IC,
-                    doc.data().phoneNumber,
-                ])
+                const result = (await getDocs(q)).docs.map((doc) => doc)
                 setPatientsList(Object.values(result.sort()))
             } else if (searchByPhone) {
                 const start = searchByPhone
@@ -42,11 +34,7 @@ export const RegisterExisting = () => {
                     where("phoneNumber", ">=", start),
                     where("phoneNumber", "<", end)
                 )
-                const result = (await getDocs(q)).docs.map((doc) => [
-                    doc.data().name,
-                    doc.data().IC,
-                    doc.data().phoneNumber,
-                ])
+                const result = (await getDocs(q)).docs.map((doc) => doc)
                 setPatientsList(Object.values(result.sort()))
             } else {
                 setPatientsList([])
@@ -92,7 +80,7 @@ export const RegisterExisting = () => {
             <Modal isOpen={isOpen} onRequestClose={toggleModal} contentLabel="Register">
                 <div>
                     <label>Search By Name:</label>
-                    <input type="text" defaultValue={""} onChange={handleSearchByName} autoFocus />
+                    <input type="text" defaultValue={""} onChange={handleSearchByName} autofocus/>
                 </div>
                 <div>
                     <label>Search By IC:</label>
@@ -112,10 +100,10 @@ export const RegisterExisting = () => {
                         <th>Phone Number</th>
                     </tr>
                     {patientsList.map((patient) => (
-                        <tr>
-                            <td>{patient[0]}</td>
-                            <td>{patient[1]}</td>
-                            <td>{patient[2]}</td>
+                        <tr key={patient.id}>
+                            <td>{patient.data().name}</td>
+                            <td>{patient.data().IC}</td>
+                            <td>{patient.data().phoneNumber}</td>
                         </tr>
                     ))}
                 </table>

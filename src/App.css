@@ -85,3 +85,7 @@ input, textarea {
     transform: rotate(360deg);
   }
 }
+
+textarea {
+    resize: none;
+}
