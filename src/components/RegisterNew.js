@@ -3,6 +3,7 @@ import { useState } from "react"
 import { db } from "../firebase"
 import { collection, addDoc, getDocs } from "firebase/firestore"
 import Modal from "react-modal"
+import CloseButton from "./CloseButton"
 
 Modal.setAppElement("#root")
 
@@ -138,6 +139,7 @@ const RegisterNew = () => {
                 </button>
             </li>
             <Modal isOpen={isOpen} onRequestClose={toggleModal} contentLabel="Register">
+                <CloseButton toggleModal={toggleModal} />
                 <form onSubmit={handleCreate}>
                     <div className="grid grid-cols-4 gap-4">
                         <div className="flex flex-col">
