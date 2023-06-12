@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react"
 import Modal from "react-modal"
 import { db } from "../firebase"
 import { collection, query, where, getDocs } from "firebase/firestore"
+import CloseButton from "./CloseButton"
 
 Modal.setAppElement("#root")
 
@@ -78,9 +79,10 @@ export const RegisterExisting = () => {
                 </button>
             </li>
             <Modal isOpen={isOpen} onRequestClose={toggleModal} contentLabel="Register">
-                <div>
+                <CloseButton toggleModal={toggleModal} />
+                {/* <div>
                     <label>Search By Name:</label>
-                    <input type="text" defaultValue={""} onChange={handleSearchByName} autofocus/>
+                    <input type="text" defaultValue={""} onChange={handleSearchByName} autofocus />
                 </div>
                 <div>
                     <label>Search By IC:</label>
@@ -89,24 +91,36 @@ export const RegisterExisting = () => {
                 <div>
                     <label>Search By Phone Number:</label>
                     <input type="text" defaultValue={""} onChange={handleSearchByPhone} />
-                </div>
-                <button className="" onClick={toggleModal}>
-                    Close
-                </button>
-                <table>
-                    <tr>
-                        <th>Name</th>
-                        <th>IC</th>
-                        <th>Phone Number</th>
-                    </tr>
+                </div> */}
+                <div className="relative">
+                    <div className="w-full grid grid-cols-3 h-full">
+                        <div className="">
+                            <label>Search By Name:</label>
+                            <input className="w-full" type="text" defaultValue={""} onChange={handleSearchByName} autofocus />
+                        </div>
+                        <div className="">
+                            <label>Search By IC:</label>
+                            <input className="w-full" type="text" defaultValue={""} onChange={handleSearchByIC} />
+                        </div>
+                        <div className="">
+                            <label>Search By Phone Number:</label>
+                            <input className="w-full" type="text" defaultValue={""} onChange={handleSearchByPhone} />
+                        </div>
+                    </div>
+                    <div className="w-full grid grid-cols-3 h-10 bg-gray-300 font-bold border-l border-t border-b border-black">
+                        <div className="border-r border-black">Name</div>
+                        <div className="border-r border-black">IC</div>
+                        <div className="border-r border-black">Phone Number</div>
+                    </div>
                     {patientsList.map((patient) => (
-                        <tr key={patient.id}>
-                            <td>{patient.data().name}</td>
-                            <td>{patient.data().IC}</td>
-                            <td>{patient.data().phoneNumber}</td>
-                        </tr>
+                        <div className="w-full grid grid-cols-3 h-10 bg-gray-400 font-semibold border-l border-black" key={patient.id}>
+                            <div className="border-r border-b border-black">{patient.data().name}</div>
+                            <div className="border-r border-b border-black">{patient.data().IC}</div>
+                            <div className="border-r border-b border-black">{patient.data().phoneNumber}</div>
+                        </div>
                     ))}
-                </table>
+                </div>
+
                 {/* <ul>
                     {patientsList.map((patient) => (
                         <li>{patient}</li>
