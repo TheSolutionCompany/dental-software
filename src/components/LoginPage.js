@@ -26,7 +26,7 @@ export const LoginPage = () => {
         try {
             await signInWithEmailAndPassword(auth, email, password)
             // Login successful, you can redirect to another page here
-            navigate("/AdminDashboard")
+            navigate("/Dashboard")
         } catch (error) {
             setError(error.message)
             //setError("Wrong email or password!")

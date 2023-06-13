@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom"
 import Header from "./Header"
 import SideBar from "./SideBar"
 
-export const AdminDashboard = () => {
+const Dashboard = () => {
     const navigate = useNavigate()
 
     const handleLogout = () => {
@@ -25,11 +25,11 @@ export const AdminDashboard = () => {
             <div className="flex h-full">
                 <SideBar />
                 <div className="w-full bg-gray-200">
-                    <p className="text-gray-500 text-lg">Admin Dashboard</p>
+                    <p className="text-gray-500 text-lg">Dashboard</p>
                 </div>
             </div>
         </div>
     )
 }
 
-export default AdminDashboard
+export default Dashboard

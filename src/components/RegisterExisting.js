@@ -65,6 +65,10 @@ export const RegisterExisting = () => {
         setSearchByPhone(event.target.value)
     }
 
+    const handleRegister = (patient) => {
+        alert(patient.id)
+    }
+
     return (
         <div className="App">
             <li className="cursor-pointer select-none">
@@ -93,10 +97,16 @@ export const RegisterExisting = () => {
                     <input type="text" defaultValue={""} onChange={handleSearchByPhone} />
                 </div> */}
                 <div className="relative">
-                    <div className="w-full grid grid-cols-3 h-full">
+                    <div className="w-full grid grid-cols-3 h-full gap-4 pb-6">
                         <div className="">
                             <label>Search By Name:</label>
-                            <input className="w-full" type="text" defaultValue={""} onChange={handleSearchByName} autofocus />
+                            <input
+                                className="w-full"
+                                type="text"
+                                defaultValue={""}
+                                onChange={handleSearchByName}
+                                autofocus
+                            />
                         </div>
                         <div className="">
                             <label>Search By IC:</label>
@@ -107,25 +117,24 @@ export const RegisterExisting = () => {
                             <input className="w-full" type="text" defaultValue={""} onChange={handleSearchByPhone} />
                         </div>
                     </div>
-                    <div className="w-full grid grid-cols-3 h-10 bg-gray-300 font-bold border-l border-t border-b border-black">
-                        <div className="border-r border-black">Name</div>
-                        <div className="border-r border-black">IC</div>
-                        <div className="border-r border-black">Phone Number</div>
-                    </div>
-                    {patientsList.map((patient) => (
-                        <div className="w-full grid grid-cols-3 h-10 bg-gray-400 font-semibold border-l border-black" key={patient.id}>
-                            <div className="border-r border-b border-black">{patient.data().name}</div>
-                            <div className="border-r border-b border-black">{patient.data().IC}</div>
-                            <div className="border-r border-b border-black">{patient.data().phoneNumber}</div>
-                        </div>
-                    ))}
+                    <table className="w-full grid grid-cols-3 h-10 bg-gray-300 font-bold border-l border-t border-b border-black">
+                        <tr className="w-full grid grid-cols-3 h-10 bg-gray-300 font-bold border-l border-t border-b border-black">
+                            <th className="border-r border-black">Name</th>
+                            <th className="border-r border-black">IC</th>
+                            <th className="border-r border-black">Phone Number</th>
+                        </tr>
+                        {patientsList.map((patient) => (
+                            <tr
+                                className="w-full grid grid-cols-3 h-10 bg-gray-400 font-semibold border-l border-black"
+                                key={patient.id}
+                            >
+                                <td className="border-r border-b border-black">{patient.data().name}</td>
+                                <td className="border-r border-b border-black">{patient.data().IC}</td>
+                                <td className="border-r border-b border-black">{patient.data().phoneNumber}</td>
+                            </tr>
+                        ))}
+                    </table>
                 </div>
-
-                {/* <ul>
-                    {patientsList.map((patient) => (
-                        <li>{patient}</li>
-                    ))}
-                </ul> */}
             </Modal>
         </div>
     )

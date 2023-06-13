@@ -5,7 +5,9 @@ import { auth } from "./firebase"
 import { onAuthStateChanged } from "firebase/auth"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import ProtectedRoute from "./components/ProtectedRoute"
-import AdminDashboard from "./components/AdminDashboard"
+import Dashboard from "./components/Dashboard"
+import Appointment from "./components/Appointment"
+import Queue from "./components/Queue"
 
 function App() {
     useEffect(() => {
@@ -25,10 +27,26 @@ function App() {
                 <Routes>
                     <Route path="/" element={<LoginPage />} />
                     <Route
-                        path="/AdminDashboard"
+                        path="/Dashboard"
                         element={
                             <ProtectedRoute>
-                                <AdminDashboard />
+                                <Dashboard />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/Queue"
+                        element={
+                            <ProtectedRoute>
+                                <Queue />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/Appointment"
+                        element={
+                            <ProtectedRoute>
+                                <Appointment />
                             </ProtectedRoute>
                         }
                     />
