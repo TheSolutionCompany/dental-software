@@ -6,7 +6,7 @@ import { onAuthStateChanged } from "firebase/auth"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import ProtectedRoute from "./components/ProtectedRoute"
 import Dashboard from "./components/Dashboard"
-import Appointment from "./components/Appointment"
+import Appointments from "./components/Appointments"
 import Queue from "./components/Queue"
 
 function App() {
@@ -43,10 +43,10 @@ function App() {
                         }
                     />
                     <Route
-                        path="/Appointment"
+                        path="/Appointments"
                         element={
                             <ProtectedRoute>
-                                <Appointment />
+                                <Appointments />
                             </ProtectedRoute>
                         }
                     />

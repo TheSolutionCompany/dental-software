@@ -82,20 +82,8 @@ export const RegisterExisting = () => {
                             </span> */}
                 </button>
             </li>
-            <Modal isOpen={isOpen} onRequestClose={toggleModal} contentLabel="Register">
+            <Modal isOpen={isOpen} onRequestClose={toggleModal} contentLabel="Register" shouldCloseOnOverlayClick="false">
                 <CloseButton toggleModal={toggleModal} />
-                {/* <div>
-                    <label>Search By Name:</label>
-                    <input type="text" defaultValue={""} onChange={handleSearchByName} autofocus />
-                </div>
-                <div>
-                    <label>Search By IC:</label>
-                    <input type="text" defaultValue={""} onChange={handleSearchByIC} />
-                </div>
-                <div>
-                    <label>Search By Phone Number:</label>
-                    <input type="text" defaultValue={""} onChange={handleSearchByPhone} />
-                </div> */}
                 <div className="relative">
                     <div className="w-full grid grid-cols-3 h-full gap-4 pb-6">
                         <div className="">
@@ -126,7 +114,7 @@ export const RegisterExisting = () => {
                         {patientsList.map((patient) => (
                             <tr
                                 className="w-full grid grid-cols-3 h-10 bg-gray-400 font-semibold border-l border-black"
-                                key={patient.id}
+                                key={patient.id} onClick={() => handleRegister(patient)}
                             >
                                 <td className="border-r border-b border-black">{patient.data().name}</td>
                                 <td className="border-r border-b border-black">{patient.data().IC}</td>

@@ -312,7 +312,7 @@ const RegisterNew = () => {
                             <textarea rows={4} onChange={(e) => setRemark(e.target.value)} />
                         </div>
                     </div>
-                    <div className="flex flex-row mt-28">
+                    <div className="flex flex-row mt-16 justify-end">
                         <button id="createButton" className="button-green rounded m-2" type="submit">
                             Create
                         </button>

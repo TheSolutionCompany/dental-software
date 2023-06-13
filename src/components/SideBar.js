@@ -19,7 +19,7 @@ const SideBar = () => {
                             className="flex w-full items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
                         >
                             <span className="text-left flex-1 ml-3 whitespace-nowrap">
-                                Appointment
+                                Make Appointment
                             </span>
                             <span className="inline-flex items-center justify-center w-3 h-3 p-3 ml-3 text-sm font-medium text-red-200 bg-red-600 rounded-full">
                                 3
@@ -40,7 +40,7 @@ const SideBar = () => {
                             className="flex w-full items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
                         >
                             <span className="text-left flex-1 ml-3 whitespace-nowrap">
-                                MC
+                                Issue MC
                             </span>
                         </button>
                     </li>

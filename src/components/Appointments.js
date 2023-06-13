@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom"
 import Header from "./Header"
 import SideBar from "./SideBar"
 
-const Appointment = () => {
+const Appointments = () => {
     const navigate = useNavigate()
 
     const handleLogout = () => {
@@ -32,4 +32,4 @@ const Appointment = () => {
     )
 }
 
-export default Appointment
+export default Appointments
