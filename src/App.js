@@ -1,13 +1,13 @@
 import "./App.css"
 import { useEffect } from "react"
-import LoginPage from "./components/LoginPage"
+import LoginPage from "./pages/LoginPage"
 import { auth } from "./firebase"
 import { onAuthStateChanged } from "firebase/auth"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import ProtectedRoute from "./components/ProtectedRoute"
-import Dashboard from "./components/Dashboard"
+import Dashboard from "./pages/Dashboard"
 import Appointments from "./components/Appointments"
-import Queue from "./components/Queue"
+import Queue from "./pages/Queue"
 
 function App() {
     useEffect(() => {
