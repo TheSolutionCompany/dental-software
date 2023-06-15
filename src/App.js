@@ -1,15 +1,15 @@
 import "./App.css"
 import { useEffect } from "react"
-import LoginPage from "./components/LoginPage"
+import LoginPage from "./pages/LoginPage"
 import { auth } from "./firebase"
 import { onAuthStateChanged } from "firebase/auth"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import ProtectedRoute from "./components/ProtectedRoute"
-import Dashboard from "./components/Dashboard"
-import Appointments from "./components/Appointments"
-import Queue from "./components/Queue"
-import Profile from "./components/Profile"
-import ProfileUpdate from "./components/ProfileUpdate"
+import Dashboard from "./pages/Dashboard"
+import Appointments from "./pages/Appointments"
+import Profile from "./pages/Profile"
+import ProfileUpdate from "./pages/ProfileUpdate"
+import Queue from "./pages/Queue"
 
 function App() {
     useEffect(() => {
@@ -21,7 +21,6 @@ function App() {
             }
         })
     }, [])
-
 
     return (
         <div className="App h-[100vh]">

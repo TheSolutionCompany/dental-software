@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react"
 import { auth } from "../firebase"
 import { onAuthStateChanged, signOut } from "firebase/auth"
 import { useNavigate } from "react-router-dom"
-import Header from "./Header"
-import SideBar from "./SideBar"
+import Header from "../components/Header"
+import SideBar from "../components/SideBar"
 
 const Profile = () => {
     const navigate = useNavigate()

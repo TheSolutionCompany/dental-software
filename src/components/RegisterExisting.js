@@ -105,7 +105,7 @@ export const RegisterExisting = () => {
                             <input className="w-full" type="text" defaultValue={""} onChange={handleSearchByPhone} />
                         </div>
                     </div>
-                    <table className="w-full grid grid-cols-3 h-10 bg-gray-300 font-bold border-l border-t border-b border-black">
+                    <table className="w-full h-10 bg-gray-300 font-bold border border-black">
                         <tr className="w-full grid grid-cols-3 h-10 bg-gray-300 font-bold border-l border-t border-b border-black">
                             <th className="border-r border-black">Name</th>
                             <th className="border-r border-black">IC</th>
@@ -113,7 +113,7 @@ export const RegisterExisting = () => {
                         </tr>
                         {patientsList.map((patient) => (
                             <tr
-                                className="w-full grid grid-cols-3 h-10 bg-gray-400 font-semibold border-l border-black"
+                                className="w-full grid grid-cols-3 h-10 bg-gray-200 font-semibold border-l border-black hover:bg-green-400 cursor-pointer"
                                 key={patient.id} onClick={() => handleRegister(patient)}
                             >
                                 <td className="border-r border-b border-black">{patient.data().name}</td>

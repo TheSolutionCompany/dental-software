@@ -2,8 +2,8 @@ import React from "react"
 import { auth } from "../firebase"
 import { signOut } from "firebase/auth"
 import { useNavigate } from "react-router-dom"
-import Header from "./Header"
-import SideBar from "./SideBar"
+import Header from "../components/Header"
+import SideBar from "../components/SideBar"
 
 const Appointments = () => {
     const navigate = useNavigate()
