@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react"
-import { auth } from "../firebase"
+import { auth, db } from "../firebase"
 import { onAuthStateChanged, reload, signOut, updateEmail, updateProfile } from "firebase/auth"
+import { doc, getDoc, updateDoc } from "firebase/firestore"
 import { useNavigate } from "react-router-dom"
 import Header from "../components/Header"
 import SideBar from "../components/SideBar"
@@ -9,6 +10,8 @@ const ProfileUpdate = () => {
     const navigate = useNavigate()
     const [displayName, setDisplayName] = useState("")
     const [email, setEmail] = useState("")
+    const [position, setPosition] = useState("")
+    const [userId, setUserId] = useState("")
 
     const handleLogout = () => {
         signOut(auth)
@@ -22,28 +25,37 @@ const ProfileUpdate = () => {
     }
 
     useEffect(() => {
-        console.log("componentDidMount")
         onAuthStateChanged(auth, (user) => {
             if (user) {
+                setUserId(user.uid)
                 setDisplayName(user.displayName)
                 setEmail(user.email)
+                const docRef = doc(db, "users", user.uid)
+                getDoc(docRef).then((docSnap) => {
+                    if (docSnap.exists()) {
+                        setPosition(docSnap.data().position)
+                    }
+                })
             }
         })
     }, [])
 
     const handleUpdateProfile = async (e) => {
         e.preventDefault()
-        if (displayName !== auth.currentUser.displayName || email !== auth.currentUser.email) {
-            updateProfile(auth.currentUser, { displayName: displayName }).then(() => {
-                updateEmail(auth.currentUser, email).then(() => {
-                    reload(auth.currentUser).then(() => {
+        updateProfile(auth.currentUser, { displayName: displayName }).then(() => {
+            updateEmail(auth.currentUser, email).then(() => {
+                reload(auth.currentUser).then(() => {
+                    const docRef = doc(db, "users", userId)
+                    updateDoc(docRef, {
+                        position: position,
+                        displayName: displayName,
+                        email: email,
+                    }).then(() => {
                         navigate("/profile")
                     })
                 })
             })
-        } else {
-            navigate("/profile")
-        }
+        })
     }
 
     return (
@@ -62,6 +74,12 @@ const ProfileUpdate = () => {
                         />
                         <label>Email</label>
                         <input type="email" defaultValue={email} onChange={(e) => setEmail(e.target.value)} />
+                        <label>Position</label>
+                        <select onChange={(e) => setPosition(e.target.value)}>
+                            <option value="Doctor">Doctor</option>
+                            <option value="Locum Doctor">Locum Doctor</option>
+                            <option value="Receptionist">Receptionist</option>
+                        </select>
                         <button>Update</button>
                     </form>
                 </div>

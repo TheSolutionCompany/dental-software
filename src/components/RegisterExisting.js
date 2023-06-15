@@ -8,10 +8,15 @@ Modal.setAppElement("#root")
 
 export const RegisterExisting = () => {
     const [isOpen, setIsOpen] = useState(false)
+    const [isInnerOpen, setIsInnerOpen] = useState(false)
     const [searchByName, setSearchByName] = useState("")
     const [searchByIC, setSearchByIC] = useState("")
     const [searchByPhone, setSearchByPhone] = useState("")
     const [patientsList, setPatientsList] = useState([])
+    const [patientName, setPatientName] = useState("")
+    const [patientId, setPatientId] = useState("")
+    const [complains, setComplains] = useState("")
+    const [doctorId, setDoctorId] = useState("")
 
     useEffect(() => {
         const handleSearch = async () => {
@@ -45,7 +50,23 @@ export const RegisterExisting = () => {
     }, [searchByName, searchByIC, searchByPhone])
 
     const toggleModal = () => {
+        if (isOpen) {
+            setPatientsList([])
+            setSearchByName("")
+            setSearchByIC("")
+            setSearchByPhone("")
+        }
         setIsOpen(!isOpen)
+    }
+
+    const toggleInnerModal = () => {
+        if (isInnerOpen) {
+            setPatientId("")
+            setPatientName("")
+            setComplains("")
+            setDoctorId("")
+        }
+        setIsInnerOpen(!isInnerOpen)
     }
 
     const toUpperCase = (event) => {
@@ -66,7 +87,15 @@ export const RegisterExisting = () => {
     }
 
     const handleRegister = (patient) => {
-        alert(patient.id)
+        setPatientId(patient.id)
+        setPatientName(patient.data().name)
+        toggleInnerModal()
+    }
+
+    const handleAddToQueue = () => {
+        alert(patientId + " " + doctorId + " " + complains)
+        toggleInnerModal()
+        toggleModal()
     }
 
     return (
@@ -82,7 +111,12 @@ export const RegisterExisting = () => {
                             </span> */}
                 </button>
             </li>
-            <Modal isOpen={isOpen} onRequestClose={toggleModal} contentLabel="Register" shouldCloseOnOverlayClick={false}>
+            <Modal
+                isOpen={isOpen}
+                onRequestClose={toggleModal}
+                contentLabel="Register Existing"
+                shouldCloseOnOverlayClick={false}
+            >
                 <CloseButton toggleModal={toggleModal} />
                 <div className="relative">
                     <div className="w-full grid grid-cols-3 h-full gap-4 pb-6">
@@ -114,7 +148,8 @@ export const RegisterExisting = () => {
                         {patientsList.map((patient) => (
                             <tr
                                 className="w-full grid grid-cols-3 h-10 bg-gray-200 font-semibold border-l border-black hover:bg-green-400 cursor-pointer"
-                                key={patient.id} onClick={() => handleRegister(patient)}
+                                key={patient.id}
+                                onClick={() => handleRegister(patient)}
                             >
                                 <td className="border-r border-b border-black">{patient.data().name}</td>
                                 <td className="border-r border-b border-black">{patient.data().IC}</td>
@@ -122,6 +157,44 @@ export const RegisterExisting = () => {
                             </tr>
                         ))}
                     </table>
+                    <Modal
+                        isOpen={isInnerOpen}
+                        onRequestClose={toggleInnerModal}
+                        contentLabel="Add To Queue"
+                        shouldCloseOnOverlayClick={false}
+                        style={{
+                            overlay: {
+                                position: "fixed",
+                                top: 0,
+                                left: 0,
+                                right: 0,
+                                bottom: 0,
+                                backgroundColor: "rgba(255, 255, 255, 0.75)",
+                            },
+                            content: {
+                                position: "absolute",
+                                top: "100px",
+                                left: "500px",
+                                right: "500px",
+                                bottom: "100px",
+                                border: "1px solid #ccc",
+                                background: "#fff",
+                                overflow: "auto",
+                                WebkitOverflowScrolling: "touch",
+                                borderRadius: "4px",
+                                outline: "none",
+                                padding: "20px",
+                            },
+                        }}
+                    >
+                        <CloseButton toggleModal={toggleInnerModal} />
+                        <div>{patientName}</div>
+                        <form onSubmit={handleAddToQueue}>
+                            <label>Complains:</label>
+                            <textarea rows={4} onChange={(e) => setComplains(e.target.value)} />
+                            <button type="submit">Add To Queue</button>
+                        </form>
+                    </Modal>
                 </div>
             </Modal>
         </div>

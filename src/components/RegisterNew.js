@@ -10,6 +10,7 @@ Modal.setAppElement("#root")
 const RegisterNew = () => {
     const [isCreate, setIsCreate] = useState(false)
     const [isOpen, setIsOpen] = useState(false)
+    const [isInnerOpen, setIsInnerOpen] = useState(false)
     const [title, setTitle] = useState("")
     const [name, setName] = useState("")
     const [IC, setIC] = useState("")
@@ -36,9 +37,49 @@ const RegisterNew = () => {
     const [allergy, setAllergy] = useState("")
     const [remark, setRemark] = useState("")
 
+    const [patientId, setPatientId] = useState("")
+    const [complains, setComplains] = useState("")
+    const [doctorId, setDoctorId] = useState("")
+
     const toggleModal = () => {
+        if (isOpen) {
+            setIsCreate(false)
+            setTitle("")
+            setName("")
+            setIC("")
+            setGender("")
+            setDOB("")
+            setAge("")
+            setMobileNumber("")
+            setPhoneNumber("")
+            setEmail("")
+            setRace("")
+            setMaritalStatus("")
+            setNationality("")
+            setEmergencyContactName("")
+            setEmergencyContactNumber("")
+            setBloodType("")
+            setKnowAboutUs("")
+            setPanelCompany("")
+            setOccupation("")
+            setPreferredLanguage("")
+            setPreferredCommunication("")
+            setReferBy("")
+            setAddress("")
+            setSecondAddress("")
+            setAllergy("")
+            setRemark("")
+        }
         setIsOpen(!isOpen)
-        setIsCreate(false)
+    }
+
+    const toggleInnerModal = () => {
+        if (isInnerOpen) {
+            setPatientId("")
+            setComplains("")
+            setDoctorId("")
+        }
+        setIsInnerOpen(!isInnerOpen)
     }
 
     useEffect(() => {
@@ -77,7 +118,6 @@ const RegisterNew = () => {
                 return false // IC already exists, return false
             }
         }
-
         return true
     }
 
@@ -124,7 +164,15 @@ const RegisterNew = () => {
         event.preventDefault()
         if (!isCreate) {
             alert("Please create the patient first")
+        } else {
+            toggleInnerModal()
         }
+    }
+
+    const handleAddToQueue = () => {
+        alert(patientId + " " + doctorId + " " + complains)
+        toggleInnerModal()
+        toggleModal()
     }
 
     return (
@@ -137,7 +185,12 @@ const RegisterNew = () => {
                     <span className="text-left flex-1 ml-3 whitespace-nowrap">Register New</span>
                 </button>
             </li>
-            <Modal isOpen={isOpen} onRequestClose={toggleModal} contentLabel="Register">
+            <Modal
+                isOpen={isOpen}
+                onRequestClose={toggleModal}
+                contentLabel="Register New"
+                shouldCloseOnOverlayClick={false}
+            >
                 <CloseButton toggleModal={toggleModal} />
                 <form onSubmit={handleCreate}>
                     <div className="grid grid-cols-4 gap-4">
@@ -329,6 +382,44 @@ const RegisterNew = () => {
                         </button>
                     </div>
                 </form>
+                <Modal
+                    isOpen={isInnerOpen}
+                    onRequestClose={toggleInnerModal}
+                    contentLabel="Add To Queue"
+                    shouldCloseOnOverlayClick={false}
+                    style={{
+                        overlay: {
+                            position: "fixed",
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            backgroundColor: "rgba(255, 255, 255, 0.75)",
+                        },
+                        content: {
+                            position: "absolute",
+                            top: "100px",
+                            left: "500px",
+                            right: "500px",
+                            bottom: "100px",
+                            border: "1px solid #ccc",
+                            background: "#fff",
+                            overflow: "auto",
+                            WebkitOverflowScrolling: "touch",
+                            borderRadius: "4px",
+                            outline: "none",
+                            padding: "20px",
+                        },
+                    }}
+                >
+                    <CloseButton toggleModal={toggleInnerModal} />
+                    <div>{name}</div>
+                    <form onSubmit={handleAddToQueue}>
+                        <label>Complains:</label>
+                        <textarea rows={4} onChange={(e) => setComplains(e.target.value)} />
+                        <button type="submit">Add To Queue</button>
+                    </form>
+                </Modal>
             </Modal>
         </div>
     )

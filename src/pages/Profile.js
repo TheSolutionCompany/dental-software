@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react"
-import { auth } from "../firebase"
+import { auth, db } from "../firebase"
 import { onAuthStateChanged, signOut } from "firebase/auth"
+import { doc, getDoc } from "firebase/firestore"
 import { useNavigate } from "react-router-dom"
 import Header from "../components/Header"
 import SideBar from "../components/SideBar"
@@ -9,6 +10,7 @@ const Profile = () => {
     const navigate = useNavigate()
     const [displayName, setDisplayName] = useState("")
     const [email, setEmail] = useState("")
+    const [position, setPosition] = useState("")
 
     const handleLogout = () => {
         signOut(auth)
@@ -27,6 +29,12 @@ const Profile = () => {
                 setDisplayName(user.displayName)
                 setEmail(user.email)
             }
+            const docRef = doc(db, "users", user.uid)
+            getDoc(docRef).then((docSnap) => {
+                if (docSnap.exists()) {
+                    setPosition(docSnap.data().position)
+                }
+            })
         })
     }, [])
 
@@ -43,9 +51,11 @@ const Profile = () => {
                 <div className="w-full bg-gray-200">
                     <p className="text-gray-500 text-lg">Profile</p>
                     <label>Name</label>
-                    <input type="text" value={displayName} />
+                    <input type="text" value={displayName} disabled={true} />
                     <label>Email</label>
-                    <input type="email" value={email} />
+                    <input type="email" value={email} disabled={true} />
+                    <label>Position</label>
+                    <input type="text" value={position} disabled={true} />
                     <button onClick={handleProfileUpdate}>Update profile</button>
                 </div>
             </div>
