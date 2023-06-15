@@ -82,7 +82,7 @@ export const RegisterExisting = () => {
                             </span> */}
                 </button>
             </li>
-            <Modal isOpen={isOpen} onRequestClose={toggleModal} contentLabel="Register" shouldCloseOnOverlayClick="false">
+            <Modal isOpen={isOpen} onRequestClose={toggleModal} contentLabel="Register" shouldCloseOnOverlayClick={false}>
                 <CloseButton toggleModal={toggleModal} />
                 <div className="relative">
                     <div className="w-full grid grid-cols-3 h-full gap-4 pb-6">

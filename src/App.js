@@ -8,6 +8,8 @@ import ProtectedRoute from "./components/ProtectedRoute"
 import Dashboard from "./components/Dashboard"
 import Appointments from "./components/Appointments"
 import Queue from "./components/Queue"
+import Profile from "./components/Profile"
+import ProfileUpdate from "./components/ProfileUpdate"
 
 function App() {
     useEffect(() => {
@@ -47,6 +49,22 @@ function App() {
                         element={
                             <ProtectedRoute>
                                 <Appointments />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/Profile"
+                        element={
+                            <ProtectedRoute>
+                                <Profile />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/ProfileUpdate"
+                        element={
+                            <ProtectedRoute>
+                                <ProfileUpdate />
                             </ProtectedRoute>
                         }
                     />

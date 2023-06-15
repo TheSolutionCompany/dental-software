@@ -8,11 +8,11 @@ const Header = ({ handleLogout }) => {
     const navigate = useNavigate()
     const location = useLocation()
     const [isShown, setIsShown] = useState(false)
-    const [email, setEmail] = useState("")
+    const [displayName, setDisplayName] = useState("")
 
     onAuthStateChanged(auth, (user) => {
         if (user) {
-            setEmail(user.email)
+            setDisplayName(user.displayName)
         }
     })
 
@@ -50,7 +50,7 @@ const Header = ({ handleLogout }) => {
         <header className="flex items-center justify-between bg-gray-800 h-14">
             <div className="h-full flex items-center cursor-pointer ml-4">
                 <img className="h-10 w-10" src={HeaderIcon} alt="header icon" />
-                <h1 className="w-full pl-2 text-white font-bold text-xl select-none">Welcome,{email}</h1>
+                <h1 className="w-full pl-2 text-white font-bold text-xl select-none">Welcome,{displayName}</h1>
             </div>
             <div className="h-full w-full flex items-center justify-end font-bold">
                 <button className="p-4 h-full text-white hover:bg-gray-700" onClick={handleDashboardPage}>

@@ -134,8 +134,7 @@ const RegisterNew = () => {
                     onClick={toggleModal}
                     className="flex w-full items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
-                    <span class="text-left flex-1 ml-3 whitespace-nowrap">Register New</span>
-
+                    <span className="text-left flex-1 ml-3 whitespace-nowrap">Register New</span>
                 </button>
             </li>
             <Modal isOpen={isOpen} onRequestClose={toggleModal} contentLabel="Register">
@@ -283,7 +282,10 @@ const RegisterNew = () => {
                         </div>
                         <div className="flex flex-col">
                             <label>Preferred communication</label>
-                            <select className="select-dropdown" onChange={(e) => setPreferredCommunication(e.target.value)}>
+                            <select
+                                className="select-dropdown"
+                                onChange={(e) => setPreferredCommunication(e.target.value)}
+                            >
                                 <option value="">Select</option>
                                 <option value="Email">Email</option>
                                 <option value="SMS">SMS</option>
