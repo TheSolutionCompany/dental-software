@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react"
 import Modal from "react-modal"
 import { db } from "../firebase"
-import { collection, query, where, getDocs } from "firebase/firestore"
+import { collection, query, where, getDocs, addDoc } from "firebase/firestore"
 import CloseButton from "./CloseButton"
 
 Modal.setAppElement("#root")
@@ -92,8 +92,15 @@ export const RegisterExisting = () => {
         toggleInnerModal()
     }
 
-    const handleAddToQueue = () => {
-        alert(patientId + " " + doctorId + " " + complains)
+    const handleAddToQueue = async (e) => {
+        e.preventDefault()
+        await addDoc(collection(db, "queues"), {
+            patientId: patientId,
+            patientName: patientName,
+            doctorId: "XC8S45vanES4ZmCcEfLtxvE8ATy1",
+            complains: complains,
+            status: "waiting",
+        })
         toggleInnerModal()
         toggleModal()
     }

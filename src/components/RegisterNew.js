@@ -169,8 +169,14 @@ const RegisterNew = () => {
         }
     }
 
-    const handleAddToQueue = () => {
-        alert(patientId + " " + doctorId + " " + complains)
+    const handleAddToQueue = async () => {
+        await addDoc(collection(db, "queues"), {
+            patientId: patientId,
+            patientName: name,
+            doctorId: doctorId,
+            complains: complains,
+            status: "waiting",
+        })
         toggleInnerModal()
         toggleModal()
     }
