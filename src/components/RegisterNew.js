@@ -1,7 +1,7 @@
 import React, { useEffect } from "react"
 import { useState } from "react"
 import { db } from "../firebase"
-import { collection, addDoc, getDocs } from "firebase/firestore"
+import { collection, addDoc, getDocs, query, where } from "firebase/firestore"
 import Modal from "react-modal"
 import CloseButton from "./CloseButton"
 
@@ -40,6 +40,7 @@ const RegisterNew = () => {
     const [patientId, setPatientId] = useState("")
     const [complains, setComplains] = useState("")
     const [doctorId, setDoctorId] = useState("")
+    const [availableDoctors, setAvailableDoctors] = useState([])
 
     const toggleModal = () => {
         if (isOpen) {
@@ -87,6 +88,10 @@ const RegisterNew = () => {
             document.getElementById("createButton").hidden = true
             document.getElementById("sendToQueueButton").hidden = false
         }
+        const q = query(collection(db, "users"), where("position", "in", ["Doctor", "Locum Doctor"]))
+        getDocs(q).then((querySnapshot) => {
+            setAvailableDoctors(Object.values(querySnapshot.docs.map((doc) => doc)).sort())
+        })
     }, [isCreate])
 
     useEffect(() => {
@@ -177,6 +182,7 @@ const RegisterNew = () => {
             complains: complains,
             status: "waiting",
         })
+        localStorage.setItem("queueSize", parseInt(localStorage.getItem("queueSize")) + 1)
         toggleInnerModal()
         toggleModal()
     }
@@ -427,6 +433,12 @@ const RegisterNew = () => {
                             <div className="flex flex-col"> 
                                 <p>Complains:</p>
                                 <textarea rows={4} onChange={(e) => setComplains(e.target.value)} />
+                                <select className="select-dropdown" onChange={(e) => setDoctorId(e.target.value)} required>
+                                    <option disabled selected></option>
+                                    {availableDoctors.map((doctor) => (
+                                        <option value={doctor.id}>{doctor.name}</option>
+                                    ))}
+                                </select>
                             </div>
                             <div className="flex justify-center pt-4">
                                 <button className="button-green rounded" type="submit">Add To Queue</button>

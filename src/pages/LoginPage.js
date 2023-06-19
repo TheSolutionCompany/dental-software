@@ -1,7 +1,8 @@
 import React, { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { auth } from "../firebase"
+import { auth, db } from "../firebase"
 import { signInWithEmailAndPassword } from "firebase/auth"
+import { collection, getCountFromServer, query, where } from "firebase/firestore"
 
 export const LoginPage = () => {
 
@@ -22,10 +23,12 @@ export const LoginPage = () => {
     const handleLogin = async (event) => {
         event.preventDefault()
         setError("")
-
         try {
             await signInWithEmailAndPassword(auth, email, password)
             // Login successful, you can redirect to another page here
+            const q = query(collection(db, "queues"), where("doctorId", "==", auth.currentUser.uid))
+            const count = await getCountFromServer(q)
+            localStorage.setItem("queueSize", parseInt(count.data().count))
             navigate("/Dashboard")
         } catch (error) {
             setError(error.message)

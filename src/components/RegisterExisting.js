@@ -17,6 +17,14 @@ export const RegisterExisting = () => {
     const [patientId, setPatientId] = useState("")
     const [complains, setComplains] = useState("")
     const [doctorId, setDoctorId] = useState("")
+    const [availableDoctors, setAvailableDoctors] = useState([])
+
+    useEffect(() => {
+        const q = query(collection(db, "users"), where("position", "in", ["Doctor", "Locum Doctor"]))
+        getDocs(q).then((querySnapshot) => {
+            setAvailableDoctors(Object.values(querySnapshot.docs.map((doc) => doc)).sort())
+        })
+    }, [])
 
     useEffect(() => {
         const handleSearch = async () => {
@@ -97,10 +105,11 @@ export const RegisterExisting = () => {
         await addDoc(collection(db, "queues"), {
             patientId: patientId,
             patientName: patientName,
-            doctorId: "XC8S45vanES4ZmCcEfLtxvE8ATy1",
+            doctorId: doctorId,
             complains: complains,
             status: "waiting",
         })
+        localStorage.setItem("queueSize", parseInt(localStorage.getItem("queueSize")) + 1)
         toggleInnerModal()
         toggleModal()
     }
@@ -203,6 +212,12 @@ export const RegisterExisting = () => {
                             <div className="flex flex-col"> 
                                 <p>Complains:</p>
                                 <textarea rows={4} onChange={(e) => setComplains(e.target.value)} />
+                                <select className="select-dropdown" onChange={(e) => setDoctorId(e.target.value)} required>
+                                <option disabled selected></option>
+                                {availableDoctors.map((doctor) => (
+                                    <option value={doctor.id}>{doctor.data().displayName}</option>
+                                ))}
+                            </select>
                             </div>
                             <div className="flex justify-center pt-4">
                                 <button className="button-green rounded" type="submit">Add To Queue</button>

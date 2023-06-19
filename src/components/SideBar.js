@@ -21,9 +21,6 @@ const SideBar = () => {
                             <span className="text-left flex-1 ml-3 whitespace-nowrap">
                                 Make Appointment
                             </span>
-                            <span className="inline-flex items-center justify-center w-3 h-3 p-3 ml-3 text-sm font-medium text-red-200 bg-red-600 rounded-full">
-                                3
-                            </span>
                         </button>
                     </li>
                     <li className="cursor-pointer select-none">
