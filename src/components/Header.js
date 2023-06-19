@@ -58,6 +58,9 @@ const Header = ({ handleLogout }) => {
                 </button>
                 <button className="p-4 h-full text-white hover:bg-gray-700" onClick={handleQueuePage}>
                     Queue
+                    {localStorage.getItem("queueSize") > 0 && <span className="inline-flex items-center justify-center w-3 h-3 p-3 ml-3 text-sm font-medium text-red-200 bg-red-600 rounded-full">
+                        {localStorage.getItem("queueSize")}
+                    </span>}
                 </button>
                 <button className="p-4 h-full text-white hover:bg-gray-700" onClick={handleAppointmentsPage}>
                     Appointments

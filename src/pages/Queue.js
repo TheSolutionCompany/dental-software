@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 import { auth, db } from "../firebase"
-import { signOut } from "firebase/auth"
+import { onAuthStateChanged, signOut } from "firebase/auth"
 import { useNavigate } from "react-router-dom"
 import Header from "../components/Header"
 import SideBar from "../components/SideBar"
@@ -11,12 +11,16 @@ const Queue = () => {
     const [queues, setQueues] = useState([])
 
     useEffect(() => {
-        const q = query(collection(db, "queues"), where("doctorId", "==", auth.currentUser.uid))
-        onSnapshot(q, (querySnapshot) => {
-            setQueues([])
-            querySnapshot.forEach((doc) => {
-                setQueues((prev) => [...prev, doc.data()])
-            })
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const q = query(collection(db, "queues"), where("doctorId", "==", auth.currentUser.uid))
+                onSnapshot(q, (querySnapshot) => {
+                    setQueues([])
+                    querySnapshot.forEach((doc) => {
+                        setQueues((prev) => [...prev, doc.data()])
+                    })
+                })
+            }
         })
     }, [])
 
