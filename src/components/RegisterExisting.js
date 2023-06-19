@@ -112,6 +112,7 @@ export const RegisterExisting = () => {
         localStorage.setItem("queueSize", parseInt(localStorage.getItem("queueSize")) + 1)
         toggleInnerModal()
         toggleModal()
+        window.location.reload()
     }
 
     return (
@@ -212,6 +213,7 @@ export const RegisterExisting = () => {
                             <div className="flex flex-col"> 
                                 <p>Complains:</p>
                                 <textarea rows={4} onChange={(e) => setComplains(e.target.value)} />
+                                <p>Doctor:</p>
                                 <select className="select-dropdown" onChange={(e) => setDoctorId(e.target.value)} required>
                                 <option disabled selected></option>
                                 {availableDoctors.map((doctor) => (

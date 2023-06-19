@@ -4,7 +4,7 @@ import { onAuthStateChanged, signOut } from "firebase/auth"
 import { useNavigate } from "react-router-dom"
 import Header from "../components/Header"
 import SideBar from "../components/SideBar"
-import { onSnapshot, query, where, collection } from "firebase/firestore"
+import { onSnapshot, query, where, collection, deleteDoc, doc } from "firebase/firestore"
 
 const Queue = () => {
     const navigate = useNavigate()
@@ -17,12 +17,19 @@ const Queue = () => {
                 onSnapshot(q, (querySnapshot) => {
                     setQueues([])
                     querySnapshot.forEach((doc) => {
-                        setQueues((prev) => [...prev, doc.data()])
+                        setQueues((prev) => [...prev, doc])
                     })
                 })
             }
         })
     }, [])
+
+    const handlePatientCall = async (patientId, queueId) => {
+        await deleteDoc(doc(db, "queues", queueId)).then(() => {
+            localStorage.setItem("queueSize", parseInt(localStorage.getItem("queueSize")) - 1)
+        })
+        alert("Patient called")
+    }
 
     const handleLogout = () => {
         signOut(auth)
@@ -42,15 +49,25 @@ const Queue = () => {
                 <SideBar />
                 <div className="w-full bg-gray-200">
                     <p className="text-gray-500 text-lg">Queue</p>
-                    <ul>
+                    <table>
+                        <tr>
+                            <th>Patient Name</th>
+                            <th>Complains</th>
+                            <th>Status</th>
+                        </tr>
                         {queues.map((queue) => (
-                            <li>
-                                <p>{queue.patientName}</p>
-                                <p>{queue.complains}</p>
-                                <p>{queue.statue}</p>
-                            </li>
+                            <tr>
+                                <td>{queue.data().patientName}</td>
+                                <td>{queue.data().complains}</td>
+                                <td>{queue.data().status}</td>
+                                <td>
+                                    <button onClick={() => handlePatientCall(queue.data().patientId, queue.id)}>
+                                        Call
+                                    </button>
+                                </td>
+                            </tr>
                         ))}
-                    </ul>
+                    </table>
                 </div>
             </div>
         </div>
