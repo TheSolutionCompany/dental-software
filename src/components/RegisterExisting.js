@@ -204,18 +204,24 @@ export const RegisterExisting = () => {
                         }}
                     >
                         <CloseButton toggleModal={toggleInnerModal} />
-                        <div>{patientName}</div>
                         <form onSubmit={handleAddToQueue}>
-                            <label>Complains:</label>
-                            <textarea rows={4} onChange={(e) => setComplains(e.target.value)} />
-                            <label>Doctor:</label>
-                            <select className="select-dropdown" onChange={(e) => setDoctorId(e.target.value)} required>
+                            <div className="flex"> 
+                                <p>Patient Name:</p>
+                                <div className="font-semibold pl-2">{patientName}</div>
+                            </div>
+                            <div className="flex flex-col"> 
+                                <p>Complains:</p>
+                                <textarea rows={4} onChange={(e) => setComplains(e.target.value)} />
+                                <select className="select-dropdown" onChange={(e) => setDoctorId(e.target.value)} required>
                                 <option disabled selected></option>
                                 {availableDoctors.map((doctor) => (
                                     <option value={doctor.id}>{doctor.data().displayName}</option>
                                 ))}
                             </select>
-                            <button type="submit">Add To Queue</button>
+                            </div>
+                            <div className="flex justify-center pt-4">
+                                <button className="button-green rounded" type="submit">Add To Queue</button>
+                            </div>
                         </form>
                     </Modal>
                 </div>
