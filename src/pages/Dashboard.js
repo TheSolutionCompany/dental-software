@@ -1,22 +1,21 @@
-import React from "react"
-import { auth } from "../firebase"
-import { signOut } from "firebase/auth"
+import React, { useState } from "react"
 import { useNavigate } from "react-router-dom"
+import { useAuth } from "../contexts/AuthContext"
 import Header from "../components/Header"
 import SideBar from "../components/SideBar"
 
 const Dashboard = () => {
     const navigate = useNavigate()
+    const [error, setError] = useState("")
+    const { logout } = useAuth()
 
-    const handleLogout = () => {
-        signOut(auth)
-            .then(() => {
-                localStorage.removeItem("isUserSignedIn")
-                navigate("/")
-            })
-            .catch((error) => {
-                console.log("signed out fail")
-            })
+    async function handleLogout() {
+        try {
+            await logout()
+            navigate("/")
+        } catch (error) {
+            setError("Failed to log out")
+        }
     }
 
     return (

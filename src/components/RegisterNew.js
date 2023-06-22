@@ -1,21 +1,25 @@
-import React, { useEffect } from "react"
-import { useState } from "react"
-import { db } from "../firebase"
-import { collection, addDoc, getDocs, query, where } from "firebase/firestore"
+import React, { useEffect, useState } from "react"
+import { useDatabase } from "../contexts/DatabaseContext"
 import Modal from "react-modal"
 import CloseButton from "./CloseButton"
 
 Modal.setAppElement("#root")
 
 const RegisterNew = () => {
+    // Variables from DatabaseContext
+    const { availableDoctors } = useDatabase()
+    // Functions from DatabaseContext
+    const { checkRepeatedIc, registerNewPatient, addToQueue } = useDatabase()
+
     const [isCreate, setIsCreate] = useState(false)
     const [isOpen, setIsOpen] = useState(false)
     const [isInnerOpen, setIsInnerOpen] = useState(false)
+    
     const [title, setTitle] = useState("")
     const [name, setName] = useState("")
-    const [IC, setIC] = useState("")
+    const [ic, setIc] = useState("")
     const [gender, setGender] = useState("")
-    const [DOB, setDOB] = useState("")
+    const [dob, setDob] = useState("")
     const [age, setAge] = useState("")
     const [mobileNumber, setMobileNumber] = useState("")
     const [phoneNumber, setPhoneNumber] = useState("")
@@ -40,16 +44,15 @@ const RegisterNew = () => {
     const [patientId, setPatientId] = useState("")
     const [complains, setComplains] = useState("")
     const [doctorId, setDoctorId] = useState("")
-    const [availableDoctors, setAvailableDoctors] = useState([])
 
     const toggleModal = () => {
         if (isOpen) {
             setIsCreate(false)
             setTitle("")
             setName("")
-            setIC("")
+            setIc("")
             setGender("")
-            setDOB("")
+            setDob("")
             setAge("")
             setMobileNumber("")
             setPhoneNumber("")
@@ -88,76 +91,36 @@ const RegisterNew = () => {
             document.getElementById("createButton").hidden = true
             document.getElementById("sendToQueueButton").hidden = false
         }
-        const q = query(collection(db, "users"), where("position", "in", ["Doctor", "Locum Doctor"]))
-        getDocs(q).then((querySnapshot) => {
-            setAvailableDoctors(Object.values(querySnapshot.docs.map((doc) => doc)).sort())
-        })
     }, [isCreate])
 
     useEffect(() => {
-        if (IC.length === 12) {
+        if (ic.length === 12) {
             let a
-            let dob
-            const year = IC.slice(0, 2)
-            const month = IC.slice(2, 4)
-            const day = IC.slice(4, 6)
+            let tempDob
+            const year = ic.slice(0, 2)
+            const month = ic.slice(2, 4)
+            const day = ic.slice(4, 6)
             const currentYear = new Date().getFullYear().toString().slice(2, 4)
             if (year <= currentYear) {
                 a = currentYear - year
-                dob = "20" + year + "-" + month + "-" + day
+                tempDob = "20" + year + "-" + month + "-" + day
             } else {
                 a = currentYear - year + 100
-                dob = "19" + year + "-" + month + "-" + day
+                tempDob = "19" + year + "-" + month + "-" + day
             }
             document.getElementById("age").value = a
-            document.getElementById("dob").value = dob
+            document.getElementById("dob").value = tempDob
             setAge(a)
-            setDOB(dob)
+            setDob(tempDob)
         }
-    }, [IC])
-
-    const checkIC = async (IC) => {
-        const querySnapshot = await getDocs(collection(db, "patients"))
-        for (const doc of querySnapshot.docs) {
-            if (doc.data().IC === IC) {
-                return false // IC already exists, return false
-            }
-        }
-        return true
-    }
+    }, [ic])
 
     const handleCreate = async (event) => {
         event.preventDefault()
-        const result = await checkIC(IC)
+        const result = await checkRepeatedIc(ic)
         console.log(result)
         if (result) {
-            await addDoc(collection(db, "patients"), {
-                title: title,
-                name: name,
-                IC: IC,
-                gender: gender,
-                DOB: DOB,
-                age: age,
-                mobileNumber: mobileNumber,
-                phoneNumber: phoneNumber,
-                email: email,
-                race: race,
-                maritalStatus: maritalStatus,
-                nationality: nationality,
-                emergencyContactName: emergencyContactName,
-                emergencyContactNumber: emergencyContactNumber,
-                bloodType: bloodType,
-                knowAboutUs: knowAboutUs,
-                panelCompany: panelCompany,
-                occupation: occupation,
-                preferredLanguage: preferredLanguage,
-                preferredCommunication: preferredCommunication,
-                referBy: referBy,
-                address: address,
-                secondAddress: secondAddress,
-                allergy: allergy,
-                remark: remark,
-            })
+            await registerNewPatient(title, name, ic, gender, dob, age, mobileNumber, phoneNumber, email, race, maritalStatus, nationality, emergencyContactName, emergencyContactNumber, bloodType, knowAboutUs, panelCompany, occupation, preferredLanguage, preferredCommunication, referBy, address, secondAddress, allergy, remark)
             setIsCreate(true)
             alert("Patient created successfully")
         } else {
@@ -175,13 +138,7 @@ const RegisterNew = () => {
     }
 
     const handleAddToQueue = async () => {
-        await addDoc(collection(db, "queues"), {
-            patientId: patientId,
-            patientName: name,
-            doctorId: doctorId,
-            complains: complains,
-            status: "waiting",
-        })
+        await addToQueue(patientId, name, age, ic, gender, doctorId, complains, "waiting")
         localStorage.setItem("queueSize", parseInt(localStorage.getItem("queueSize")) + 1)
         toggleInnerModal()
         toggleModal()
@@ -189,21 +146,21 @@ const RegisterNew = () => {
 
     return (
         <div className="">
-            <li className="cursor-pointer select-none">
+            <div className="cursor-pointer select-none">
                 <button
                     onClick={toggleModal}
                     className="flex w-full items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
                     <span className="text-left flex-1 ml-3 whitespace-nowrap">Register New</span>
                 </button>
-            </li>
+            </div>
             <Modal
                 isOpen={isOpen}
                 onRequestClose={toggleModal}
                 contentLabel="Register New"
                 shouldCloseOnOverlayClick={false}
             >
-                <CloseButton toggleModal={toggleModal} />
+                <CloseButton func={toggleModal} />
                 <form onSubmit={handleCreate}>
                     <div className="grid grid-cols-4 gap-4">
                         <div className="flex flex-col">
@@ -231,7 +188,7 @@ const RegisterNew = () => {
                         </div>
                         <div className="flex flex-col">
                             <label>IC/Passport number *</label>
-                            <input type="text" onChange={(e) => setIC(e.target.value)} required />
+                            <input type="text" onChange={(e) => setIc(e.target.value)} required />
                         </div>
                         <div className="flex flex-col">
                             <label>Gender</label>
@@ -244,7 +201,7 @@ const RegisterNew = () => {
                         </div>
                         <div className="flex flex-col">
                             <label>DOB *</label>
-                            <input id="dob" type="date" onChange={(e) => setDOB(e.target.value)} required />
+                            <input id="dob" type="date" onChange={(e) => setDob(e.target.value)} required />
                         </div>
                         <div className="flex flex-col">
                             <label>Age *</label>
@@ -426,23 +383,25 @@ const RegisterNew = () => {
                 >
                     <CloseButton toggleModal={toggleInnerModal} />
                     <form onSubmit={handleAddToQueue}>
-                            <div className="flex"> 
-                                <p>Patient Name:</p>
-                                <div className="font-semibold pl-2">{name}</div>
-                            </div>
-                            <div className="flex flex-col"> 
-                                <p>Complains:</p>
-                                <textarea rows={4} onChange={(e) => setComplains(e.target.value)} />
-                                <select className="select-dropdown" onChange={(e) => setDoctorId(e.target.value)} required>
-                                    <option disabled selected></option>
-                                    {availableDoctors.map((doctor) => (
-                                        <option value={doctor.id}>{doctor.name}</option>
-                                    ))}
-                                </select>
-                            </div>
-                            <div className="flex justify-center pt-4">
-                                <button className="button-green rounded" type="submit">Add To Queue</button>
-                            </div>
+                        <div className="flex">
+                            <p>Patient Name:</p>
+                            <div className="font-semibold pl-2">{name}</div>
+                        </div>
+                        <div className="flex flex-col">
+                            <p>Complains:</p>
+                            <textarea rows={4} onChange={(e) => setComplains(e.target.value)} />
+                            <select className="select-dropdown" onChange={(e) => setDoctorId(e.target.value)} required>
+                                <option disabled selected></option>
+                                {availableDoctors.map((doctor) => (
+                                    <option value={doctor.id}>{doctor.name}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="flex justify-center pt-4">
+                            <button className="button-green rounded" type="submit">
+                                Add To Queue
+                            </button>
+                        </div>
                     </form>
                 </Modal>
             </Modal>

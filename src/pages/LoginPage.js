@@ -1,39 +1,28 @@
-import React, { useState } from "react"
+import React, { useState, useRef } from "react"
 import { useNavigate } from "react-router-dom"
-import { auth, db } from "../firebase"
-import { signInWithEmailAndPassword } from "firebase/auth"
-import { collection, getCountFromServer, query, where } from "firebase/firestore"
+import { useAuth } from "../contexts/AuthContext"
 
 export const LoginPage = () => {
-
     const navigate = useNavigate()
-
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
+    const emailRef = useRef()
+    const passwordRef = useRef()
     const [error, setError] = useState("")
+    const [loading, setLoading] = useState(false)
+    const { login } = useAuth()
 
-    const handleEmailChange = (event) => {
-        setEmail(event.target.value)
-    }
-
-    const handlePasswordChange = (event) => {
-        setPassword(event.target.value)
-    }
-
-    const handleLogin = async (event) => {
-        event.preventDefault()
-        setError("")
+    async function handleLogin(e) {
+        e.preventDefault()
         try {
-            await signInWithEmailAndPassword(auth, email, password)
+            setError("")
+            setLoading(true)
+            await login(emailRef.current.value, passwordRef.current.value)
             // Login successful, you can redirect to another page here
-            const q = query(collection(db, "queues"), where("doctorId", "==", auth.currentUser.uid))
-            const count = await getCountFromServer(q)
-            localStorage.setItem("queueSize", parseInt(count.data().count))
             navigate("/Dashboard")
         } catch (error) {
             setError(error.message)
             //setError("Wrong email or password!")
         }
+        setLoading(false)
     }
     return (
         <div className="h-[100vh] bg-gray-200 flex flex-col">
@@ -51,14 +40,14 @@ export const LoginPage = () => {
                             <div className="flex items-center justify-start h-full">
                                 <label className="select-none">Email:</label>
                             </div>
-                            <input className="" type="email" value={email} onChange={handleEmailChange} />
+                            <input className="" type="email" ref={emailRef} />
                             <div className="flex items-center justify-start h-full">
                                 <label className="select-none">Password:</label>
                             </div>
-                            <input type="password" value={password} onChange={handlePasswordChange} />
+                            <input type="password" ref={passwordRef} />
                         </div>
                         <div className="mt-4">
-                            <button className="button-green rounded" type="submit">Login</button>
+                            <button disabled={loading} className="button-green rounded" type="submit">Login</button>
                         </div>
                     </form>
                     {error && <div className="error-message">{error}</div>}
