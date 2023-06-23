@@ -85,9 +85,9 @@ export const RegisterExisting = () => {
     const handleAddToQueue = async (e) => {
         await addToQueue(patientId, patientName, age, ic, gender, doctorId, complains, "waiting")
         const alertAddToQueueSuccess = () =>
-            toast.success("Patient added to queue successfully", {
+            toast.success("Added to queue successfully", {
                 position: "top-center",
-                autoClose: 3000,
+                autoClose: 1000,
                 hideProgressBar: true,
                 closeOnClick: true,
                 pauseOnHover: true,
@@ -95,6 +95,8 @@ export const RegisterExisting = () => {
                 progress: undefined,
                 theme: "colored",
             })
+        toast.dismiss()
+        toast.clearWaitingQueue()
         alertAddToQueueSuccess()
         toggleInnerModal()
         toggleModal()
@@ -225,7 +227,7 @@ export const RegisterExisting = () => {
                     </Modal>
                 </div>
             </Modal>
-            <ToastContainer />
+            <ToastContainer limit={1} />
         </div>
     )
 }

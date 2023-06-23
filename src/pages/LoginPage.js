@@ -22,7 +22,7 @@ export const LoginPage = () => {
             const alertLoginError = () =>
                 toast.error("Incorrect email or password", {
                     position: "top-center",
-                    autoClose: 3000,
+                    autoClose: 1000,
                     hideProgressBar: true,
                     closeOnClick: true,
                     pauseOnHover: true,
@@ -30,6 +30,8 @@ export const LoginPage = () => {
                     progress: undefined,
                     theme: "colored",
                 })
+            toast.dismiss()
+            toast.clearWaitingQueue()
             alertLoginError()
         }
         setLoading(false)
@@ -64,7 +66,7 @@ export const LoginPage = () => {
                     </form>
                 </div>
             </div>
-            <ToastContainer />
+            <ToastContainer limit={1} />
         </div>
     )
 }

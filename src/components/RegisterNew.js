@@ -157,16 +157,19 @@ const RegisterNew = () => {
                 remark
             )
             setIsCreate(true)
-            const alertCreateSuccess = () => toast.success("Patient created successfully", {
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: true,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "colored",
-            })
+            const alertCreateSuccess = () =>
+                toast.success("Patient created successfully", {
+                    position: "top-center",
+                    autoClose: 1000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                })
+            toast.dismiss()
+            toast.clearWaitingQueue()
             alertCreateSuccess()
             document.getElementById("title").disabled = true
             document.getElementById("name").disabled = true
@@ -197,7 +200,7 @@ const RegisterNew = () => {
             const alertPatientExists = () =>
                 toast.warn("Patient with the same IC/Passport number already exists", {
                     position: "top-center",
-                    autoClose: 3000,
+                    autoClose: 1000,
                     hideProgressBar: true,
                     closeOnClick: true,
                     pauseOnHover: true,
@@ -205,6 +208,8 @@ const RegisterNew = () => {
                     progress: undefined,
                     theme: "colored",
                 })
+            toast.dismiss()
+            toast.clearWaitingQueue()
             alertPatientExists()
         }
     }
@@ -216,16 +221,19 @@ const RegisterNew = () => {
 
     const handleAddToQueue = async () => {
         await addToQueue(patientId, name, age, ic, gender, doctorId, complains, "waiting")
-        const alertAddToQueueSuccess = () => toast.success("Patient added to queue successfully", {
-            position: "top-center",
-            autoClose: 3000,
-            hideProgressBar: true,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "colored",
-        })
+        const alertAddToQueueSuccess = () =>
+            toast.success("Added to queue successfully", {
+                position: "top-center",
+                autoClose: 1000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            })
+        toast.dismiss()
+        toast.clearWaitingQueue()
         alertAddToQueueSuccess()
         toggleInnerModal()
         toggleModal()
@@ -535,7 +543,7 @@ const RegisterNew = () => {
                     </form>
                 </Modal>
             </Modal>
-            <ToastContainer />
+            <ToastContainer limit={1} />
         </div>
     )
 }

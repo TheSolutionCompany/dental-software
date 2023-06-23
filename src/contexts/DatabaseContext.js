@@ -106,6 +106,16 @@ export function DatabaseProvider({ children }) {
         return (await getCountFromServer(q)).data().count === 0 ? false : true
     }
 
+    async function issueMc(patientId, doctorId, fromDate, toDate, remark) {
+        await addDoc(collection(db, "mc"), {
+            patientId,
+            doctorId,
+            fromDate,
+            toDate,
+            remark,
+        })
+    }
+
     async function registerNewPatient(
         title,
         name,
@@ -172,6 +182,7 @@ export function DatabaseProvider({ children }) {
         getWaitingQueueSize,
         checkRepeatedIc,
         registerNewPatient,
+        issueMc,
     }
 
     return <DatabaseContext.Provider value={value}>{!loading && children}</DatabaseContext.Provider>
