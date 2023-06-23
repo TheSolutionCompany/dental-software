@@ -14,7 +14,7 @@ const RegisterNew = () => {
     const [isCreate, setIsCreate] = useState(false)
     const [isOpen, setIsOpen] = useState(false)
     const [isInnerOpen, setIsInnerOpen] = useState(false)
-    
+
     const [title, setTitle] = useState("")
     const [name, setName] = useState("")
     const [ic, setIc] = useState("")
@@ -94,35 +94,93 @@ const RegisterNew = () => {
     }, [isCreate])
 
     useEffect(() => {
-        if (ic.length === 12) {
-            let a
+        if (ic.length === 12 && /^\d+$/.test(ic)) {
+            let tempAge
             let tempDob
+            let tempGender
             const year = ic.slice(0, 2)
             const month = ic.slice(2, 4)
             const day = ic.slice(4, 6)
             const currentYear = new Date().getFullYear().toString().slice(2, 4)
             if (year <= currentYear) {
-                a = currentYear - year
+                tempAge = currentYear - year
                 tempDob = "20" + year + "-" + month + "-" + day
             } else {
-                a = currentYear - year + 100
+                tempAge = currentYear - year + 100
                 tempDob = "19" + year + "-" + month + "-" + day
             }
-            document.getElementById("age").value = a
+            if (ic.charAt(11) % 2 === 1) {
+                tempGender = "Male"
+            } else {
+                tempGender = "Female"
+            }
+            document.getElementById("age").value = tempAge
             document.getElementById("dob").value = tempDob
-            setAge(a)
+            document.getElementById("gender").value = tempGender
+            setAge(tempAge)
             setDob(tempDob)
+            setGender(tempGender)
         }
     }, [ic])
 
     const handleCreate = async (event) => {
         event.preventDefault()
-        const result = await checkRepeatedIc(ic)
-        console.log(result)
-        if (result) {
-            await registerNewPatient(title, name, ic, gender, dob, age, mobileNumber, phoneNumber, email, race, maritalStatus, nationality, emergencyContactName, emergencyContactNumber, bloodType, knowAboutUs, panelCompany, occupation, preferredLanguage, preferredCommunication, referBy, address, secondAddress, allergy, remark)
+        const repeated = await checkRepeatedIc(ic)
+        if (!repeated) {
+            await registerNewPatient(
+                title,
+                name,
+                ic,
+                gender,
+                dob,
+                age,
+                mobileNumber,
+                phoneNumber,
+                email,
+                race,
+                maritalStatus,
+                nationality,
+                emergencyContactName,
+                emergencyContactNumber,
+                bloodType,
+                knowAboutUs,
+                panelCompany,
+                occupation,
+                preferredLanguage,
+                preferredCommunication,
+                referBy,
+                address,
+                secondAddress,
+                allergy,
+                remark
+            )
             setIsCreate(true)
             alert("Patient created successfully")
+            document.getElementById("title").disabled = true
+            document.getElementById("name").disabled = true
+            document.getElementById("ic").disabled = true
+            document.getElementById("gender").disabled = true
+            document.getElementById("dob").disabled = true
+            document.getElementById("age").disabled = true
+            document.getElementById("mobileNumber").disabled = true
+            document.getElementById("phoneNumber").disabled = true
+            document.getElementById("email").disabled = true
+            document.getElementById("race").disabled = true
+            document.getElementById("maritalStatus").disabled = true
+            document.getElementById("nationality").disabled = true
+            document.getElementById("emergencyContactName").disabled = true
+            document.getElementById("emergencyContactNumber").disabled = true
+            document.getElementById("bloodType").disabled = true
+            document.getElementById("knowAboutUs").disabled = true
+            document.getElementById("panelCompany").disabled = true
+            document.getElementById("occupation").disabled = true
+            document.getElementById("preferredLanguage").disabled = true
+            document.getElementById("preferredCommunication").disabled = true
+            document.getElementById("referBy").disabled = true
+            document.getElementById("address").disabled = true
+            document.getElementById("secondAddress").disabled = true
+            document.getElementById("allergy").disabled = true
+            document.getElementById("remark").disabled = true
         } else {
             alert("Patient with the same IC/Passport number already exists")
         }
@@ -165,7 +223,7 @@ const RegisterNew = () => {
                     <div className="grid grid-cols-4 gap-4">
                         <div className="flex flex-col">
                             <label>Title</label>
-                            <select className="select-dropdown" onChange={(e) => setTitle(e.target.value)}>
+                            <select id="title" className="select-dropdown" onChange={(e) => setTitle(e.target.value)}>
                                 <option value="">Select</option>
                                 <option value="Mr">Mr</option>
                                 <option value="Mrs">Mrs</option>
@@ -177,6 +235,7 @@ const RegisterNew = () => {
                         <div className="flex flex-col">
                             <label>Name *</label>
                             <input
+                                id="name"
                                 type="text"
                                 onChange={(e) => {
                                     e.target.value = e.target.value.toUpperCase()
@@ -188,11 +247,16 @@ const RegisterNew = () => {
                         </div>
                         <div className="flex flex-col">
                             <label>IC/Passport number *</label>
-                            <input type="text" onChange={(e) => setIc(e.target.value)} required />
+                            <input id="ic" type="text" onChange={(e) => setIc(e.target.value)} required />
                         </div>
                         <div className="flex flex-col">
-                            <label>Gender</label>
-                            <select className="select-dropdown" onChange={(e) => setGender(e.target.value)}>
+                            <label>Gender *</label>
+                            <select
+                                id="gender"
+                                className="select-dropdown"
+                                onChange={(e) => setGender(e.target.value)}
+                                required
+                            >
                                 <option value="">Select</option>
                                 <option value="Male">Male</option>
                                 <option value="Female">Female</option>
@@ -208,20 +272,20 @@ const RegisterNew = () => {
                             <input id="age" type="text" onChange={(e) => setAge(e.target.value)} required />
                         </div>
                         <div className="flex flex-col">
-                            <label>Mobile number</label>
-                            <input type="tel" onChange={(e) => setMobileNumber(e.target.value)} />
+                            <label>Mobile number *</label>
+                            <input id="mobileNumber" type="tel" onChange={(e) => setMobileNumber(e.target.value)} required />
                         </div>
                         <div className="flex flex-col">
                             <label>Phone number</label>
-                            <input type="tel" onChange={(e) => setPhoneNumber(e.target.value)} />
+                            <input id="phoneNumber" type="tel" onChange={(e) => setPhoneNumber(e.target.value)} />
                         </div>
                         <div className="flex flex-col">
                             <label>Email</label>
-                            <input type="email" onChange={(e) => setEmail(e.target.value)} />
+                            <input id="email" type="email" onChange={(e) => setEmail(e.target.value)} />
                         </div>
                         <div className="flex flex-col">
                             <label>Race</label>
-                            <select className="select-dropdown" onChange={(e) => setRace(e.target.value)}>
+                            <select id="race" className="select-dropdown" onChange={(e) => setRace(e.target.value)}>
                                 <option value="">Select</option>
                                 <option value="Malay">Malay</option>
                                 <option value="Chinese">Chinese</option>
@@ -231,7 +295,7 @@ const RegisterNew = () => {
                         </div>
                         <div className="flex flex-col">
                             <label>Marital status</label>
-                            <select className="select-dropdown" onChange={(e) => setMaritalStatus(e.target.value)}>
+                            <select id="maritalStatus" className="select-dropdown" onChange={(e) => setMaritalStatus(e.target.value)}>
                                 <option value="">Select</option>
                                 <option value="Single">Single</option>
                                 <option value="Married">Married</option>
@@ -241,7 +305,7 @@ const RegisterNew = () => {
                         </div>
                         <div className="flex flex-col">
                             <label>Nationality</label>
-                            <select className="select-dropdown" onChange={(e) => setNationality(e.target.value)}>
+                            <select id="nationality" className="select-dropdown" onChange={(e) => setNationality(e.target.value)}>
                                 <option value="">Select</option>
                                 <option value="Malaysian">Malaysian</option>
                                 <option value="Others">Others</option>
@@ -249,15 +313,15 @@ const RegisterNew = () => {
                         </div>
                         <div className="flex flex-col">
                             <label>Emergency contact name</label>
-                            <input type="text" onChange={(e) => setEmergencyContactName(e.target.value)} />
+                            <input id="emergencyContactName" type="text" onChange={(e) => setEmergencyContactName(e.target.value)} />
                         </div>
                         <div className="flex flex-col">
                             <label>Emergency contact number</label>
-                            <input type="tel" onChange={(e) => setEmergencyContactNumber(e.target.value)} />
+                            <input id="emergencyContactNumber" type="tel" onChange={(e) => setEmergencyContactNumber(e.target.value)} />
                         </div>
                         <div className="flex flex-col">
                             <label>Blood type</label>
-                            <select className="select-dropdown" onChange={(e) => setBloodType(e.target.value)}>
+                            <select id="bloodType" className="select-dropdown" onChange={(e) => setBloodType(e.target.value)}>
                                 <option value="">Select</option>
                                 <option value="A+">A+</option>
                                 <option value="A-">A-</option>
@@ -271,7 +335,7 @@ const RegisterNew = () => {
                         </div>
                         <div className="flex flex-col">
                             <label>Know about us</label>
-                            <select className="select-dropdown" onChange={(e) => setKnowAboutUs(e.target.value)}>
+                            <select id="knowAboutUs" className="select-dropdown" onChange={(e) => setKnowAboutUs(e.target.value)}>
                                 <option value="">Select</option>
                                 <option value="Facebook">Facebook</option>
                                 <option value="Instagram">Instagram</option>
@@ -281,7 +345,7 @@ const RegisterNew = () => {
                         </div>
                         <div className="flex flex-col">
                             <label>Panel company</label>
-                            <select className="select-dropdown" onChange={(e) => setPanelCompany(e.target.value)}>
+                            <select id="panelCompany" className="select-dropdown" onChange={(e) => setPanelCompany(e.target.value)}>
                                 <option value="">Select</option>
                                 <option value="AIA">AIA</option>
                                 <option value="Allianz">Allianz</option>
@@ -291,11 +355,11 @@ const RegisterNew = () => {
                         </div>
                         <div className="flex flex-col">
                             <label>Occupation</label>
-                            <input type="text" onChange={(e) => setOccupation(e.target.value)} />
+                            <input id="occupation" type="text" onChange={(e) => setOccupation(e.target.value)} />
                         </div>
                         <div className="flex flex-col">
                             <label>Preferred language</label>
-                            <select className="select-dropdown" onChange={(e) => setPreferredLanguage(e.target.value)}>
+                            <select id="preferredLanguage" className="select-dropdown" onChange={(e) => setPreferredLanguage(e.target.value)}>
                                 <option value="">Select</option>
                                 <option value="English">English</option>
                                 <option value="Malay">Malay</option>
@@ -305,6 +369,7 @@ const RegisterNew = () => {
                         <div className="flex flex-col">
                             <label>Preferred communication</label>
                             <select
+                                id="preferredCommunication"
                                 className="select-dropdown"
                                 onChange={(e) => setPreferredCommunication(e.target.value)}
                             >
@@ -316,24 +381,23 @@ const RegisterNew = () => {
                         </div>
                         <div className="flex flex-col">
                             <label>Refer by</label>
-                            <input type="text" onChange={(e) => setReferBy(e.target.value)} />
+                            <input id="referBy" type="text" onChange={(e) => setReferBy(e.target.value)} />
                         </div>
                         <div className="flex flex-col">
                             <label>Address</label>
-
-                            <textarea rows={4} onChange={(e) => setAddress(e.target.value)} />
+                            <textarea id="address" rows={4} onChange={(e) => setAddress(e.target.value)} />
                         </div>
                         <div className="flex flex-col">
                             <label>Second address</label>
-                            <textarea rows={4} onChange={(e) => setSecondAddress(e.target.value)} />
+                            <textarea id="secondAddress" rows={4} onChange={(e) => setSecondAddress(e.target.value)} />
                         </div>
                         <div className="flex flex-col">
                             <label>Allergy/Medical history</label>
-                            <textarea rows={4} onChange={(e) => setAllergy(e.target.value)} />
+                            <textarea id="allergy" rows={4} onChange={(e) => setAllergy(e.target.value)} />
                         </div>
                         <div className="flex flex-col">
                             <label>Remark</label>
-                            <textarea rows={4} onChange={(e) => setRemark(e.target.value)} />
+                            <textarea id="remark" rows={4} onChange={(e) => setRemark(e.target.value)} />
                         </div>
                     </div>
                     <div className="flex flex-row mt-16 justify-end">

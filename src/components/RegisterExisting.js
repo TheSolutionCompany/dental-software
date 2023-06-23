@@ -14,28 +14,28 @@ export const RegisterExisting = () => {
     const [isOpen, setIsOpen] = useState(false)
     const [isInnerOpen, setIsInnerOpen] = useState(false)
     const [searchByName, setSearchByName] = useState("")
-    const [searchByIC, setSearchByIC] = useState("")
+    const [searchByIc, setSearchByIc] = useState("")
     const [searchByMobileNumber, setsearchByMobileNumber] = useState("")
     const [patientsList, setPatientsList] = useState([])
     const [patientName, setPatientName] = useState("")
     const [gender, setGender] = useState("")
     const [age, setAge] = useState("")
-    const [IC, setIC] = useState("")
+    const [ic, setIc] = useState("")
     const [patientId, setPatientId] = useState("")
     const [complains, setComplains] = useState("")
     const [doctorId, setDoctorId] = useState("")
 
     useEffect(() => {
-        search(searchByName, searchByIC, searchByMobileNumber).then((result) => {
+        search(searchByName, searchByIc, searchByMobileNumber).then((result) => {
             setPatientsList(result)
         })
-    }, [searchByName, searchByIC, searchByMobileNumber, search])
+    }, [searchByName, searchByIc, searchByMobileNumber, search])
 
     const toggleModal = () => {
         if (isOpen) {
             setPatientsList([])
             setSearchByName("")
-            setSearchByIC("")
+            setSearchByIc("")
             setsearchByMobileNumber("")
         }
         setIsOpen(!isOpen)
@@ -48,7 +48,7 @@ export const RegisterExisting = () => {
             setComplains("")
             setDoctorId("")
             setAge("")
-            setIC("")
+            setIc("")
             setGender("")
         }
         setIsInnerOpen(!isInnerOpen)
@@ -63,8 +63,8 @@ export const RegisterExisting = () => {
         setSearchByName(event.target.value)
     }
 
-    const handleSearchByIC = (event) => {
-        setSearchByIC(event.target.value)
+    const handleSearchByIc = (event) => {
+        setSearchByIc(event.target.value)
     }
 
     const handlesearchByMobileNumber = (event) => {
@@ -76,15 +76,16 @@ export const RegisterExisting = () => {
         setPatientName(patient.data().name)
         setGender(patient.data().gender)
         setAge(patient.data().age)
-        setIC(patient.data().IC)
+        setIc(patient.data().ic)
         toggleInnerModal()
     }
 
     const handleAddToQueue = async (e) => {
         e.preventDefault()
-        await addToQueue(patientId, patientName, age, IC, gender, doctorId, complains, "waiting")
-        toggleInnerModal()
-        toggleModal()
+        addToQueue(patientId, patientName, age, ic, gender, doctorId, complains, "waiting").then(() => {
+            toggleInnerModal()
+            toggleModal()
+        })
     }
 
     return (
@@ -113,16 +114,21 @@ export const RegisterExisting = () => {
                                 type="text"
                                 defaultValue={""}
                                 onChange={handleSearchByName}
-                                autofocus
+                                autoFocus
                             />
                         </div>
                         <div className="">
                             <label>Search By IC:</label>
-                            <input className="w-full" type="text" defaultValue={""} onChange={handleSearchByIC} />
+                            <input className="w-full" type="text" defaultValue={""} onChange={handleSearchByIc} />
                         </div>
                         <div className="">
                             <label>Search By Mobile Number:</label>
-                            <input className="w-full" type="text" defaultValue={""} onChange={handlesearchByMobileNumber} />
+                            <input
+                                className="w-full"
+                                type="text"
+                                defaultValue={""}
+                                onChange={handlesearchByMobileNumber}
+                            />
                         </div>
                     </div>
                     <table className="w-full h-10 bg-gray-300 font-bold border border-black">
@@ -140,9 +146,9 @@ export const RegisterExisting = () => {
                                     key={patient.id}
                                     onClick={() => handleRegister(patient)}
                                 >
-                                    <td key={patient.data().name} className="border-r border-b border-black">{patient.data().name}</td>
-                                    <td key={patient.data().ic} className="border-r border-b border-black">{patient.data().ic}</td>
-                                    <td key={patient.data().mobileNumber} className="border-r border-b border-black">{patient.data().mobileNumber}</td>
+                                    <td className="border-r border-b border-black">{patient.data().name}</td>
+                                    <td className="border-r border-b border-black">{patient.data().ic}</td>
+                                    <td className="border-r border-b border-black">{patient.data().mobileNumber}</td>
                                 </tr>
                             ))}
                         </tbody>

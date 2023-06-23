@@ -10,7 +10,7 @@ const PatientProfile = () => {
     const { patientId, doctorId } = state
     const [title, setTitle] = useState("")
     const [name, setName] = useState("")
-    const [IC, setIC] = useState("")
+    const [ic, setIc] = useState("")
     const [gender, setGender] = useState("")
     const [DOB, setDOB] = useState("")
     const [age, setAge] = useState("")
@@ -39,7 +39,7 @@ const PatientProfile = () => {
         getDoc(q).then((doc) => {
             setTitle(doc.data().title)
             setName(doc.data().name)
-            setIC(doc.data().IC)
+            setIc(doc.data().Ic)
             setGender(doc.data().gender)
             setDOB(doc.data().DOB)
             setAge(doc.data().age)
@@ -85,7 +85,7 @@ const PatientProfile = () => {
                 </div>
                 <div className="flex flex-col">
                     <label>IC/Passport number *</label>
-                    <input type="text" defaultValue={IC} onChange={(e) => setIC(e.target.value)} required />
+                    <input type="text" defaultValue={ic} onChange={(e) => setIc(e.target.value)} required />
                 </div>
                 <div className="flex flex-col">
                     <label>Gender</label>
