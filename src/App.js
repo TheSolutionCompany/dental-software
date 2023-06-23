@@ -8,6 +8,7 @@ import Profile from "./pages/Profile"
 import ProfileUpdate from "./pages/ProfileUpdate"
 import Queue from "./pages/Queue"
 import PatientProfile from "./pages/PatientProfile"
+import Stock from "./pages/Stock"
 import { AuthProvider } from "./contexts/AuthContext"
 import { DatabaseProvider } from "./contexts/DatabaseContext"
 
@@ -64,6 +65,14 @@ function App() {
                                 element={
                                     <ProtectedRoute>
                                         <PatientProfile />
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route
+                                path="/Stock"
+                                element={
+                                    <ProtectedRoute>
+                                        <Stock />
                                     </ProtectedRoute>
                                 }
                             />

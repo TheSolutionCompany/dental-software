@@ -46,6 +46,12 @@ const Header = ({ handleLogout }) => {
         }
     }
 
+    const handleStockPage = () => {
+        if (location.pathname !== "/Stock") {
+            navigate("/Stock")
+        }
+    }
+
     return (
         <header className="flex items-center justify-between bg-gray-800 h-14">
             <div className="h-full flex items-center cursor-pointer ml-4">
@@ -64,6 +70,9 @@ const Header = ({ handleLogout }) => {
                 </button>
                 <button className="p-4 h-full text-white hover:bg-gray-700" onClick={handleAppointmentsPage}>
                     Appointments
+                </button>
+                <button className="p-4 h-full text-white hover:bg-gray-700" onClick={handleStockPage}>
+                    Stock
                 </button>
                 <div className="flex h-full">
                     <button
