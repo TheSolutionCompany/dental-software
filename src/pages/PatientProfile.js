@@ -7,7 +7,7 @@ import CloseButton from "../components/CloseButton"
 const PatientProfile = () => {
     const navigate = useNavigate()
     const { state } = useLocation()
-    const { patientId, doctorId } = state
+    const { patientId } = state
     const [title, setTitle] = useState("")
     const [name, setName] = useState("")
     const [ic, setIc] = useState("")
@@ -39,7 +39,7 @@ const PatientProfile = () => {
         getDoc(q).then((doc) => {
             setTitle(doc.data().title)
             setName(doc.data().name)
-            setIc(doc.data().Ic)
+            setIc(doc.data().ic)
             setGender(doc.data().gender)
             setDOB(doc.data().DOB)
             setAge(doc.data().age)
@@ -47,9 +47,24 @@ const PatientProfile = () => {
             setPhoneNumber(doc.data().phoneNumber)
             setEmail(doc.data().email)
             setRace(doc.data.race)
+            setMaritalStatus(doc.data().maritalStatus)
+            setNationality(doc.data().nationality)
+            setEmergencyContactName(doc.data().emergencyContactName)
+            setEmergencyContactNumber(doc.data().emergencyContactNumber)
+            setBloodType(doc.data().bloodType)
+            setKnowAboutUs(doc.data().knowAboutUs)
+            setPanelCompany(doc.data().panelCompany)
+            setOccupation(doc.data().occupation)
+            setPreferredLanguage(doc.data().preferredLanguage)
+            setPreferredCommunication(doc.data().preferredCommunication)
+            setReferBy(doc.data().referBy)
+            setAddress(doc.data().address)
+            setSecondAddress(doc.data().secondAddress)
+            setAllergy(doc.data().allergy)
+            setRemark(doc.data().remark)
         })
 
-    }, [])
+    }, [patientId])
 
     const handleBackToQueue = () => {
         navigate("/Queue")

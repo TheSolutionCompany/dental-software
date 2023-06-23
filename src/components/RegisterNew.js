@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react"
 import { useDatabase } from "../contexts/DatabaseContext"
 import Modal from "react-modal"
 import CloseButton from "./CloseButton"
+import { ToastContainer, toast } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
 
 Modal.setAppElement("#root")
 
@@ -155,7 +157,17 @@ const RegisterNew = () => {
                 remark
             )
             setIsCreate(true)
-            alert("Patient created successfully")
+            const alertCreateSuccess = toast.success("Patient created successfully", {
+                position: "top-center",
+                autoClose: 3000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            })
+            alertCreateSuccess()
             document.getElementById("title").disabled = true
             document.getElementById("name").disabled = true
             document.getElementById("ic").disabled = true
@@ -182,22 +194,39 @@ const RegisterNew = () => {
             document.getElementById("allergy").disabled = true
             document.getElementById("remark").disabled = true
         } else {
-            alert("Patient with the same IC/Passport number already exists")
+            const alertPatientExists = () =>
+                toast.warn("Patient with the same IC/Passport number already exists", {
+                    position: "top-center",
+                    autoClose: 3000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                })
+            alertPatientExists()
         }
     }
 
     const handleSendToQueue = (event) => {
         event.preventDefault()
-        if (!isCreate) {
-            alert("Please create the patient first")
-        } else {
-            toggleInnerModal()
-        }
+        toggleInnerModal()
     }
 
     const handleAddToQueue = async () => {
         await addToQueue(patientId, name, age, ic, gender, doctorId, complains, "waiting")
-        localStorage.setItem("queueSize", parseInt(localStorage.getItem("queueSize")) + 1)
+        const alertAddToQueueSuccess = toast.success("Patient added to queue successfully", {
+            position: "top-center",
+            autoClose: 3000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+        })
+        alertAddToQueueSuccess()
         toggleInnerModal()
         toggleModal()
     }
@@ -273,7 +302,12 @@ const RegisterNew = () => {
                         </div>
                         <div className="flex flex-col">
                             <label>Mobile number *</label>
-                            <input id="mobileNumber" type="tel" onChange={(e) => setMobileNumber(e.target.value)} required />
+                            <input
+                                id="mobileNumber"
+                                type="tel"
+                                onChange={(e) => setMobileNumber(e.target.value)}
+                                required
+                            />
                         </div>
                         <div className="flex flex-col">
                             <label>Phone number</label>
@@ -295,7 +329,11 @@ const RegisterNew = () => {
                         </div>
                         <div className="flex flex-col">
                             <label>Marital status</label>
-                            <select id="maritalStatus" className="select-dropdown" onChange={(e) => setMaritalStatus(e.target.value)}>
+                            <select
+                                id="maritalStatus"
+                                className="select-dropdown"
+                                onChange={(e) => setMaritalStatus(e.target.value)}
+                            >
                                 <option value="">Select</option>
                                 <option value="Single">Single</option>
                                 <option value="Married">Married</option>
@@ -305,7 +343,11 @@ const RegisterNew = () => {
                         </div>
                         <div className="flex flex-col">
                             <label>Nationality</label>
-                            <select id="nationality" className="select-dropdown" onChange={(e) => setNationality(e.target.value)}>
+                            <select
+                                id="nationality"
+                                className="select-dropdown"
+                                onChange={(e) => setNationality(e.target.value)}
+                            >
                                 <option value="">Select</option>
                                 <option value="Malaysian">Malaysian</option>
                                 <option value="Others">Others</option>
@@ -313,15 +355,27 @@ const RegisterNew = () => {
                         </div>
                         <div className="flex flex-col">
                             <label>Emergency contact name</label>
-                            <input id="emergencyContactName" type="text" onChange={(e) => setEmergencyContactName(e.target.value)} />
+                            <input
+                                id="emergencyContactName"
+                                type="text"
+                                onChange={(e) => setEmergencyContactName(e.target.value)}
+                            />
                         </div>
                         <div className="flex flex-col">
                             <label>Emergency contact number</label>
-                            <input id="emergencyContactNumber" type="tel" onChange={(e) => setEmergencyContactNumber(e.target.value)} />
+                            <input
+                                id="emergencyContactNumber"
+                                type="tel"
+                                onChange={(e) => setEmergencyContactNumber(e.target.value)}
+                            />
                         </div>
                         <div className="flex flex-col">
                             <label>Blood type</label>
-                            <select id="bloodType" className="select-dropdown" onChange={(e) => setBloodType(e.target.value)}>
+                            <select
+                                id="bloodType"
+                                className="select-dropdown"
+                                onChange={(e) => setBloodType(e.target.value)}
+                            >
                                 <option value="">Select</option>
                                 <option value="A+">A+</option>
                                 <option value="A-">A-</option>
@@ -335,7 +389,11 @@ const RegisterNew = () => {
                         </div>
                         <div className="flex flex-col">
                             <label>Know about us</label>
-                            <select id="knowAboutUs" className="select-dropdown" onChange={(e) => setKnowAboutUs(e.target.value)}>
+                            <select
+                                id="knowAboutUs"
+                                className="select-dropdown"
+                                onChange={(e) => setKnowAboutUs(e.target.value)}
+                            >
                                 <option value="">Select</option>
                                 <option value="Facebook">Facebook</option>
                                 <option value="Instagram">Instagram</option>
@@ -345,7 +403,11 @@ const RegisterNew = () => {
                         </div>
                         <div className="flex flex-col">
                             <label>Panel company</label>
-                            <select id="panelCompany" className="select-dropdown" onChange={(e) => setPanelCompany(e.target.value)}>
+                            <select
+                                id="panelCompany"
+                                className="select-dropdown"
+                                onChange={(e) => setPanelCompany(e.target.value)}
+                            >
                                 <option value="">Select</option>
                                 <option value="AIA">AIA</option>
                                 <option value="Allianz">Allianz</option>
@@ -359,7 +421,11 @@ const RegisterNew = () => {
                         </div>
                         <div className="flex flex-col">
                             <label>Preferred language</label>
-                            <select id="preferredLanguage" className="select-dropdown" onChange={(e) => setPreferredLanguage(e.target.value)}>
+                            <select
+                                id="preferredLanguage"
+                                className="select-dropdown"
+                                onChange={(e) => setPreferredLanguage(e.target.value)}
+                            >
                                 <option value="">Select</option>
                                 <option value="English">English</option>
                                 <option value="Malay">Malay</option>
@@ -469,6 +535,7 @@ const RegisterNew = () => {
                     </form>
                 </Modal>
             </Modal>
+            <ToastContainer />
         </div>
     )
 }

@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react"
 import Modal from "react-modal"
 import { useDatabase } from "../contexts/DatabaseContext"
 import CloseButton from "./CloseButton"
+import { ToastContainer, toast } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
 
 Modal.setAppElement("#root")
 
@@ -81,11 +83,20 @@ export const RegisterExisting = () => {
     }
 
     const handleAddToQueue = async (e) => {
-        e.preventDefault()
-        addToQueue(patientId, patientName, age, ic, gender, doctorId, complains, "waiting").then(() => {
-            toggleInnerModal()
-            toggleModal()
+        await addToQueue(patientId, patientName, age, ic, gender, doctorId, complains, "waiting")
+        const alertAddToQueueSuccess = toast.success("Patient added to queue successfully", {
+            position: "top-center",
+            autoClose: 3000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
         })
+        alertAddToQueueSuccess()
+        toggleInnerModal()
+        toggleModal()
     }
 
     return (
@@ -213,6 +224,7 @@ export const RegisterExisting = () => {
                     </Modal>
                 </div>
             </Modal>
+            <ToastContainer />
         </div>
     )
 }
