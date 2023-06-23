@@ -1,6 +1,7 @@
 import React from "react"
 import RegisterExisting from "./RegisterExisting"
 import RegisterNew from "./RegisterNew"
+import IssueMC from "./IssueMC"
 
 const SideBar = () => {
     return (
@@ -13,6 +14,7 @@ const SideBar = () => {
                 <ul className="space-y-2 font-medium">
                     <RegisterExisting />
                     <RegisterNew />
+                    <IssueMC />
                     <li className="cursor-pointer select-none">
 
                         <button
