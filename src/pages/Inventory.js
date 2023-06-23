@@ -4,7 +4,7 @@ import { useAuth } from "../contexts/AuthContext"
 import Header from "../components/Header"
 import SideBar from "../components/SideBar"
 
-const Stock = () => {
+const Inventory = () => {
     const navigate = useNavigate()
     const { logout } = useAuth()
 
@@ -30,4 +30,4 @@ const Stock = () => {
     )
 }
 
-export default Stock
+export default Inventory

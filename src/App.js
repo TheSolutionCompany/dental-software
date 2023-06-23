@@ -8,7 +8,7 @@ import Profile from "./pages/Profile"
 import ProfileUpdate from "./pages/ProfileUpdate"
 import Queue from "./pages/Queue"
 import PatientProfile from "./pages/PatientProfile"
-import Stock from "./pages/Stock"
+import Inventory from "./pages/Inventory"
 import { AuthProvider } from "./contexts/AuthContext"
 import { DatabaseProvider } from "./contexts/DatabaseContext"
 
@@ -69,10 +69,10 @@ function App() {
                                 }
                             />
                             <Route
-                                path="/Stock"
+                                path="/Inventory"
                                 element={
                                     <ProtectedRoute>
-                                        <Stock />
+                                        <Inventory />
                                     </ProtectedRoute>
                                 }
                             />
