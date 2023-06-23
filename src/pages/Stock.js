@@ -4,7 +4,7 @@ import { useAuth } from "../contexts/AuthContext"
 import Header from "../components/Header"
 import SideBar from "../components/SideBar"
 
-const Dashboard = () => {
+const Stock = () => {
     const navigate = useNavigate()
     const { logout } = useAuth()
 
@@ -23,11 +23,11 @@ const Dashboard = () => {
             <div className="flex h-full">
                 <SideBar />
                 <div className="w-full bg-gray-200">
-                    <p className="text-gray-500 text-lg">Dashboard</p>
+                    <p className="text-gray-500 text-lg">Stock</p>
                 </div>
             </div>
         </div>
     )
 }
 
-export default Dashboard
+export default Stock

@@ -52,72 +52,58 @@ export function DatabaseProvider({ children }) {
         setLoading(false)
     }, [user])
 
-
-    async function search(name, IC, mobileNumber) {
-        try {
-            if (name) {
-                const start = name
-                const end = start.replace(/.$/, (c) => String.fromCharCode(c.charCodeAt(0) + 1))
-                const q = query(collection(db, "patients"), where("name", ">=", start), where("name", "<", end))
-                const result = (await getDocs(q)).docs.map((doc) => doc)
-                return Object.values(result.sort())
-            } else if (IC) {
-                const start = IC
-                const end = start.replace(/.$/, (c) => String.fromCharCode(c.charCodeAt(0) + 1))
-                const q = query(collection(db, "patients"), where("IC", ">=", start), where("IC", "<", end))
-                const result = (await getDocs(q)).docs.map((doc) => doc)
-                return Object.values(result.sort())
-            } else if (mobileNumber) {
-                const start = mobileNumber
-                const end = start.replace(/.$/, (c) => String.fromCharCode(c.charCodeAt(0) + 1))
-                const q = query(
-                    collection(db, "patients"),
-                    where("mobileNumber", ">=", start),
-                    where("mobileNumber", "<", end)
-                )
-                const result = (await getDocs(q)).docs.map((doc) => doc)
-                return Object.values(result.sort())
-            } else {
-                return []
-            }
-        } catch (error) {
-            console.log(error)
+    async function search(name, ic, mobileNumber) {
+        if (name) {
+            const start = name
+            const end = start.replace(/.$/, (c) => String.fromCharCode(c.charCodeAt(0) + 1))
+            const q = query(collection(db, "patients"), where("name", ">=", start), where("name", "<", end))
+            const result = (await getDocs(q)).docs.map((doc) => doc)
+            return Object.values(result.sort())
+        } else if (ic) {
+            const start = ic
+            const end = start.replace(/.$/, (c) => String.fromCharCode(c.charCodeAt(0) + 1))
+            const q = query(collection(db, "patients"), where("ic", ">=", start), where("ic", "<", end))
+            const result = (await getDocs(q)).docs.map((doc) => doc)
+            return Object.values(result.sort())
+        } else if (mobileNumber) {
+            const start = mobileNumber
+            const end = start.replace(/.$/, (c) => String.fromCharCode(c.charCodeAt(0) + 1))
+            const q = query(
+                collection(db, "patients"),
+                where("mobileNumber", ">=", start),
+                where("mobileNumber", "<", end)
+            )
+            const result = (await getDocs(q)).docs.map((doc) => doc)
+            return Object.values(result.sort())
+        } else {
+            return []
         }
     }
 
     async function addToQueue(patientId, patientName, age, ic, gender, doctorId, complains, status) {
-        try {
-            await addDoc(collection(db, "queues"), {
-                patientId,
-                patientName,
-                age,
-                ic,
-                gender,
-                doctorId,
-                complains,
-                status,
-            })
-        } catch (error) {
-            console.log(error)
-        }
+        console.log("adding to queue")
+        console.log(age)
+        console.log(ic)
+        await addDoc(collection(db, "queues"), {
+            patientId,
+            patientName,
+            age,
+            ic,
+            gender,
+            doctorId,
+            complains,
+            status,
+        })
     }
 
     async function getWaitingQueueSize() {
-        try {
-            const q = query(collection(db, "queue"), where("status", "==", "waiting"))
-            return (await getCountFromServer(q)).data().count
-        } catch (error) {
-            console.log(error)
-        }
+        const q = query(collection(db, "queue"), where("status", "==", "waiting"))
+        return (await getCountFromServer(q)).data().count
     }
 
     async function checkRepeatedIc(ic) {
-        try {
-            const q = query(collection(db, "patients"), where("ic", "==", ic))
-            return (await getCountFromServer(q)).data().count === 0 ? false : true
-        } catch (error) {
-            console.log(error)
-        }
+        const q = query(collection(db, "patients"), where("ic", "==", ic))
+        return (await getCountFromServer(q)).data().count === 0 ? false : true
     }
 
     async function registerNewPatient(
@@ -147,37 +133,33 @@ export function DatabaseProvider({ children }) {
         allergy,
         remarks
     ) {
-        try {
-            await addDoc(collection(db, "patients"), {
-                title,
-                name,
-                ic,
-                gender,
-                dob,
-                age,
-                mobileNumber,
-                phoneNumber,
-                email,
-                race,
-                maritalStatus,
-                nationality,
-                emergencyContactName,
-                emergencyContactNumber,
-                bloodType,
-                knowAboutUs,
-                panelCompany,
-                occupation,
-                preferredLanguage,
-                preferredCommunication,
-                referBy,
-                address,
-                secondAddress,
-                allergy,
-                remarks,
-            })
-        } catch (error) {
-            console.log("Error at registerNewPatient function: " + error)
-        }
+        await addDoc(collection(db, "patients"), {
+            title,
+            name,
+            ic,
+            gender,
+            dob,
+            age,
+            mobileNumber,
+            phoneNumber,
+            email,
+            race,
+            maritalStatus,
+            nationality,
+            emergencyContactName,
+            emergencyContactNumber,
+            bloodType,
+            knowAboutUs,
+            panelCompany,
+            occupation,
+            preferredLanguage,
+            preferredCommunication,
+            referBy,
+            address,
+            secondAddress,
+            allergy,
+            remarks,
+        })
     }
     const value = {
         availableDoctors: availableDoctors,

@@ -7,10 +7,10 @@ import CloseButton from "../components/CloseButton"
 const PatientProfile = () => {
     const navigate = useNavigate()
     const { state } = useLocation()
-    const { patientId, doctorId } = state
+    const { patientId } = state
     const [title, setTitle] = useState("")
     const [name, setName] = useState("")
-    const [IC, setIC] = useState("")
+    const [ic, setIc] = useState("")
     const [gender, setGender] = useState("")
     const [DOB, setDOB] = useState("")
     const [age, setAge] = useState("")
@@ -39,7 +39,7 @@ const PatientProfile = () => {
         getDoc(q).then((doc) => {
             setTitle(doc.data().title)
             setName(doc.data().name)
-            setIC(doc.data().IC)
+            setIc(doc.data().ic)
             setGender(doc.data().gender)
             setDOB(doc.data().DOB)
             setAge(doc.data().age)
@@ -47,17 +47,32 @@ const PatientProfile = () => {
             setPhoneNumber(doc.data().phoneNumber)
             setEmail(doc.data().email)
             setRace(doc.data.race)
+            setMaritalStatus(doc.data().maritalStatus)
+            setNationality(doc.data().nationality)
+            setEmergencyContactName(doc.data().emergencyContactName)
+            setEmergencyContactNumber(doc.data().emergencyContactNumber)
+            setBloodType(doc.data().bloodType)
+            setKnowAboutUs(doc.data().knowAboutUs)
+            setPanelCompany(doc.data().panelCompany)
+            setOccupation(doc.data().occupation)
+            setPreferredLanguage(doc.data().preferredLanguage)
+            setPreferredCommunication(doc.data().preferredCommunication)
+            setReferBy(doc.data().referBy)
+            setAddress(doc.data().address)
+            setSecondAddress(doc.data().secondAddress)
+            setAllergy(doc.data().allergy)
+            setRemark(doc.data().remark)
         })
 
-    }, [])
+    }, [patientId])
 
     const handleBackToQueue = () => {
         navigate("/Queue")
     }
 
     return (
-        <React.Fragment>
-            <CloseButton func={handleBackToQueue}/>
+        <div className="p-5">
+            <CloseButton name="Patient Profile" func={handleBackToQueue}/>
             <div className="grid grid-cols-4 gap-4">
                 <div className="flex flex-col">
                     <label>Title</label>
@@ -85,7 +100,7 @@ const PatientProfile = () => {
                 </div>
                 <div className="flex flex-col">
                     <label>IC/Passport number *</label>
-                    <input type="text" defaultValue={IC} onChange={(e) => setIC(e.target.value)} required />
+                    <input type="text" defaultValue={ic} onChange={(e) => setIc(e.target.value)} required />
                 </div>
                 <div className="flex flex-col">
                     <label>Gender</label>
@@ -229,7 +244,7 @@ const PatientProfile = () => {
                     <textarea defaultValue={remark} rows={4} onChange={(e) => setRemark(e.target.value)} />
                 </div>
             </div>
-        </React.Fragment>
+        </div>
     )
 }
 

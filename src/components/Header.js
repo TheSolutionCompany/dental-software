@@ -1,6 +1,6 @@
 import React, { useState } from "react"
-import { auth } from "../firebase"
-import { onAuthStateChanged } from "firebase/auth"
+import { useAuth } from "../contexts/AuthContext"
+import { useDatabase } from "../contexts/DatabaseContext"
 import HeaderIcon from "../assets/icons/header-icon.png"
 import { useNavigate, useLocation } from "react-router-dom"
 
@@ -8,13 +8,8 @@ const Header = ({ handleLogout }) => {
     const navigate = useNavigate()
     const location = useLocation()
     const [isShown, setIsShown] = useState(false)
-    const [displayName, setDisplayName] = useState("")
-
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            setDisplayName(user.displayName)
-        }
-    })
+    const { user } = useAuth()
+    const { getWaitingQueueSize } = useDatabase()
 
     const handleDashboardPage = () => {
         if (location.pathname !== "/Dashboard") {
@@ -46,11 +41,17 @@ const Header = ({ handleLogout }) => {
         }
     }
 
+    const handleStockPage = () => {
+        if (location.pathname !== "/Stock") {
+            navigate("/Stock")
+        }
+    }
+
     return (
         <header className="flex items-center justify-between bg-gray-800 h-14">
             <div className="h-full flex items-center cursor-pointer ml-4">
                 <img className="h-10 w-10" src={HeaderIcon} alt="header icon" />
-                <h1 className="w-full pl-2 text-white font-bold text-xl select-none">Welcome,{displayName}</h1>
+                <h1 className="w-full pl-2 text-white font-bold text-xl select-none">Welcome,{user.displayName}</h1>
             </div>
             <div className="h-full w-full flex items-center justify-end font-bold">
                 <button className="p-4 h-full text-white hover:bg-gray-700" onClick={handleDashboardPage}>
@@ -58,12 +59,17 @@ const Header = ({ handleLogout }) => {
                 </button>
                 <button className="p-4 h-full text-white hover:bg-gray-700" onClick={handleQueuePage}>
                     Queue
-                    {localStorage.getItem("queueSize") > 0 && <span className="inline-flex items-center justify-center w-3 h-3 p-3 ml-3 text-sm font-medium text-red-200 bg-red-600 rounded-full">
-                        {localStorage.getItem("queueSize")}
-                    </span>}
+                    {getWaitingQueueSize() > 0 && (
+                        <span className="inline-flex items-center justify-center w-3 h-3 p-3 ml-3 text-sm font-medium text-red-200 bg-red-600 rounded-full">
+                            {getWaitingQueueSize()}
+                        </span>
+                    )}
                 </button>
                 <button className="p-4 h-full text-white hover:bg-gray-700" onClick={handleAppointmentsPage}>
                     Appointments
+                </button>
+                <button className="p-4 h-full text-white hover:bg-gray-700" onClick={handleStockPage}>
+                    Stock
                 </button>
                 <div className="flex h-full">
                     <button
