@@ -71,8 +71,8 @@ const PatientProfile = () => {
     }
 
     return (
-        <React.Fragment>
-            <CloseButton func={handleBackToQueue}/>
+        <div className="p-5">
+            <CloseButton name="Patient Profile" func={handleBackToQueue}/>
             <div className="grid grid-cols-4 gap-4">
                 <div className="flex flex-col">
                     <label>Title</label>
@@ -244,7 +244,7 @@ const PatientProfile = () => {
                     <textarea defaultValue={remark} rows={4} onChange={(e) => setRemark(e.target.value)} />
                 </div>
             </div>
-        </React.Fragment>
+        </div>
     )
 }
 

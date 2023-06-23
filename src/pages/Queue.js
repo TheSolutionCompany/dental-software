@@ -27,6 +27,7 @@ export const Queue = () => {
                 document.getElementById(item).hidden = false
             }
         }
+        document.getElementById("tableHeader")
     }, [filter])
 
     function generateQueue(queues) {
@@ -42,7 +43,7 @@ export const Queue = () => {
                     <td
                         onClick={(e) => {
                             e.stopPropagation()
-                            handlePatientCall(queue.data().patientId, queue.id)
+                            handlePatientCall(queue.id)
                         }}
                     >
                         Call
@@ -88,9 +89,6 @@ export const Queue = () => {
                         <option value="inProgress">In Progress</option>
                         <option value="completed">Completed</option>
                     </select>
-
-                    {/* <label>Filter</label>
-                    <input type="text" defaultValue={filter} onChange={handleF}></input> */}
                     <table>
                         <thead>
                             <tr>

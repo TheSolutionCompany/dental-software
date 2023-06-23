@@ -84,16 +84,17 @@ export const RegisterExisting = () => {
 
     const handleAddToQueue = async (e) => {
         await addToQueue(patientId, patientName, age, ic, gender, doctorId, complains, "waiting")
-        const alertAddToQueueSuccess = toast.success("Patient added to queue successfully", {
-            position: "top-center",
-            autoClose: 3000,
-            hideProgressBar: true,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "colored",
-        })
+        const alertAddToQueueSuccess = () =>
+            toast.success("Patient added to queue successfully", {
+                position: "top-center",
+                autoClose: 3000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            })
         alertAddToQueueSuccess()
         toggleInnerModal()
         toggleModal()
@@ -115,7 +116,7 @@ export const RegisterExisting = () => {
                 contentLabel="Register Existing"
                 shouldCloseOnOverlayClick={false}
             >
-                <CloseButton func={toggleModal} />
+                <CloseButton name="Register Existing" func={toggleModal} />
                 <div className="relative">
                     <div className="w-full grid grid-cols-3 h-full gap-4 pb-6">
                         <div className="">

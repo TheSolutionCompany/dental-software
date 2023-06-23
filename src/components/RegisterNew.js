@@ -157,7 +157,7 @@ const RegisterNew = () => {
                 remark
             )
             setIsCreate(true)
-            const alertCreateSuccess = toast.success("Patient created successfully", {
+            const alertCreateSuccess = () => toast.success("Patient created successfully", {
                 position: "top-center",
                 autoClose: 3000,
                 hideProgressBar: true,
@@ -216,7 +216,7 @@ const RegisterNew = () => {
 
     const handleAddToQueue = async () => {
         await addToQueue(patientId, name, age, ic, gender, doctorId, complains, "waiting")
-        const alertAddToQueueSuccess = toast.success("Patient added to queue successfully", {
+        const alertAddToQueueSuccess = () => toast.success("Patient added to queue successfully", {
             position: "top-center",
             autoClose: 3000,
             hideProgressBar: true,
@@ -247,7 +247,7 @@ const RegisterNew = () => {
                 contentLabel="Register New"
                 shouldCloseOnOverlayClick={false}
             >
-                <CloseButton func={toggleModal} />
+                <CloseButton name="Register New" func={toggleModal} />
                 <form onSubmit={handleCreate}>
                     <div className="grid grid-cols-4 gap-4">
                         <div className="flex flex-col">
@@ -511,7 +511,7 @@ const RegisterNew = () => {
                         },
                     }}
                 >
-                    <CloseButton toggleModal={toggleInnerModal} />
+                    <CloseButton func={toggleInnerModal} />
                     <form onSubmit={handleAddToQueue}>
                         <div className="flex">
                             <p>Patient Name:</p>
