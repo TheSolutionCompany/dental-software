@@ -72,7 +72,7 @@ export const Queue = () => {
         }
     }
 
-    const handleF = (e) => {
+    const handleFilter = (e) => {
         setFilter(e.target.value)
     }
 
@@ -82,8 +82,7 @@ export const Queue = () => {
             <div className="flex h-full">
                 <SideBar />
                 <div className="w-full bg-gray-200">
-                    <p className="text-gray-500 text-lg">Queue</p>
-                    <select value={filter} onChange={handleF}>
+                    <select value={filter} onChange={handleFilter}>
                         <option value="all">All</option>
                         <option value="waiting">Waiting</option>
                         <option value="inProgress">In Progress</option>

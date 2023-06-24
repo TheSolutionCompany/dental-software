@@ -360,7 +360,7 @@ export const MedicalCertificate = () => {
                                         <div>Ref no:</div>
                                     </div>
                                     <br />
-                                    <p className="font-bold">{patientName} 华语</p>
+                                    <p className="font-bold">{patientName}</p>
                                     <br />
                                     <p>
                                         This is to certified that{" "}

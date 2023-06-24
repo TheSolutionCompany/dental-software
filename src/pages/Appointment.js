@@ -25,7 +25,6 @@ const Appointment = () => {
             <div className="flex h-full">
                 <SideBar />
                 <div className="w-full bg-gray-200">
-                    <p className="text-gray-500 text-lg">Appointment</p>
                 </div>
             </div>
         </div>

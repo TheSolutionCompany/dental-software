@@ -23,7 +23,6 @@ const Inventory = () => {
             <div className="flex h-full">
                 <SideBar />
                 <div className="w-full bg-gray-200">
-                    <p className="text-gray-500 text-lg">Inventory</p>
                 </div>
             </div>
         </div>

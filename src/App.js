@@ -11,6 +11,7 @@ import PatientProfile from "./pages/PatientProfile"
 import Inventory from "./pages/Inventory"
 import { AuthProvider } from "./contexts/AuthContext"
 import { DatabaseProvider } from "./contexts/DatabaseContext"
+import Setting from "./pages/Setting"
 
 function App() {
     return (
@@ -73,6 +74,14 @@ function App() {
                                 element={
                                     <ProtectedRoute>
                                         <Inventory />
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route
+                                path="/Setting"
+                                element={
+                                    <ProtectedRoute>
+                                        <Setting />
                                     </ProtectedRoute>
                                 }
                             />

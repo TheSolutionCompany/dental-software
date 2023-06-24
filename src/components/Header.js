@@ -36,8 +36,8 @@ const Header = ({ currentPage, handleLogout }) => {
     }
 
     const handleSettingsPage = () => {
-        if (location.pathname !== "/Settings") {
-            navigate("/Settings")
+        if (location.pathname !== "/Setting") {
+            navigate("/Setting")
         }
     }
 
@@ -70,7 +70,7 @@ const Header = ({ currentPage, handleLogout }) => {
                 >
                     Queue
                     {waitingQueueSize > 0 && (
-                        <span className="inline-flex items-center justify-center w-3 h-3 p-3 ml-3 text-sm font-medium text-red-200 bg-red-600 rounded-full">
+                        <span className="inline-flex items-center justify-center w-3 h-3 p-3 ml-2 text-sm font-medium text-red-200 bg-red-600 rounded-full">
                             {waitingQueueSize}
                         </span>
                     )}
@@ -95,7 +95,9 @@ const Header = ({ currentPage, handleLogout }) => {
                     <button
                         onMouseEnter={() => setIsShown(true)}
                         onMouseLeave={() => setIsShown(false)}
-                        className="p-4 h-full text-white hover:bg-gray-700"
+                        className={`p-4 h-full ${
+                            currentPage === "Account" ? "bg-gray-200 text-black" : "hover:bg-gray-700 text-white "
+                        }`}
                     >
                         Account
                     </button>
