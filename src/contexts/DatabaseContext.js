@@ -233,7 +233,7 @@ export function DatabaseProvider({ children }) {
         addInventoryItem,
         editInventoryItem,
         deleteObject
-        issueMc,
+        //issueMc,
     }
 
     return <DatabaseContext.Provider value={value}>{!loading && children}</DatabaseContext.Provider>
