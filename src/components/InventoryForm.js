@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react"
 import { useDatabase } from "../contexts/DatabaseContext"
 import Modal from "react-modal"
 import CloseButton from "./CloseButton"
+import { ToastContainer, toast } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
 
 Modal.setAppElement("#root")
 
@@ -27,18 +29,57 @@ export default function InventoryForm(props) {
         if (editMode) {
             if (await editInventoryItem(activeItem.id, name, type, unitPrice, stock)) {
                 toggleModal()
-                alert("Successfully edited item!")
-                resetForm()
+                toast.success("Item edited successfully", {
+                    position: "top-center",
+                    autoClose: 1000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                })
+                toast.clearWaitingQueue()
             } else {
-                alert("Failed to edit item. Please try again later.")
+                toast.error("Failed to edit item. Please try again later.", {
+                    position: "top-center",
+                    autoClose: 1000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                })
+                toast.clearWaitingQueue()
             }
         } else {
             if (await addInventoryItem(name, type, unitPrice, stock)) {
                 toggleModal()
-                alert("Successfully added item!")
+                toast.success("Item added successfully", {
+                    position: "top-center",
+                    autoClose: 1000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                })
+                toast.clearWaitingQueue()
                 resetForm()
             } else {
-                alert("Failed to add item. Please try again later.")
+                toast.error("Failed to add item. Please try again later.", {
+                    position: "top-center",
+                    autoClose: 1000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                })
+                toast.clearWaitingQueue()
             }
         }
     }
@@ -124,6 +165,7 @@ export default function InventoryForm(props) {
                     </div>
                 </form>
             </Modal>
+            <ToastContainer limit={1} />
         </div>
     )
 }
