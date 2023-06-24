@@ -71,6 +71,10 @@ input, textarea {
 
 }
 
+.button-grey {
+  @apply cursor-pointer px-4 py-2 bg-gray-400 text-white hover:bg-gray-500 font-bold hover:text-white;
+}
+
 .error-message {
   color: red;
   margin-top: 10px;

@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react"
 import { db } from "../firebase"
 import { useAuth } from "./AuthContext"
-import { collection, query, where, getDocs, addDoc, updateDoc, getCountFromServer, onSnapshot, doc } from "firebase/firestore"
+import { collection, query, where, getDocs, addDoc, updateDoc, getCountFromServer, onSnapshot, doc, deleteDoc } from "firebase/firestore"
 
 const DatabaseContext = React.createContext()
 
@@ -193,6 +193,16 @@ export function DatabaseProvider({ children }) {
         }
     }
 
+    async function deleteObject(docName, id){
+        try {
+            await deleteDoc(doc(db, docName, id))
+            return true
+        } catch (e) {
+            console.log(e)
+            return false
+        }
+    }
+
     const value = {
         availableDoctors: availableDoctors,
         allQueue: allQueue,
@@ -206,7 +216,8 @@ export function DatabaseProvider({ children }) {
         checkRepeatedIc,
         registerNewPatient,
         addInventoryItem,
-        editInventoryItem
+        editInventoryItem,
+        deleteObject
     }
 
     return <DatabaseContext.Provider value={value}>{!loading && children}</DatabaseContext.Provider>

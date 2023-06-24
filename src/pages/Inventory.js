@@ -5,6 +5,7 @@ import Header from "../components/Header"
 import SideBar from "../components/SideBar"
 import { useDatabase } from "../contexts/DatabaseContext"
 import InventoryForm from "../components/InventoryForm"
+import DeleteConfirmation from "../components/DeleteConfirmation"
 
 const Inventory = () => {
     const navigate = useNavigate()
@@ -29,7 +30,9 @@ const Inventory = () => {
             <td>{inventoryRow.data().type}</td>
             <td>{inventoryRow.data().stock}</td>
             <td><InventoryForm data={{ editMode: true, activeItem: { id: inventoryRow.id, ...inventoryRow.data() } }} /></td>
-            <td><button>Delete</button></td>
+            <td><DeleteConfirmation docName={"inventory"}
+                activeItem={{ id: inventoryRow.id, ...inventoryRow.data() }}
+            /></td>
         </tr>))
     }
 
