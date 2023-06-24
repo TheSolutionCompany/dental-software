@@ -19,6 +19,7 @@ export function DatabaseProvider({ children }) {
     const [waitingQueue, setWaitingQueue] = useState([])
     const [inProgressQueue, setInProgressQueue] = useState([])
     const [completedQueue, setCompletedQueue] = useState([])
+    const [waitingQueueSize, setWaitingQueueSize] = useState(0)
 
     useEffect(() => {
         // AvailableDoctors Listener
@@ -28,6 +29,11 @@ export function DatabaseProvider({ children }) {
             querySnapshot.forEach((doc) => {
                 setAvailableDoctors((prev) => [...prev, doc])
             })
+        })
+        // Waiting Queue Size Listener
+        const q2 = query(collection(db, "queues"), where("status", "==", "waiting"))
+        onSnapshot(q2, (querySnapshot) => {
+            setWaitingQueueSize(querySnapshot.size)
         })
         // Queue Listener
         if (user) {
@@ -81,9 +87,6 @@ export function DatabaseProvider({ children }) {
     }
 
     async function addToQueue(patientId, patientName, age, ic, gender, doctorId, complains, status) {
-        console.log("adding to queue")
-        console.log(age)
-        console.log(ic)
         await addDoc(collection(db, "queues"), {
             patientId,
             patientName,
@@ -96,10 +99,12 @@ export function DatabaseProvider({ children }) {
         })
     }
 
-    async function getWaitingQueueSize() {
-        const q = query(collection(db, "queue"), where("status", "==", "waiting"))
-        return (await getCountFromServer(q)).data().count
-    }
+    // function getWaitingQueueSize() {
+    //     const q = query(collection(db, "queues"), where("status", "==", "waiting"))
+    //     getCountFromServer(q).then((result) => {
+    //         return result.data().count
+    //     })
+    // }
 
     async function checkRepeatedIc(ic) {
         const q = query(collection(db, "patients"), where("ic", "==", ic))
@@ -177,9 +182,9 @@ export function DatabaseProvider({ children }) {
         waitingQueue: waitingQueue,
         inProgressQueue: inProgressQueue,
         completedQueue: completedQueue,
+        waitingQueueSize: waitingQueueSize,
         search,
         addToQueue,
-        getWaitingQueueSize,
         checkRepeatedIc,
         registerNewPatient,
         issueMc,

@@ -219,7 +219,8 @@ const RegisterNew = () => {
         toggleInnerModal()
     }
 
-    const handleAddToQueue = async () => {
+    const handleAddToQueue = async (e) => {
+        e.preventDefault()
         await addToQueue(patientId, name, age, ic, gender, doctorId, complains, "waiting")
         const alertAddToQueueSuccess = () =>
             toast.success("Added to queue successfully", {
@@ -528,10 +529,11 @@ const RegisterNew = () => {
                         <div className="flex flex-col">
                             <p>Complains:</p>
                             <textarea rows={4} onChange={(e) => setComplains(e.target.value)} />
+                            <p>Doctors:</p>
                             <select className="select-dropdown" onChange={(e) => setDoctorId(e.target.value)} required>
                                 <option disabled selected></option>
                                 {availableDoctors.map((doctor) => (
-                                    <option value={doctor.id}>{doctor.name}</option>
+                                    <option value={doctor.id}>{doctor.data().name}</option>
                                 ))}
                             </select>
                         </div>

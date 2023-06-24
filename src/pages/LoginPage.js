@@ -52,11 +52,11 @@ export const LoginPage = () => {
                             <div className="flex items-center justify-start h-full">
                                 <label className="select-none">Email:</label>
                             </div>
-                            <input className="" type="email" ref={emailRef} />
+                            <input className="" type="email" ref={emailRef} required />
                             <div className="flex items-center justify-start h-full">
                                 <label className="select-none">Password:</label>
                             </div>
-                            <input type="password" ref={passwordRef} />
+                            <input type="password" ref={passwordRef} required />
                         </div>
                         <div className="mt-4">
                             <button disabled={loading} className="button-green rounded" type="submit">

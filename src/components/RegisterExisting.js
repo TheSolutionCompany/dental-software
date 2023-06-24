@@ -83,6 +83,7 @@ export const RegisterExisting = () => {
     }
 
     const handleAddToQueue = async (e) => {
+        e.preventDefault()
         await addToQueue(patientId, patientName, age, ic, gender, doctorId, complains, "waiting")
         const alertAddToQueueSuccess = () =>
             toast.success("Added to queue successfully", {

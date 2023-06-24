@@ -9,7 +9,7 @@ const Header = ({ handleLogout }) => {
     const location = useLocation()
     const [isShown, setIsShown] = useState(false)
     const { user } = useAuth()
-    const { getWaitingQueueSize } = useDatabase()
+    const { waitingQueueSize } = useDatabase()
 
     const handleDashboardPage = () => {
         if (location.pathname !== "/Dashboard") {
@@ -59,9 +59,9 @@ const Header = ({ handleLogout }) => {
                 </button>
                 <button className="p-4 h-full text-white hover:bg-gray-700" onClick={handleQueuePage}>
                     Queue
-                    {getWaitingQueueSize() > 0 && (
+                    {waitingQueueSize > 0 && (
                         <span className="inline-flex items-center justify-center w-3 h-3 p-3 ml-3 text-sm font-medium text-red-200 bg-red-600 rounded-full">
-                            {getWaitingQueueSize()}
+                            {waitingQueueSize}
                         </span>
                     )}
                 </button>
