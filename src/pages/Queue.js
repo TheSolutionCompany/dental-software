@@ -55,7 +55,7 @@ export const Queue = () => {
 
     const handlePatientCall = async (queueId) => {
         await updateDoc(doc(db, "queues", queueId), {
-            status: "inProgress",
+            status: "in progress",
         })
     }
 
