@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React from "react"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "../contexts/AuthContext"
 import Header from "../components/Header"
@@ -9,9 +9,10 @@ import DeleteConfirmation from "../components/DeleteConfirmation"
 
 const Inventory = () => {
     const navigate = useNavigate()
-    const { user, logout } = useAuth()
+    const { logout } = useAuth()
 
     const { inventory } = useDatabase()
+
 
     async function handleLogout() {
         try {

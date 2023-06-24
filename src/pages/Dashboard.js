@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React from "react"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "../contexts/AuthContext"
 import Header from "../components/Header"
@@ -6,7 +6,6 @@ import SideBar from "../components/SideBar"
 
 const Dashboard = () => {
     const navigate = useNavigate()
-    const [error, setError] = useState("")
     const { logout } = useAuth()
 
     async function handleLogout() {
@@ -14,7 +13,7 @@ const Dashboard = () => {
             await logout()
             navigate("/")
         } catch (error) {
-            setError("Failed to log out")
+            console.log(error)
         }
     }
 

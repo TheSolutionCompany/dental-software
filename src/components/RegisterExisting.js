@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react"
 import Modal from "react-modal"
 import { useDatabase } from "../contexts/DatabaseContext"
 import CloseButton from "./CloseButton"
+import { ToastContainer, toast } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
 
 Modal.setAppElement("#root")
 
@@ -82,10 +84,23 @@ export const RegisterExisting = () => {
 
     const handleAddToQueue = async (e) => {
         e.preventDefault()
-        addToQueue(patientId, patientName, age, ic, gender, doctorId, complains, "waiting").then(() => {
-            toggleInnerModal()
-            toggleModal()
-        })
+        await addToQueue(patientId, patientName, age, ic, gender, doctorId, complains, "waiting")
+        const alertAddToQueueSuccess = () =>
+            toast.success("Added to queue successfully", {
+                position: "top-center",
+                autoClose: 1000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            })
+        toast.dismiss()
+        toast.clearWaitingQueue()
+        alertAddToQueueSuccess()
+        toggleInnerModal()
+        toggleModal()
     }
 
     return (
@@ -104,7 +119,7 @@ export const RegisterExisting = () => {
                 contentLabel="Register Existing"
                 shouldCloseOnOverlayClick={false}
             >
-                <CloseButton func={toggleModal} />
+                <CloseButton name="Register Existing" func={toggleModal} />
                 <div className="relative">
                     <div className="w-full grid grid-cols-3 h-full gap-4 pb-6">
                         <div className="">
@@ -213,6 +228,7 @@ export const RegisterExisting = () => {
                     </Modal>
                 </div>
             </Modal>
+            <ToastContainer limit={1} />
         </div>
     )
 }

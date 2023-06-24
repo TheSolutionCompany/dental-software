@@ -1,26 +1,38 @@
 import React, { useState, useRef } from "react"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "../contexts/AuthContext"
+import { ToastContainer, toast } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
 
 export const LoginPage = () => {
     const navigate = useNavigate()
     const emailRef = useRef()
     const passwordRef = useRef()
-    const [error, setError] = useState("")
     const [loading, setLoading] = useState(false)
     const { login } = useAuth()
 
     async function handleLogin(e) {
         e.preventDefault()
         try {
-            setError("")
             setLoading(true)
             await login(emailRef.current.value, passwordRef.current.value)
             // Login successful, you can redirect to another page here
             navigate("/Dashboard")
-        } catch (error) {
-            setError(error.message)
-            //setError("Wrong email or password!")
+        } catch (e) {
+            const alertLoginError = () =>
+                toast.error("Incorrect email or password", {
+                    position: "top-center",
+                    autoClose: 1000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                })
+            toast.dismiss()
+            toast.clearWaitingQueue()
+            alertLoginError()
         }
         setLoading(false)
     }
@@ -40,19 +52,21 @@ export const LoginPage = () => {
                             <div className="flex items-center justify-start h-full">
                                 <label className="select-none">Email:</label>
                             </div>
-                            <input className="" type="email" ref={emailRef} />
+                            <input className="" type="email" ref={emailRef} required />
                             <div className="flex items-center justify-start h-full">
                                 <label className="select-none">Password:</label>
                             </div>
-                            <input type="password" ref={passwordRef} />
+                            <input type="password" ref={passwordRef} required />
                         </div>
                         <div className="mt-4">
-                            <button disabled={loading} className="button-green rounded" type="submit">Login</button>
+                            <button disabled={loading} className="button-green rounded" type="submit">
+                                Login
+                            </button>
                         </div>
                     </form>
-                    {error && <div className="error-message">{error}</div>}
                 </div>
             </div>
+            <ToastContainer limit={1} />
         </div>
     )
 }

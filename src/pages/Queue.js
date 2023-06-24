@@ -10,7 +10,7 @@ import { updateDoc, doc } from "firebase/firestore"
 export const Queue = () => {
     const navigate = useNavigate()
     // Functions in AuthContext
-    const { user, logout } = useAuth()
+    const { logout } = useAuth()
 
     // Variables in DatabaseContext
     const { allQueue, waitingQueue, inProgressQueue, completedQueue } = useDatabase()
@@ -27,11 +27,12 @@ export const Queue = () => {
                 document.getElementById(item).hidden = false
             }
         }
+        document.getElementById("tableHeader")
     }, [filter])
 
     function generateQueue(queues) {
         return queues.map((queue) => (
-            <tr key={queue.id} onClick={() => handlePatientProfile(queue.data().patientId)}>
+            <tr key={queue.id} onDoubleClick={() => handlePatientProfile(queue.data().patientId)}>
                 <td>{queue.data().patientName}</td>
                 <td>{queue.data().gender}</td>
                 <td>{queue.data().age}</td>
@@ -42,7 +43,7 @@ export const Queue = () => {
                     <td
                         onClick={(e) => {
                             e.stopPropagation()
-                            handlePatientCall(queue.data().patientId, queue.id)
+                            handlePatientCall(queue.id)
                         }}
                     >
                         Call
@@ -52,14 +53,14 @@ export const Queue = () => {
         ))
     }
 
-    const handlePatientCall = async (patientId, queueId) => {
+    const handlePatientCall = async (queueId) => {
         await updateDoc(doc(db, "queues", queueId), {
             status: "inProgress",
         })
     }
 
     const handlePatientProfile = (patientId) => {
-        navigate("/PatientProfile", { state: { patientId: patientId, doctorId: user.uid } })
+        navigate("/PatientProfile", { state: { patientId: patientId } })
     }
 
     async function handleLogout() {
@@ -88,9 +89,6 @@ export const Queue = () => {
                         <option value="inProgress">In Progress</option>
                         <option value="completed">Completed</option>
                     </select>
-
-                    {/* <label>Filter</label>
-                    <input type="text" defaultValue={filter} onChange={handleF}></input> */}
                     <table>
                         <thead>
                             <tr>

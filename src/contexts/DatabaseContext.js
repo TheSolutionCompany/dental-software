@@ -20,6 +20,7 @@ export function DatabaseProvider({ children }) {
     const [inProgressQueue, setInProgressQueue] = useState([])
     const [completedQueue, setCompletedQueue] = useState([])
     const [inventory, setInventory] = useState([])
+    const [waitingQueueSize, setWaitingQueueSize] = useState(0)
 
     useEffect(() => {
         // AvailableDoctors Listener
@@ -29,6 +30,11 @@ export function DatabaseProvider({ children }) {
             querySnapshot.forEach((doc) => {
                 setAvailableDoctors((prev) => [...prev, doc])
             })
+        })
+        // Waiting Queue Size Listener
+        const q2 = query(collection(db, "queues"), where("status", "==", "waiting"))
+        onSnapshot(q2, (querySnapshot) => {
+            setWaitingQueueSize(querySnapshot.size)
         })
         // Queue Listener
         if (user) {
@@ -92,9 +98,6 @@ export function DatabaseProvider({ children }) {
     }
 
     async function addToQueue(patientId, patientName, age, ic, gender, doctorId, complains, status) {
-        console.log("adding to queue")
-        console.log(age)
-        console.log(ic)
         await addDoc(collection(db, "queues"), {
             patientId,
             patientName,
@@ -107,14 +110,26 @@ export function DatabaseProvider({ children }) {
         })
     }
 
-    async function getWaitingQueueSize() {
-        const q = query(collection(db, "queue"), where("status", "==", "waiting"))
-        return (await getCountFromServer(q)).data().count
-    }
+    // function getWaitingQueueSize() {
+    //     const q = query(collection(db, "queues"), where("status", "==", "waiting"))
+    //     getCountFromServer(q).then((result) => {
+    //         return result.data().count
+    //     })
+    // }
 
     async function checkRepeatedIc(ic) {
         const q = query(collection(db, "patients"), where("ic", "==", ic))
         return (await getCountFromServer(q)).data().count === 0 ? false : true
+    }
+
+    async function issueMc(patientId, doctorId, fromDate, toDate, remark) {
+        await addDoc(collection(db, "mc"), {
+            patientId,
+            doctorId,
+            fromDate,
+            toDate,
+            remark,
+        })
     }
 
     async function registerNewPatient(
@@ -210,14 +225,15 @@ export function DatabaseProvider({ children }) {
         inProgressQueue: inProgressQueue,
         completedQueue: completedQueue,
         inventory: inventory,
+        waitingQueueSize: waitingQueueSize,
         search,
         addToQueue,
-        getWaitingQueueSize,
         checkRepeatedIc,
         registerNewPatient,
         addInventoryItem,
         editInventoryItem,
         deleteObject
+        issueMc,
     }
 
     return <DatabaseContext.Provider value={value}>{!loading && children}</DatabaseContext.Provider>
