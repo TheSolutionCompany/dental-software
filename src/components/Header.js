@@ -47,8 +47,8 @@ const Header = ({ handleLogout }) => {
     }
 
     const handleStockPage = () => {
-        if (location.pathname !== "/Stock") {
-            navigate("/Stock")
+        if (location.pathname !== "/Inventory") {
+            navigate("/Inventory")
         }
     }
 
@@ -72,7 +72,7 @@ const Header = ({ handleLogout }) => {
                     Appointments
                 </button>
                 <button className="p-4 h-full text-white hover:bg-gray-700" onClick={handleStockPage}>
-                    Stock
+                    Inventory
                 </button>
                 <div className="flex h-full">
                     <button

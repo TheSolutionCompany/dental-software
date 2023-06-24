@@ -19,7 +19,7 @@ export function DatabaseProvider({ children }) {
     const [waitingQueue, setWaitingQueue] = useState([])
     const [inProgressQueue, setInProgressQueue] = useState([])
     const [completedQueue, setCompletedQueue] = useState([])
-    const [stock, setStock] = useState([])
+    const [inventory, setInventory] = useState([])
 
     useEffect(() => {
         // AvailableDoctors Listener
@@ -51,12 +51,12 @@ export function DatabaseProvider({ children }) {
             })
         }
 
-        // Stock Listener
-        const stockQ = query(collection(db, "stock"))
-        onSnapshot(stockQ, (querySnapshot) => {
-            setStock([])
+        // Inventory Listener
+        const inventoryQ = query(collection(db, "inventory"))
+        onSnapshot(inventoryQ, (querySnapshot) => {
+            setInventory([])
             querySnapshot.forEach((doc) => {
-                setStock((prev) => [...prev, doc])
+                setInventory((prev) => [...prev, doc])
             })
         })
 
@@ -173,8 +173,8 @@ export function DatabaseProvider({ children }) {
         })
     }
 
-    async function addStockItem(name, type, price, stock){
-        await addDoc(collection(db, "stock"), {name, type, price, stock})
+    async function addInventoryItem(name, type, unitPrice, stock){
+        await addDoc(collection(db, "inventory"), {name, type, unitPrice, stock})
     }
 
     const value = {
@@ -183,13 +183,13 @@ export function DatabaseProvider({ children }) {
         waitingQueue: waitingQueue,
         inProgressQueue: inProgressQueue,
         completedQueue: completedQueue,
-        stock: stock,
+        inventory: inventory,
         search,
         addToQueue,
         getWaitingQueueSize,
         checkRepeatedIc,
         registerNewPatient,
-        addStockItem
+        addInventoryItem
     }
 
     return <DatabaseContext.Provider value={value}>{!loading && children}</DatabaseContext.Provider>

@@ -4,13 +4,13 @@ import { useAuth } from "../contexts/AuthContext"
 import Header from "../components/Header"
 import SideBar from "../components/SideBar"
 import { useDatabase } from "../contexts/DatabaseContext"
-import StockForm from "../components/StockForm"
+import InventoryForm from "../components/InventoryForm"
 
-const Stock = () => {
+const Inventory = () => {
     const navigate = useNavigate()
     const { user, logout } = useAuth()
 
-    const { stock } = useDatabase()
+    const { inventory } = useDatabase()
 
     const [stateToPass, setStateToPass] = useState({isOpen: false, editMode: false, activeItem: null})
 
@@ -23,14 +23,14 @@ const Stock = () => {
         }
     }
 
-    function generateRows(stockTable) {
-        return stockTable.map((stockRow) =>
-        (<tr key={stockRow.id}>
-            <td>{stockRow.data().name}</td>
-            <td>{stockRow.data().price}</td>
-            <td>{stockRow.data().type}</td>
-            <td>{stockRow.data().stock}</td>
-            <td><StockForm data={{editMode: true, activeItem: stockRow.data()}}/></td>
+    function generateRows(inventoryTable) {
+        return inventoryTable.map((inventoryRow) =>
+        (<tr key={inventoryRow.id}>
+            <td>{inventoryRow.data().name}</td>
+            <td>{inventoryRow.data().unitPrice}</td>
+            <td>{inventoryRow.data().type}</td>
+            <td>{inventoryRow.data().stock}</td>
+            <td><InventoryForm data={{editMode: true, activeItem: inventoryRow.data()}}/></td>
             <td><button>Delete</button></td>
         </tr>))
     }
@@ -41,9 +41,9 @@ const Stock = () => {
             <div className="flex h-full">
                 <SideBar />
                 <div className="w-full bg-gray-200">
-                    <p className="text-gray-500 text-lg">Stock</p>
+                    <p className="text-gray-500 text-lg">Inventory</p>
                     <span>
-                    <StockForm data={{editMode: false, activeItem: null}}/>
+                    <InventoryForm data={{editMode: false, activeItem: null}}/>
                     </span>
                     <br></br>
                     <table>
@@ -56,7 +56,7 @@ const Stock = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {generateRows(stock)}
+                            {generateRows(inventory)}
                         </tbody>
                     </table>
                 </div>
@@ -65,4 +65,4 @@ const Stock = () => {
     )
 }
 
-export default Stock
+export default Inventory

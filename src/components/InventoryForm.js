@@ -5,10 +5,10 @@ import CloseButton from "./CloseButton"
 
 Modal.setAppElement("#root")
 
-export default function StockForm (props) {
+export default function InventoryForm (props) {
 
     const [isOpen, setIsOpen] = useState(false)
-    const {addToStock} = useDatabase()
+    const {addInventoryItem} = useDatabase()
 
     const toggleModal = () => {setIsOpen(!isOpen)}
 
