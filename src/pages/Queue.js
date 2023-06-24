@@ -78,7 +78,7 @@ export const Queue = () => {
 
     return (
         <div className="flex flex-col h-full">
-            <Header className="z-50" handleLogout={handleLogout} />
+            <Header className="z-50" currentPage={"Queue"} handleLogout={handleLogout} />
             <div className="flex h-full">
                 <SideBar />
                 <div className="w-full bg-gray-200">

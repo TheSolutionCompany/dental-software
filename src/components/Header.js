@@ -4,7 +4,7 @@ import { useDatabase } from "../contexts/DatabaseContext"
 import HeaderIcon from "../assets/icons/header-icon.png"
 import { useNavigate, useLocation } from "react-router-dom"
 
-const Header = ({ handleLogout }) => {
+const Header = ({ currentPage, handleLogout }) => {
     const navigate = useNavigate()
     const location = useLocation()
     const [isShown, setIsShown] = useState(false)
@@ -24,8 +24,8 @@ const Header = ({ handleLogout }) => {
     }
 
     const handleAppointmentsPage = () => {
-        if (location.pathname !== "/Appointments") {
-            navigate("/Appointments")
+        if (location.pathname !== "/Appointment") {
+            navigate("/Appointment")
         }
     }
 
@@ -49,15 +49,25 @@ const Header = ({ handleLogout }) => {
 
     return (
         <header className="flex items-center justify-between bg-gray-800 h-14">
-            <div className="h-full flex items-center cursor-pointer ml-4">
+            <div className="h-full w-full flex items-center cursor-pointer ml-4 text-left">
                 <img className="h-10 w-10" src={HeaderIcon} alt="header icon" />
-                <h1 className="w-full pl-2 text-white font-bold text-xl select-none">Welcome, Dr {user.displayName}</h1>
+                <h1 className="w-full pl-4 text-white font-bold text-xl select-none">Welcome, Dr {user.displayName}</h1>
             </div>
             <div className="h-full w-full flex items-center justify-end font-bold">
-                <button className="p-4 h-full text-white hover:bg-gray-700" onClick={handleDashboardPage}>
+                <button
+                    className={`p-4 h-full ${
+                        currentPage === "Dashboard" ? "bg-gray-200 text-black" : "hover:bg-gray-700 text-white "
+                    }`}
+                    onClick={handleDashboardPage}
+                >
                     Dashboard
                 </button>
-                <button className="p-4 h-full text-white hover:bg-gray-700" onClick={handleQueuePage}>
+                <button
+                    className={`p-4 h-full ${
+                        currentPage === "Queue" ? "bg-gray-200 text-black" : "hover:bg-gray-700 text-white "
+                    }`}
+                    onClick={handleQueuePage}
+                >
                     Queue
                     {waitingQueueSize > 0 && (
                         <span className="inline-flex items-center justify-center w-3 h-3 p-3 ml-3 text-sm font-medium text-red-200 bg-red-600 rounded-full">
@@ -65,10 +75,20 @@ const Header = ({ handleLogout }) => {
                         </span>
                     )}
                 </button>
-                <button className="p-4 h-full text-white hover:bg-gray-700" onClick={handleAppointmentsPage}>
-                    Appointments
+                <button
+                    className={`p-4 h-full ${
+                        currentPage === "Appointment" ? "bg-gray-200 text-black" : "hover:bg-gray-700 text-white "
+                    }`}
+                    onClick={handleAppointmentsPage}
+                >
+                    Appointment
                 </button>
-                <button className="p-4 h-full text-white hover:bg-gray-700" onClick={handleInventoryPage}>
+                <button
+                    className={`p-4 h-full ${
+                        currentPage === "Inventory" ? "bg-gray-200 text-black" : "hover:bg-gray-700 text-white "
+                    }`}
+                    onClick={handleInventoryPage}
+                >
                     Inventory
                 </button>
                 <div className="flex h-full">
