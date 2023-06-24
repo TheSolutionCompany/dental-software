@@ -12,8 +12,6 @@ const Inventory = () => {
 
     const { inventory } = useDatabase()
 
-    const [stateToPass, setStateToPass] = useState({isOpen: false, editMode: false, activeItem: null})
-
     async function handleLogout() {
         try {
             await logout()
@@ -30,7 +28,7 @@ const Inventory = () => {
             <td>{inventoryRow.data().unitPrice}</td>
             <td>{inventoryRow.data().type}</td>
             <td>{inventoryRow.data().stock}</td>
-            <td><InventoryForm data={{editMode: true, activeItem: inventoryRow.data()}}/></td>
+            <td><InventoryForm data={{ editMode: true, activeItem: { id: inventoryRow.id, ...inventoryRow.data() } }} /></td>
             <td><button>Delete</button></td>
         </tr>))
     }
@@ -43,7 +41,7 @@ const Inventory = () => {
                 <div className="w-full bg-gray-200">
                     <p className="text-gray-500 text-lg">Inventory</p>
                     <span>
-                    <InventoryForm data={{editMode: false, activeItem: null}}/>
+                        <InventoryForm data={{ editMode: false, activeItem: null }} />
                     </span>
                     <br></br>
                     <table>

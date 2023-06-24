@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react"
 import { db } from "../firebase"
 import { useAuth } from "./AuthContext"
-import { collection, query, where, getDocs, addDoc, getCountFromServer, onSnapshot } from "firebase/firestore"
+import { collection, query, where, getDocs, addDoc, updateDoc, getCountFromServer, onSnapshot, doc } from "firebase/firestore"
 
 const DatabaseContext = React.createContext()
 
@@ -173,8 +173,24 @@ export function DatabaseProvider({ children }) {
         })
     }
 
-    async function addInventoryItem(name, type, unitPrice, stock){
-        await addDoc(collection(db, "inventory"), {name, type, unitPrice, stock})
+    async function addInventoryItem(name, type, unitPrice, stock) {
+        try {
+            await addDoc(collection(db, "inventory"), { name, type, unitPrice, stock })
+            return true
+        } catch (e) {
+            console.log(e)
+            return false
+        }
+    }
+
+    async function editInventoryItem(id, name, type, unitPrice, stock) {
+        try{
+            await updateDoc(doc(db, "inventory", id), {name, type, unitPrice, stock})
+            return true
+        } catch (e) {
+            console.log(e)
+            return false
+        }
     }
 
     const value = {
@@ -189,7 +205,8 @@ export function DatabaseProvider({ children }) {
         getWaitingQueueSize,
         checkRepeatedIc,
         registerNewPatient,
-        addInventoryItem
+        addInventoryItem,
+        editInventoryItem
     }
 
     return <DatabaseContext.Provider value={value}>{!loading && children}</DatabaseContext.Provider>
