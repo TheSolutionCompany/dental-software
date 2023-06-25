@@ -87,3 +87,10 @@ textarea {
 textarea {
     resize: none;
 }
+
+@media print {
+    @page {
+        size: A5 landscape;
+        margin: 30px;
+    }
+}
