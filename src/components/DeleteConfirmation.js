@@ -10,16 +10,16 @@ Modal.setAppElement("#root")
 export default function DeleteConfirmation(props) {
 
     const [isOpen, setIsOpen] = useState(false)
-    const {deleteObject} = useDatabase()
-    
+    const { deleteObject } = useDatabase()
+
     const activeItem = props.activeItem
     const docName = props.docName
 
-    const toggleModal = () => {setIsOpen(!isOpen)}
+    const toggleModal = () => { setIsOpen(!isOpen) }
 
     const handleOk = async (event) => {
         event.preventDefault()
-        if(await deleteObject(docName, activeItem.id)) {
+        if (await deleteObject(docName, activeItem.id)) {
             toast.success(`${activeItem.name} deleted successfully`, {
                 position: "top-center",
                 autoClose: 1000,
@@ -32,7 +32,7 @@ export default function DeleteConfirmation(props) {
             })
             toast.clearWaitingQueue()
             toggleModal()
-        }else{
+        } else {
             toast.error(`Failed to delete ${activeItem.name}. Please try again later.`, {
                 position: "top-center",
                 autoClose: 1000,
@@ -73,17 +73,10 @@ export default function DeleteConfirmation(props) {
                 shouldCloseOnOverlayClick={false}
                 style={smallModal}
             >
-                <div style={{ display: 'inline-flex', width: '100%' }}>
-                    <div style={{ float: 'left', width: '80%', marginTop: '-10px' }}>
-                        <h1 style={{ fontSize: 28, fontWeight: 500 }}>{title}</h1>
-                    </div>
-                    <div style={{ float: 'right', width: '20%' }}>
-                        <CloseButton func={toggleModal} />
-                    </div>
-                </div>
+                <CloseButton name={title} func={toggleModal} />
 
-                <div style={{marginTop: '20px'}}>
-                Are you sure you want to delete {activeItem.name}?
+                <div style={{ marginTop: '20px' }}>
+                    Are you sure you want to delete {activeItem.name}?
                 </div>
 
                 <button style={{ marginTop: '20px' }} className="button-green rounded" onClick={handleOk}>

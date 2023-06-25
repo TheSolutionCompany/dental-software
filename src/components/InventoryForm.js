@@ -115,14 +115,7 @@ export default function InventoryForm(props) {
                 shouldCloseOnOverlayClick={false}
                 style={smallModal}
             >
-                <div style={{ display: 'inline-flex', width: '100%' }}>
-                    <div style={{ float: 'left', width: '80%', marginTop: '-10px' }}>
-                        <h1 style={{ fontSize: 28, fontWeight: 500 }}>{title}</h1>
-                    </div>
-                    <div style={{ float: 'right', width: '20%' }}>
-                        <CloseButton func={toggleModal} />
-                    </div>
-                </div>
+                <CloseButton name={title} func={toggleModal} />
                 <form onSubmit={handleSubmit}>
                     <div className="grid grid-cols-1 gap-1">
                         <div className="flex flex-col">
