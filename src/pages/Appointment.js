@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom"
 import Header from "../components/Header"
 import SideBar from "../components/SideBar"
 
-const Appointments = () => {
+const Appointment = () => {
     const navigate = useNavigate()
 
     const handleLogout = () => {
@@ -21,15 +21,14 @@ const Appointments = () => {
 
     return (
         <div className="flex flex-col h-full">
-            <Header className="z-50" handleLogout={handleLogout} />
+            <Header className="z-50" currentPage={"Appointment"} handleLogout={handleLogout} />
             <div className="flex h-full">
                 <SideBar />
                 <div className="w-full bg-gray-200">
-                    <p className="text-gray-500 text-lg">Appointment</p>
                 </div>
             </div>
         </div>
     )
 }
 
-export default Appointments
+export default Appointment

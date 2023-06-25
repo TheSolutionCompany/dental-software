@@ -55,7 +55,7 @@ export const Queue = () => {
 
     const handlePatientCall = async (queueId) => {
         await updateDoc(doc(db, "queues", queueId), {
-            status: "inProgress",
+            status: "in progress",
         })
     }
 
@@ -72,18 +72,17 @@ export const Queue = () => {
         }
     }
 
-    const handleF = (e) => {
+    const handleFilter = (e) => {
         setFilter(e.target.value)
     }
 
     return (
         <div className="flex flex-col h-full">
-            <Header className="z-50" handleLogout={handleLogout} />
+            <Header className="z-50" currentPage={"Queue"} handleLogout={handleLogout} />
             <div className="flex h-full">
                 <SideBar />
                 <div className="w-full bg-gray-200">
-                    <p className="text-gray-500 text-lg">Queue</p>
-                    <select value={filter} onChange={handleF}>
+                    <select value={filter} onChange={handleFilter}>
                         <option value="all">All</option>
                         <option value="waiting">Waiting</option>
                         <option value="inProgress">In Progress</option>

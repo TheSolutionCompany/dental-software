@@ -21,6 +21,15 @@ export function DatabaseProvider({ children }) {
     const [completedQueue, setCompletedQueue] = useState([])
     const [inventory, setInventory] = useState([])
     const [waitingQueueSize, setWaitingQueueSize] = useState(0)
+    const [date, setDate] = useState(new Date())
+    const dayQueueRef = collection(db, "queues")
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setDate(new Date())
+        }, 1000)
+        return () => clearInterval(timer)
+    }, [])
 
     useEffect(() => {
         // AvailableDoctors Listener
@@ -32,14 +41,24 @@ export function DatabaseProvider({ children }) {
             })
         })
         // Waiting Queue Size Listener
-        const q2 = query(collection(db, "queues"), where("status", "==", "waiting"))
-        onSnapshot(q2, (querySnapshot) => {
+        const q1 = query(
+            collection(dayQueueRef, date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate(), "queue"),
+            where("status", "==", "waiting")
+        )
+        onSnapshot(q1, (querySnapshot) => {
             setWaitingQueueSize(querySnapshot.size)
         })
         // Queue Listener
         if (user) {
-            const q1 = query(collection(db, "queues"), where("doctorId", "==", user.uid))
-            onSnapshot(q1, (querySnapshot) => {
+            const q2 = query(
+                collection(
+                    dayQueueRef,
+                    date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate(),
+                    "queue"
+                ),
+                where("doctorId", "==", user.uid)
+            )
+            onSnapshot(q2, (querySnapshot) => {
                 setAllQueue([])
                 setWaitingQueue([])
                 setInProgressQueue([])
@@ -48,7 +67,7 @@ export function DatabaseProvider({ children }) {
                     setAllQueue((prev) => [...prev, doc])
                     if (doc.data().status === "waiting") {
                         setWaitingQueue((prev) => [...prev, doc])
-                    } else if (doc.data().status === "inProgress") {
+                    } else if (doc.data().status === "in progress") {
                         setInProgressQueue((prev) => [...prev, doc])
                     } else if (doc.data().status === "completed") {
                         setCompletedQueue((prev) => [...prev, doc])
@@ -67,7 +86,7 @@ export function DatabaseProvider({ children }) {
         })
 
         setLoading(false)
-    }, [user])
+    }, [user, date, dayQueueRef])
 
     async function search(name, ic, mobileNumber) {
         if (name) {
@@ -98,24 +117,20 @@ export function DatabaseProvider({ children }) {
     }
 
     async function addToQueue(patientId, patientName, age, ic, gender, doctorId, complains, status) {
-        await addDoc(collection(db, "queues"), {
-            patientId,
-            patientName,
-            age,
-            ic,
-            gender,
-            doctorId,
-            complains,
-            status,
-        })
+        await addDoc(
+            collection(dayQueueRef, date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate(), "queue"),
+            {
+                patientId,
+                patientName,
+                age,
+                ic,
+                gender,
+                doctorId,
+                complains,
+                status,
+            }
+        )
     }
-
-    // function getWaitingQueueSize() {
-    //     const q = query(collection(db, "queues"), where("status", "==", "waiting"))
-    //     getCountFromServer(q).then((result) => {
-    //         return result.data().count
-    //     })
-    // }
 
     async function checkRepeatedIc(ic) {
         const q = query(collection(db, "patients"), where("ic", "==", ic))

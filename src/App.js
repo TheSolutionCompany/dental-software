@@ -3,7 +3,7 @@ import LoginPage from "./pages/LoginPage"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import ProtectedRoute from "./components/ProtectedRoute"
 import Dashboard from "./pages/Dashboard"
-import Appointments from "./pages/Appointments"
+import Appointment from "./pages/Appointment"
 import Profile from "./pages/Profile"
 import ProfileUpdate from "./pages/ProfileUpdate"
 import Queue from "./pages/Queue"
@@ -11,6 +11,7 @@ import PatientProfile from "./pages/PatientProfile"
 import Inventory from "./pages/Inventory"
 import { AuthProvider } from "./contexts/AuthContext"
 import { DatabaseProvider } from "./contexts/DatabaseContext"
+import Setting from "./pages/Setting"
 
 function App() {
     return (
@@ -37,10 +38,10 @@ function App() {
                                 }
                             />
                             <Route
-                                path="/Appointments"
+                                path="/Appointment"
                                 element={
                                     <ProtectedRoute>
-                                        <Appointments />
+                                        <Appointment />
                                     </ProtectedRoute>
                                 }
                             />
@@ -73,6 +74,14 @@ function App() {
                                 element={
                                     <ProtectedRoute>
                                         <Inventory />
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route
+                                path="/Setting"
+                                element={
+                                    <ProtectedRoute>
+                                        <Setting />
                                     </ProtectedRoute>
                                 }
                             />

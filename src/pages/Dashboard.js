@@ -19,11 +19,10 @@ const Dashboard = () => {
 
     return (
         <div className="flex flex-col h-full">
-            <Header className="z-50" handleLogout={handleLogout} />
+            <Header className="z-50" currentPage="Dashboard" handleLogout={handleLogout} />
             <div className="flex h-full">
                 <SideBar />
                 <div className="w-full bg-gray-200">
-                    <p className="text-gray-500 text-lg">Dashboard</p>
                 </div>
             </div>
         </div>
