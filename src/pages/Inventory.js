@@ -27,7 +27,7 @@ const Inventory = () => {
         return inventoryTable.map((inventoryRow) =>
         (<tr key={inventoryRow.id}>
             <td>{inventoryRow.data().name}</td>
-            <td>{inventoryRow.data().unitPrice}</td>
+            <td>{Number(inventoryRow.data().unitPrice).toFixed(2)}</td>
             <td>{inventoryRow.data().type}</td>
             <td>{inventoryRow.data().stock}</td>
             <td><InventoryForm data={{ editMode: true, activeItem: { id: inventoryRow.id, ...inventoryRow.data() } }} /></td>

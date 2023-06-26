@@ -20,9 +20,13 @@ export function DatabaseProvider({ children }) {
     const [inProgressQueue, setInProgressQueue] = useState([])
     const [completedQueue, setCompletedQueue] = useState([])
     const [inventory, setInventory] = useState([])
+    const [medicineInventory, setMedicineInventory] = useState([])
+    const [treatmentInventory, setTreatmentInventory] = useState([])
+    const [otherInventory, setOtherInventory] = useState([])
     const [waitingQueueSize, setWaitingQueueSize] = useState(0)
     const [date, setDate] = useState(new Date())
     const dayQueueRef = collection(db, "queues")
+    const inventoryRef = collection(db, "inventory")
 
     useEffect(() => {
         const timer = setInterval(() => {
@@ -80,13 +84,23 @@ export function DatabaseProvider({ children }) {
         const inventoryQ = query(collection(db, "inventory"))
         onSnapshot(inventoryQ, (querySnapshot) => {
             setInventory([])
+            setMedicineInventory([])
+            setTreatmentInventory([])
+            setOtherInventory([])
             querySnapshot.forEach((doc) => {
                 setInventory((prev) => [...prev, doc])
+                if (doc.data().type === "Medicine") {
+                    setMedicineInventory((prev) => [...prev, doc])
+                } else if (doc.data().type === "Treatment") {
+                    setTreatmentInventory((prev) => [...prev, doc])
+                } else if (doc.data().type === "Other Product") {
+                    setOtherInventory((prev) => [...prev, doc])
+                }
             })
         })
 
         setLoading(false)
-    }, [user, date, dayQueueRef])
+    }, [user, date, dayQueueRef, inventoryRef])
 
     async function search(name, ic, mobileNumber) {
         if (name) {
@@ -205,7 +219,7 @@ export function DatabaseProvider({ children }) {
 
     async function addInventoryItem(name, type, unitPrice, stock) {
         try {
-            await addDoc(collection(db, "inventory"), { name, type, unitPrice, stock })
+            await addDoc(inventoryRef, { name, type, unitPrice, stock })
             return true
         } catch (e) {
             console.log(e)
@@ -214,8 +228,8 @@ export function DatabaseProvider({ children }) {
     }
 
     async function editInventoryItem(id, name, type, unitPrice, stock) {
-        try{
-            await updateDoc(doc(db, "inventory", id), {name, type, unitPrice, stock})
+        try {
+            await updateDoc(doc(db, "inventory", id), { name, type, unitPrice, stock })
             return true
         } catch (e) {
             console.log(e)
@@ -223,7 +237,7 @@ export function DatabaseProvider({ children }) {
         }
     }
 
-    async function deleteObject(docName, id){
+    async function deleteObject(docName, id) {
         try {
             await deleteDoc(doc(db, docName, id))
             return true
@@ -247,8 +261,8 @@ export function DatabaseProvider({ children }) {
         registerNewPatient,
         addInventoryItem,
         editInventoryItem,
-        deleteObject
-        //issueMc,
+        deleteObject,
+        issueMc,
     }
 
     return <DatabaseContext.Provider value={value}>{!loading && children}</DatabaseContext.Provider>

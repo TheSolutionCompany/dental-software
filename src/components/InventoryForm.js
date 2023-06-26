@@ -22,10 +22,17 @@ export default function InventoryForm(props) {
     const [unitPrice, setUnitPrice] = useState(editMode ? activeItem.unitPrice : 1.0)
     const [stock, setStock] = useState(editMode ? activeItem.stock : 1)
 
+    const [isValidInput, setIsValidInput] = useState(false)
+
     const title = editMode ? 'Edit Item' : 'Add Item'
 
     const handleSubmit = async (event) => {
         event.preventDefault()
+        document.getElementById("name").disabled=true
+        document.getElementById("type").disabled=true
+        document.getElementById("unitPrice").disabled=true
+        document.getElementById("stock").disabled=true
+        document.getElementById("submitbutton").disabled = true
         if (editMode) {
             if (await editInventoryItem(activeItem.id, name, type, unitPrice, stock)) {
                 toggleModal()
@@ -91,6 +98,13 @@ export default function InventoryForm(props) {
         setStock(1)
     }
 
+    useEffect(() => {
+        let isNameNonEmpty = (name !== '' && name !== null && name !== undefined)
+        let isUnitPriceValid = Number.isInteger(unitPrice * 100)
+        let isStockValid = Number.isInteger(stock)
+        setIsValidInput(!(isNameNonEmpty && isUnitPriceValid && isStockValid))
+    }, [name, type, unitPrice, stock])
+
     const smallModal = {
         content: {
             left: '35%',
@@ -120,15 +134,15 @@ export default function InventoryForm(props) {
                     <div className="grid grid-cols-1 gap-1">
                         <div className="flex flex-col">
                             <label>Name</label>
-                            <input value={name}
-                                onChange={(e) => { setName(e.target.value) }}
+                            <input id="name" value={name}
+                                onChange={(e) => { setName(e.target.value); }}
                                 required
                             />
 
                             <label style={{ marginTop: '20px' }}>Type</label>
-                            <select value={type}
+                            <select id="type" value={type}
                                 className="select-dropdown"
-                                onChange={(e) => setType(e.target.value)}
+                                onChange={(e) => { setType(e.target.value); }}
                                 required
                             >
                                 <option value="Medicine">Medicine</option>
@@ -137,21 +151,21 @@ export default function InventoryForm(props) {
                             </select>
 
                             <label style={{ marginTop: '20px' }}>Unit Price (RM)</label>
-                            <input value={unitPrice}
-                                onChange={(e) => { setUnitPrice(e.target.value) }}
+                            <input id="unitPrice" value={unitPrice}
+                                onChange={(e) => { setUnitPrice(Number(e.target.value)); }}
                                 required
                                 type="number"
                                 step="0.01"
                             />
 
                             <label style={{ marginTop: '20px' }}>Stock Left</label>
-                            <input value={stock}
-                                onChange={(e) => { setStock(e.target.value) }}
+                            <input id="stock" value={stock}
+                                onChange={(e) => { setStock(Number(e.target.value)); }}
                                 required
                                 type="number"
                             />
 
-                            <button style={{ marginTop: '20px' }} className="button-green rounded m-2" type="submit">
+                            <button style={{ marginTop: '20px' }} className="button-green rounded" type="submit" id="submitbutton" disabled={isValidInput}>
                                 Submit
                             </button>
                         </div>
