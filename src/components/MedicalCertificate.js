@@ -30,6 +30,7 @@ export const MedicalCertificate = () => {
     const [fromDate, setFromDate] = useState("")
     const [toDate, setToDate] = useState("")
     const [remark, setRemark] = useState("")
+    const [loading, setLoading] = useState(false)
 
     useEffect(() => {
         search(searchByName, searchByIC, searchByMobileNumber).then((result) => {
@@ -103,6 +104,7 @@ export const MedicalCertificate = () => {
 
     const handleSubmitMcDetails = async (e) => {
         e.preventDefault()
+        setLoading(true)
         if (fromDate <= toDate) {
             await issueMc(patientId, doctorId, fromDate, toDate, remark)
             const alertMcIssued = () =>
@@ -136,6 +138,7 @@ export const MedicalCertificate = () => {
             toast.clearWaitingQueue()
             alertDateRange()
         }
+        setLoading(false)
     }
 
     const handlePrintMc = (e) => {
@@ -293,6 +296,7 @@ export const MedicalCertificate = () => {
                             </select>
                             <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
                                 <button
+                                    disabled={loading}
                                     style={{
                                         border: "1px solid black",
                                         borderRadius: "5px",
