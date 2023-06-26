@@ -70,6 +70,10 @@ textarea {
     @apply cursor-pointer px-4 py-2 bg-blue-500 text-white hover:bg-blue-600 font-bold hover:text-white;
 }
 
+.button-grey {
+  @apply cursor-pointer px-4 py-2 bg-gray-400 text-white hover:bg-gray-500 font-bold hover:text-white;
+}
+
 .error-message {
     color: red;
     margin-top: 10px;

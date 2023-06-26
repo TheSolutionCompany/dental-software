@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react"
 import { db } from "../firebase"
 import { useAuth } from "./AuthContext"
-import { collection, query, where, getDocs, addDoc, getCountFromServer, onSnapshot } from "firebase/firestore"
+import { collection, query, where, getDocs, addDoc, updateDoc, getCountFromServer, onSnapshot, doc, deleteDoc } from "firebase/firestore"
 
 const DatabaseContext = React.createContext()
 
@@ -19,6 +19,7 @@ export function DatabaseProvider({ children }) {
     const [waitingQueue, setWaitingQueue] = useState([])
     const [inProgressQueue, setInProgressQueue] = useState([])
     const [completedQueue, setCompletedQueue] = useState([])
+    const [inventory, setInventory] = useState([])
     const [waitingQueueSize, setWaitingQueueSize] = useState(0)
     const [date, setDate] = useState(new Date())
     const dayQueueRef = collection(db, "queues")
@@ -74,6 +75,16 @@ export function DatabaseProvider({ children }) {
                 })
             })
         }
+
+        // Inventory Listener
+        const inventoryQ = query(collection(db, "inventory"))
+        onSnapshot(inventoryQ, (querySnapshot) => {
+            setInventory([])
+            querySnapshot.forEach((doc) => {
+                setInventory((prev) => [...prev, doc])
+            })
+        })
+
         setLoading(false)
     }, [user, date, dayQueueRef])
 
@@ -191,18 +202,53 @@ export function DatabaseProvider({ children }) {
             remarks,
         })
     }
+
+    async function addInventoryItem(name, type, unitPrice, stock) {
+        try {
+            await addDoc(collection(db, "inventory"), { name, type, unitPrice, stock })
+            return true
+        } catch (e) {
+            console.log(e)
+            return false
+        }
+    }
+
+    async function editInventoryItem(id, name, type, unitPrice, stock) {
+        try{
+            await updateDoc(doc(db, "inventory", id), {name, type, unitPrice, stock})
+            return true
+        } catch (e) {
+            console.log(e)
+            return false
+        }
+    }
+
+    async function deleteObject(docName, id){
+        try {
+            await deleteDoc(doc(db, docName, id))
+            return true
+        } catch (e) {
+            console.log(e)
+            return false
+        }
+    }
+
     const value = {
         availableDoctors: availableDoctors,
         allQueue: allQueue,
         waitingQueue: waitingQueue,
         inProgressQueue: inProgressQueue,
         completedQueue: completedQueue,
+        inventory: inventory,
         waitingQueueSize: waitingQueueSize,
         search,
         addToQueue,
         checkRepeatedIc,
         registerNewPatient,
-        issueMc,
+        addInventoryItem,
+        editInventoryItem,
+        deleteObject
+        //issueMc,
     }
 
     return <DatabaseContext.Provider value={value}>{!loading && children}</DatabaseContext.Provider>
