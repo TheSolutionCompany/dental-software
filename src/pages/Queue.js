@@ -32,15 +32,15 @@ export const Queue = () => {
 
     function generateQueue(queues) {
         return queues.map((queue) => (
-            <tr key={queue.id} onDoubleClick={() => handlePatientProfile(queue.data().patientId)}>
-                <td>{queue.data().patientName}</td>
-                <td>{queue.data().gender}</td>
-                <td>{queue.data().age}</td>
-                <td>{queue.data().ic}</td>
-                <td>{queue.data().complains}</td>
-                <td>{queue.data().status}</td>
+            <tr className="w-full h-10 bg-gray-300 font-bold border-l border-t border-b border-black" key={queue.id} onDoubleClick={() => handlePatientProfile(queue.data().patientId)}>
+                <td className="border-r border-b border-black">{queue.data().patientName}</td>
+                <td className="border-r border-b border-black">{queue.data().gender}</td>
+                <td className="border-r border-b border-black">{queue.data().age}</td>
+                <td className="border-r border-b border-black">{queue.data().ic}</td>
+                <td className="border-r border-b border-black">{queue.data().complains}</td>
+                <td className="border-r border-b border-black">{queue.data().status}</td>
                 {queue.data().status === "waiting" && (
-                    <td
+                    <td className="border-r border-b border-black"
                         onClick={(e) => {
                             e.stopPropagation()
                             handlePatientCall(queue.id)
@@ -88,16 +88,16 @@ export const Queue = () => {
                         <option value="inProgress">In Progress</option>
                         <option value="completed">Completed</option>
                     </select>
-                    <table>
+                    <table className="w-full h-10 bg-gray-300 font-bold border border-black">
                         <thead>
-                            <tr>
-                                <th>Patient Name</th>
-                                <th>Gender</th>
-                                <th>Age</th>
-                                <th>IC/Passport number</th>
-                                <th>Complains</th>
-                                <th>Status</th>
-                                <th>Call</th>
+                            <tr className="w-full h-10 bg-gray-300 font-bold border-l border-t border-b border-black">
+                                <th className="border-r border-black">Patient Name</th>
+                                <th className="border-r border-black">Gender</th>
+                                <th className="border-r border-black">Age</th>
+                                <th className="border-r border-black">IC/Passport number</th>
+                                <th className="border-r border-black">Complains</th>
+                                <th className="border-r border-black">Status</th>
+                                <th className="border-r border-black">Call</th>
                             </tr>
                         </thead>
                         <tbody id="allQueue">
