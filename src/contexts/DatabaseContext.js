@@ -68,7 +68,6 @@ export function DatabaseProvider({ children }) {
                 setInProgressQueue([])
                 setCompletedQueue([])
                 querySnapshot.forEach((doc) => {
-                    setAllQueue((prev) => [...prev, doc])
                     if (doc.data().status === "waiting") {
                         setWaitingQueue((prev) => [...prev, doc])
                     } else if (doc.data().status === "in progress") {
@@ -217,9 +216,9 @@ export function DatabaseProvider({ children }) {
         })
     }
 
-    async function addInventoryItem(name, type, unitPrice, stock) {
+    async function addInventoryItem(name, type, unitPrice, stock, threshold) {
         try {
-            await addDoc(inventoryRef, { name, type, unitPrice, stock })
+            await addDoc(inventoryRef, { name, type, unitPrice, stock, threshold })
             return true
         } catch (e) {
             console.log(e)
@@ -227,9 +226,9 @@ export function DatabaseProvider({ children }) {
         }
     }
 
-    async function editInventoryItem(id, name, type, unitPrice, stock) {
+    async function editInventoryItem(id, name, type, unitPrice, stock, threshold) {
         try {
-            await updateDoc(doc(db, "inventory", id), { name, type, unitPrice, stock })
+            await updateDoc(doc(db, "inventory", id), { name, type, unitPrice, stock, threshold })
             return true
         } catch (e) {
             console.log(e)
@@ -253,7 +252,9 @@ export function DatabaseProvider({ children }) {
         waitingQueue: waitingQueue,
         inProgressQueue: inProgressQueue,
         completedQueue: completedQueue,
-        inventory: inventory,
+        medicineInventory: medicineInventory,
+        treatmentInventory: treatmentInventory,
+        otherInventory: otherInventory,
         waitingQueueSize: waitingQueueSize,
         search,
         addToQueue,
