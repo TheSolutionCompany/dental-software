@@ -120,16 +120,16 @@ export const Queue = () => {
                             <option value="completed">Completed</option>
                         </select>
                     </div>
-                    <table className="w-full h-10 bg-gray-300 font-bold border border-black">
+                    <table className="table-gray">
                         <thead>
                             <tr className="w-full h-10 bg-gray-300 font-bold border-l border-t border-b border-black">
-                                <th className="border-r border-black">Patient Name</th>
-                                <th className="border-r border-black">Gender</th>
-                                <th className="border-r border-black w-[4%]">Age</th>
-                                <th className="border-r border-black w-[20%]">IC/Passport number</th>
-                                <th className="border-r border-black w-[30%]">Complains</th>
-                                <th className="border-r border-black">Status</th>
-                                <th className="border-r border-black">Action</th>
+                                <th className="table-th-gray">Patient Name</th>
+                                <th className="table-th-gray">Gender</th>
+                                <th className="table-th-gray w-[4%]">Age</th>
+                                <th className="table-th-gray w-[20%]">IC/Passport number</th>
+                                <th className="table-th-gray w-[30%]">Complains</th>
+                                <th className="table-th-gray">Status</th>
+                                <th className="table-th-gray">Action</th>
                             </tr>
                         </thead>
                         <tbody id="allQueue">{generateQueue(allQueue)}</tbody>

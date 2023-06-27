@@ -146,18 +146,18 @@ export const RegisterExisting = () => {
                             />
                         </div>
                     </div>
-                    <table className="w-full h-10 bg-gray-300 font-bold border border-black">
+                    <table className="table-gray">
                         <thead>
-                            <tr className="w-full grid grid-cols-3 h-10 bg-gray-300 font-bold border-l border-t border-b border-black">
-                                <th className="border-r border-black">Name</th>
-                                <th className="border-r border-black">IC</th>
-                                <th className="border-r border-black">Mobile Number</th>
+                            <tr className="table-tr-thead-gray border-black">
+                                <th className="table-th-gray w-1/3">Name</th>
+                                <th className="table-th-gray w-1/3">IC</th>
+                                <th className="table-th-gray w-1/3">Mobile Number</th>
                             </tr>
                         </thead>
                         <tbody>
                             {patientsList.map((patient) => (
                                 <tr
-                                    className="w-full grid grid-cols-3 h-10 bg-gray-200 font-semibold border-l border-black hover:bg-green-400 cursor-pointer"
+                                    className="table-tr-tbody-gray hover:bg-green-400 cursor-pointer"
                                     key={patient.id}
                                     onClick={() => handleRegister(patient)}
                                 >
