@@ -63,13 +63,13 @@ export const Queue = () => {
                 <td className="border-r border-b border-black">
                     {row.data().gender}
                 </td>
-                <td className="border-r border-b w-[4%] border-black">
+                <td className="border-r border-b border-black">
                     {row.data().age}
                 </td>
-                <td className="border-r border-b w-[20%] border-black">
+                <td className="border-r border-b border-black">
                     {row.data().ic}
                 </td>
-                <td className="border-r border-b w-[30%] border-black">
+                <td className="border-r border-b border-black">
                     {row.data().complains}
                 </td>
                 <td className="border-r border-b border-black">
@@ -162,11 +162,11 @@ export const Queue = () => {
                                 <th className="border-r border-black">
                                     Gender
                                 </th>
-                                <th className="border-r border-black">Age</th>
-                                <th className="border-r border-black">
+                                <th className="border-r border-black w-[4%]">Age</th>
+                                <th className="border-r border-black w-[20%]">
                                     IC/Passport number
                                 </th>
-                                <th className="border-r border-black">
+                                <th className="border-r border-black w-[30%]">
                                     Complains
                                 </th>
                                 <th className="border-r border-black">
