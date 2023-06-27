@@ -10,7 +10,7 @@ Modal.setAppElement("#root")
 export default function InventoryForm(props) {
 
     const [isOpen, setIsOpen] = useState(false)
-    const { addInventoryItem, editInventoryItem } = useDatabase()
+    const { inventory, addInventoryItem, editInventoryItem } = useDatabase()
 
     const toggleModal = () => { setIsOpen(!isOpen) }
 
@@ -19,6 +19,7 @@ export default function InventoryForm(props) {
 
     const [name, setName] = useState(editMode ? activeItem.name : '')
     const [isNameValid, setIsNameValid] = useState(editMode)
+    const [hasDuplicate, setHasDuplicate] = useState(false)
 
     const [type, setType] = useState(editMode ? activeItem.type : 'Medicine')
     const [isTreatmentSelected, setIsTreatmentSelected] = useState(type === 'treatment')
@@ -38,12 +39,22 @@ export default function InventoryForm(props) {
 
     const handleSubmit = async (event) => {
         event.preventDefault()
+
+        for (let item of inventory) {
+            if (item.data().name === name && item.data().type === type) {
+                setHasDuplicate(true)
+                return
+            }
+        }
+
+        setHasDuplicate(false)
         document.getElementById("name").disabled = true
         document.getElementById("type").disabled = true
         document.getElementById("unitPrice").disabled = true
         document.getElementById("stock").disabled = true
         document.getElementById("threshold").disabled = true
         document.getElementById("submitbutton").disabled = true
+
         if (editMode) {
             if (await editInventoryItem(activeItem.id, name, type, unitPrice, stock, threshold)) {
                 toggleModal()
@@ -171,8 +182,15 @@ export default function InventoryForm(props) {
                                 required
                             />
                             <p hidden={isNameValid}
-                                style={{ fontSize: '12px' }}>
+                                style={{ fontSize: '12px' }}
+                            >
                                 Please fill in this field.
+                            </p>
+
+                            <p hidden={!hasDuplicate}
+                                style={{ fontSize: '12px' }}
+                            >
+                                This item already exists.
                             </p>
 
                             <label style={{ marginTop: '20px' }}>Type</label>

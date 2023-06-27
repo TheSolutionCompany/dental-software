@@ -252,6 +252,7 @@ export function DatabaseProvider({ children }) {
         waitingQueue: waitingQueue,
         inProgressQueue: inProgressQueue,
         completedQueue: completedQueue,
+        inventory: inventory,
         medicineInventory: medicineInventory,
         treatmentInventory: treatmentInventory,
         otherInventory: otherInventory,
