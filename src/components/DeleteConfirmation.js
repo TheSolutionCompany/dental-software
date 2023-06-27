@@ -58,7 +58,7 @@ export default function DeleteConfirmation(props) {
         },
     }
 
-    const title = `Delete ${activeItem.name}`
+    const title = `Delete Item`
 
     return (
         <div className="">

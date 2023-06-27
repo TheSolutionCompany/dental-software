@@ -29,7 +29,7 @@ export default function AddStockForm(props) {
         },
     };
 
-    const title = `Add new stock for ${activeItem.name}`
+    const title = `Add Stock`
 
     useEffect(() => {
         let isStockToAddValid = Number.isInteger(stockToAdd) && stockToAdd >= 0
@@ -92,6 +92,8 @@ export default function AddStockForm(props) {
                 <form onSubmit={handleSubmit}>
                     <div className="grid grid-cols-1 gap-1">
                         <div className="flex flex-col">
+                            <p>Item name: <b>{activeItem.name}</b></p>
+                            <label>Quantity</label>
                             <input id="stockToAdd" value={stockToAdd}
                                 onChange={(e) => { setStockToAdd(Number(e.target.value)); }}
                                 required

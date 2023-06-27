@@ -4,7 +4,7 @@ import { useDatabase } from "../contexts/DatabaseContext"
 import CloseButton from "./CloseButton"
 import { ToastContainer, toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
-import { useReactToPrint } from 'react-to-print'
+import { useReactToPrint } from "react-to-print"
 
 Modal.setAppElement("#root")
 
@@ -20,7 +20,7 @@ export const MedicalCertificate = () => {
     const [isInnerOpen, setIsInnerOpen] = useState(false)
     const [isInnerInnerOpen, setIsInnerInnerOpen] = useState(false)
     const [searchByName, setSearchByName] = useState("")
-    const [searchByIC, setSearchByIC] = useState("")
+    const [searchByIc, setSearchByIc] = useState("")
     const [searchByMobileNumber, setsearchByMobileNumber] = useState("")
     const [patientsList, setPatientsList] = useState([])
     const [patientId, setPatientId] = useState("")
@@ -33,16 +33,16 @@ export const MedicalCertificate = () => {
     const [loading, setLoading] = useState(false)
 
     useEffect(() => {
-        search(searchByName, searchByIC, searchByMobileNumber).then((result) => {
+        search(searchByName, searchByIc, searchByMobileNumber).then((result) => {
             setPatientsList(result)
         })
-    }, [searchByName, searchByIC, searchByMobileNumber, search])
-
+    }, [searchByName, searchByIc, searchByMobileNumber, search])
+    
     const toggleModal = () => {
         if (isOpen) {
             setPatientsList([])
             setSearchByName("")
-            setSearchByIC("")
+            setSearchByIc("")
             setsearchByMobileNumber("")
         }
         setIsOpen(!isOpen)
@@ -77,7 +77,7 @@ export const MedicalCertificate = () => {
     }
 
     const handleSearchByIC = (event) => {
-        setSearchByIC(event.target.value)
+        setSearchByIc(event.target.value)
     }
 
     const handlesearchByMobileNumber = (event) => {
@@ -280,7 +280,7 @@ export const MedicalCertificate = () => {
                                 onChange={handleRemark}
                                 required
                             />
-                            <p>Doctor:</p>
+                            <label>Doctor:</label>
                             <select
                                 className="select-dropdown"
                                 onChange={(e) => {

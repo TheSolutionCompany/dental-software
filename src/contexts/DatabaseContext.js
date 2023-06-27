@@ -41,7 +41,14 @@ export function DatabaseProvider({ children }) {
 
     useEffect(() => {
         const timer = setInterval(() => {
-            setDate(new Date())
+            const newDate = new Date()
+            if (
+                date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() !==
+                newDate.getFullYear() + "-" + (newDate.getMonth() + 1) + "-" + newDate.getDate()
+            ) {
+                setDate(new Date())
+                console.log("date changed")
+            }
         }, 1000)
         return () => clearInterval(timer)
     }, [])

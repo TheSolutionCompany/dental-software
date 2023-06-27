@@ -36,7 +36,7 @@ export default function InventoryForm(props) {
 
     const [isValidInput, setIsValidInput] = useState(false)
 
-    const title = editMode ? "Edit Item" : "Add Item"
+    const title = editMode ? "Edit Item" : "Add New Item"
 
     const handleSubmit = async (event) => {
         event.preventDefault()
