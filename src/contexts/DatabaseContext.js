@@ -1,7 +1,18 @@
 import React, { useContext, useEffect, useState } from "react"
 import { db } from "../firebase"
 import { useAuth } from "./AuthContext"
-import { collection, query, where, getDocs, addDoc, updateDoc, getCountFromServer, onSnapshot, doc, deleteDoc } from "firebase/firestore"
+import {
+    collection,
+    query,
+    where,
+    getDocs,
+    addDoc,
+    updateDoc,
+    getCountFromServer,
+    onSnapshot,
+    doc,
+    deleteDoc,
+} from "firebase/firestore"
 
 const DatabaseContext = React.createContext()
 

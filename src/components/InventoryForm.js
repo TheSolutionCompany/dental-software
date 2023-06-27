@@ -8,23 +8,24 @@ import "react-toastify/dist/ReactToastify.css"
 Modal.setAppElement("#root")
 
 export default function InventoryForm(props) {
-
     const [isOpen, setIsOpen] = useState(false)
     const { inventory, addInventoryItem, editInventoryItem } = useDatabase()
 
-    const toggleModal = () => { setIsOpen(!isOpen) }
+    const toggleModal = () => {
+        setIsOpen(!isOpen)
+    }
 
     const editMode = props.data.editMode
     const activeItem = props.data.activeItem
 
-    const [name, setName] = useState(editMode ? activeItem.name : '')
+    const [name, setName] = useState(editMode ? activeItem.name : "")
     const [isNameValid, setIsNameValid] = useState(editMode)
     const [hasDuplicate, setHasDuplicate] = useState(false)
 
-    const [type, setType] = useState(editMode ? activeItem.type : 'Medicine')
-    const [isTreatmentSelected, setIsTreatmentSelected] = useState(type === 'treatment')
+    const [type, setType] = useState(editMode ? activeItem.type : "Medicine")
+    const [isTreatmentSelected, setIsTreatmentSelected] = useState(type === "treatment")
 
-    const [unitPrice, setUnitPrice] = useState(editMode ? activeItem.unitPrice : 1.00)
+    const [unitPrice, setUnitPrice] = useState(editMode ? activeItem.unitPrice : 1.0)
     const [isUnitPriceValid, setIsUnitPriceValid] = useState(editMode)
 
     const [stock, setStock] = useState(editMode ? activeItem.stock : 1)
@@ -35,7 +36,7 @@ export default function InventoryForm(props) {
 
     const [isValidInput, setIsValidInput] = useState(false)
 
-    const title = editMode ? 'Edit Item' : 'Add Item'
+    const title = editMode ? "Edit Item" : "Add Item"
 
     const handleSubmit = async (event) => {
         event.preventDefault()
@@ -125,15 +126,15 @@ export default function InventoryForm(props) {
     }
 
     const resetForm = () => {
-        setName('')
-        setType('Medicine')
+        setName("")
+        setType("Medicine")
         setUnitPrice(1.0)
         setStock(1)
         setThreshold(0)
     }
 
     useEffect(() => {
-        let isNameNonEmpty = (name !== '' && name !== null && name !== undefined)
+        let isNameNonEmpty = name !== "" && name !== null && name !== undefined
         setIsNameValid(isNameNonEmpty)
 
         let isUnitPriceValid = Number.isInteger(unitPrice * 100) && unitPrice >= 0
@@ -149,7 +150,7 @@ export default function InventoryForm(props) {
     }, [name, type, unitPrice, stock, threshold])
 
     useEffect(() => {
-        let isTreatmentSelected = type === 'Treatment'
+        let isTreatmentSelected = type === "Treatment"
         setIsTreatmentSelected(isTreatmentSelected)
         if (isTreatmentSelected) {
             setStock(1)
@@ -159,20 +160,18 @@ export default function InventoryForm(props) {
 
     const smallModal = {
         content: {
-            left: '35%',
-            right: 'auto',
-            bottom: 'auto',
-            width: '30%',
-            padding: '40px'
+            left: "35%",
+            right: "auto",
+            bottom: "auto",
+            width: "30%",
+            padding: "40px",
         },
-    };
+    }
 
     return (
         <div className="">
             <div>
-                <button style={{ float: 'right' }}
-                    onClick={toggleModal}
-                >
+                <button style={{ float: "right" }} onClick={toggleModal}>
                     {title}
                 </button>
             </div>
@@ -188,26 +187,30 @@ export default function InventoryForm(props) {
                     <div className="grid grid-cols-1 gap-1">
                         <div className="flex flex-col">
                             <label>Name</label>
-                            <input id="name" value={name}
-                                onChange={(e) => { setName(e.target.value); }}
+                            <input
+                                id="name"
+                                value={name}
+                                onChange={(e) => {
+                                    setName(e.target.value)
+                                }}
                                 required
                             />
-                            <p hidden={isNameValid}
-                                style={{ fontSize: '12px' }}
-                            >
+                            <p hidden={isNameValid} style={{ fontSize: "12px" }}>
                                 Please fill in this field.
                             </p>
 
-                            <p hidden={!hasDuplicate}
-                                style={{ fontSize: '12px' }}
-                            >
+                            <p hidden={!hasDuplicate} style={{ fontSize: "12px" }}>
                                 This item already exists.
                             </p>
 
-                            <label style={{ marginTop: '20px' }}>Type</label>
-                            <select id="type" value={type}
+                            <label style={{ marginTop: "20px" }}>Type</label>
+                            <select
+                                id="type"
+                                value={type}
                                 className="select-dropdown"
-                                onChange={(e) => { setType(e.target.value); }}
+                                onChange={(e) => {
+                                    setType(e.target.value)
+                                }}
                                 required
                                 disabled={editMode}
                             >
@@ -216,54 +219,57 @@ export default function InventoryForm(props) {
                                 <option value="Other Product">Other Product</option>
                             </select>
 
-                            <label style={{ marginTop: '20px' }}>Unit Price (RM)</label>
-                            <input id="unitPrice" value={unitPrice}
-                                onChange={(e) => { setUnitPrice(Number(e.target.value)); }}
+                            <label style={{ marginTop: "20px" }}>Unit Price (RM)</label>
+                            <input
+                                id="unitPrice"
+                                value={unitPrice}
+                                onChange={(e) => {
+                                    setUnitPrice(Number(e.target.value))
+                                }}
                                 required
                                 type="number"
                                 step="0.01"
                             />
-                            <p hidden={isUnitPriceValid}
-                                style={{ fontSize: '12px' }}
-                            >
+                            <p hidden={isUnitPriceValid} style={{ fontSize: "12px" }}>
                                 This field must be a non-negative number with at most two decimal points.
                             </p>
 
-                            <label style={{ marginTop: '20px' }}
-                                hidden={isTreatmentSelected}
-                            >
+                            <label style={{ marginTop: "20px" }} hidden={isTreatmentSelected}>
                                 Stock Left
                             </label>
-                            <input id="stock" value={stock}
-                                onChange={(e) => { setStock(Number(e.target.value)); }}
+                            <input
+                                id="stock"
+                                value={stock}
+                                onChange={(e) => {
+                                    setStock(Number(e.target.value))
+                                }}
                                 required
                                 type="number"
                                 hidden={isTreatmentSelected}
                             />
-                            <p hidden={isStockValid}
-                                style={{ fontSize: '12px' }}
-                            >
+                            <p hidden={isStockValid} style={{ fontSize: "12px" }}>
                                 This field must be a non-negative integer.
                             </p>
 
-                            <label style={{ marginTop: '20px' }}
-                                hidden={isTreatmentSelected}
-                            >
+                            <label style={{ marginTop: "20px" }} hidden={isTreatmentSelected}>
                                 Restock Threshold
                             </label>
-                            <input id="threshold" value={threshold}
-                                onChange={(e) => { setThreshold(Number(e.target.value)); }}
+                            <input
+                                id="threshold"
+                                value={threshold}
+                                onChange={(e) => {
+                                    setThreshold(Number(e.target.value))
+                                }}
                                 required
                                 type="number"
                                 hidden={isTreatmentSelected}
                             />
-                            <p hidden={isThresholdValid}
-                                style={{ fontSize: '12px' }}
-                            >
+                            <p hidden={isThresholdValid} style={{ fontSize: "12px" }}>
                                 This field must be a non-negative integer.
                             </p>
 
-                            <button style={{ marginTop: '20px' }}
+                            <button
+                                style={{ marginTop: "20px" }}
                                 className="button-green rounded"
                                 type="submit"
                                 id="submitbutton"
