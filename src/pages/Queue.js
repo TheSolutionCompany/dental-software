@@ -90,7 +90,7 @@ export const Queue = () => {
                     </select>
                     <table className="w-full h-10 bg-gray-300 font-bold border border-black">
                         <thead>
-                            <tr className="w-full h-10 bg-gray-300 font-bold border-l border-t border-b border-black">
+                            <tr className="w-full h-10 bg-gray-400 font-bold border-l border-t border-b border-black">
                                 <th className="border-r border-black">Patient Name</th>
                                 <th className="border-r border-black">Gender</th>
                                 <th className="border-r border-black">Age</th>
