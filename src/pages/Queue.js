@@ -42,10 +42,10 @@ export const Queue = () => {
         return queues.map((row, index) => (
             <tr
                 title="Double Click to Show Profile"
-                className={
-                    onFocusIndex === row.id
-                        ? "w-full h-10 bg-gray-400  font-bold border-l border-t border-b border-black"
-                        : "w-full h-10 bg-gray-200 font-bold border-l border-t border-b border-black"
+                className={`w-full h-10 font-bold border-l border-t border-b border-black
+                ${onFocusIndex === row.id
+                        ? "bg-gray-400"
+                        : "bg-gray-200"}`
                 }
                 key={row.id}
                 onClick={() => {
@@ -63,13 +63,13 @@ export const Queue = () => {
                 <td className="border-r border-b border-black">
                     {row.data().gender}
                 </td>
-                <td className="border-r border-b w-[4%] border-black">
+                <td className="border-r border-b border-black">
                     {row.data().age}
                 </td>
-                <td className="border-r border-b w-[20%] border-black">
+                <td className="border-r border-b border-black">
                     {row.data().ic}
                 </td>
-                <td className="border-r border-b w-[30%] border-black">
+                <td className="border-r border-b border-black">
                     {row.data().complains}
                 </td>
                 <td className="border-r border-b border-black">
@@ -162,11 +162,11 @@ export const Queue = () => {
                                 <th className="border-r border-black">
                                     Gender
                                 </th>
-                                <th className="border-r border-black">Age</th>
-                                <th className="border-r border-black">
+                                <th className="border-r border-black w-[4%]">Age</th>
+                                <th className="border-r border-black w-[20%]">
                                     IC/Passport number
                                 </th>
-                                <th className="border-r border-black">
+                                <th className="border-r border-black w-[30%]">
                                     Complains
                                 </th>
                                 <th className="border-r border-black">
