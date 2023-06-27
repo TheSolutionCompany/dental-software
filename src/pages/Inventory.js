@@ -14,7 +14,6 @@ const Inventory = () => {
 
     const { medicineInventory, treatmentInventory, otherInventory } = useDatabase()
 
-
     async function handleLogout() {
         try {
             await logout()
@@ -27,29 +26,50 @@ const Inventory = () => {
     // From jq: since we will explicitly tell users to restock stuff in the dashboard, i dont think i will display
     // the restock threshold here. instead, once the threshold is reached we can display the row in red.
     function generateProductRows(inventoryTable) {
-        return inventoryTable.map((inventoryRow) =>
-        (<tr key={inventoryRow.id}>
-            <td>{inventoryRow.data().name}</td>
-            <td>{Number(inventoryRow.data().unitPrice).toFixed(2)}</td>
-            <td>{inventoryRow.data().stock}</td>
-            <td><InventoryForm data={{ editMode: true, activeItem: { id: inventoryRow.id, ...inventoryRow.data() } }} /></td>
-            <td><DeleteConfirmation docName={"inventory"}
-                activeItem={{ id: inventoryRow.id, ...inventoryRow.data() }}
-            /></td>
-            <td><AddStockForm activeItem={{ id: inventoryRow.id, ...inventoryRow.data() }}/></td>
-        </tr>))
+        return inventoryTable.map((inventoryRow) => (
+            <tr
+                key={inventoryRow.id}
+                className={`${inventoryRow.data().stock <= inventoryRow.data().threshold ? "text-red-600" : ""}`}
+            >
+                <td>{inventoryRow.data().name}</td>
+                <td>{Number(inventoryRow.data().unitPrice).toFixed(2)}</td>
+                <td>{inventoryRow.data().stock}</td>
+                <td>
+                    <InventoryForm
+                        data={{ editMode: true, activeItem: { id: inventoryRow.id, ...inventoryRow.data() } }}
+                    />
+                </td>
+                <td>
+                    <DeleteConfirmation
+                        docName={"inventory"}
+                        activeItem={{ id: inventoryRow.id, ...inventoryRow.data() }}
+                    />
+                </td>
+                <td>
+                    <AddStockForm activeItem={{ id: inventoryRow.id, ...inventoryRow.data() }} />
+                </td>
+            </tr>
+        ))
     }
 
     function generateTreatmentRows(inventoryTable) {
-        return inventoryTable.map((inventoryRow) => 
-        (<tr key={inventoryRow.id}>
-            <td>{inventoryRow.data().name}</td>
-            <td>{Number(inventoryRow.data().unitPrice).toFixed(2)}</td>
-            <td><InventoryForm data={{ editMode: true, activeItem: { id: inventoryRow.id, ...inventoryRow.data() } }} /></td>
-            <td><DeleteConfirmation docName={"inventory"}
-                activeItem={{ id: inventoryRow.id, ...inventoryRow.data() }}
-            /></td>
-        </tr>))
+        return inventoryTable.map((inventoryRow) => (
+            <tr key={inventoryRow.id}>
+                <td>{inventoryRow.data().name}</td>
+                <td>{Number(inventoryRow.data().unitPrice).toFixed(2)}</td>
+                <td>
+                    <InventoryForm
+                        data={{ editMode: true, activeItem: { id: inventoryRow.id, ...inventoryRow.data() } }}
+                    />
+                </td>
+                <td>
+                    <DeleteConfirmation
+                        docName={"inventory"}
+                        activeItem={{ id: inventoryRow.id, ...inventoryRow.data() }}
+                    />
+                </td>
+            </tr>
+        ))
     }
 
     // From jq: i will leave it as three tables in one page for now. general styling wise: i think putting three tables next to each other
@@ -60,7 +80,6 @@ const Inventory = () => {
             <div className="flex h-full">
                 <SideBar />
                 <div className="w-full bg-gray-200">
-                    <p className="text-gray-500 text-lg">Inventory</p>
                     <span>
                         <InventoryForm data={{ editMode: false, activeItem: null }} />
                     </span>
@@ -74,9 +93,7 @@ const Inventory = () => {
                                 <th>Stock</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            {generateProductRows(medicineInventory)}
-                        </tbody>
+                        <tbody>{generateProductRows(medicineInventory)}</tbody>
                     </table>
 
                     <h1>Non-medicine Product Inventory</h1>
@@ -88,9 +105,7 @@ const Inventory = () => {
                                 <th>Stock</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            {generateProductRows(otherInventory)}
-                        </tbody>
+                        <tbody>{generateProductRows(otherInventory)}</tbody>
                     </table>
 
                     <h1>Treatment Inventory</h1>
@@ -101,9 +116,7 @@ const Inventory = () => {
                                 <th>Unit Price(RM)</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            {generateTreatmentRows(treatmentInventory)}
-                        </tbody>
+                        <tbody>{generateTreatmentRows(treatmentInventory)}</tbody>
                     </table>
                 </div>
             </div>

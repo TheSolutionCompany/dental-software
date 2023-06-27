@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import { useDatabase } from "../contexts/DatabaseContext"
 import Modal from "react-modal"
 import CloseButton from "./CloseButton"
@@ -8,14 +8,15 @@ import "react-toastify/dist/ReactToastify.css"
 Modal.setAppElement("#root")
 
 export default function DeleteConfirmation(props) {
-
     const [isOpen, setIsOpen] = useState(false)
     const { deleteObject } = useDatabase()
 
     const activeItem = props.activeItem
     const docName = props.docName
 
-    const toggleModal = () => { setIsOpen(!isOpen) }
+    const toggleModal = () => {
+        setIsOpen(!isOpen)
+    }
 
     const handleOk = async (event) => {
         event.preventDefault()
@@ -49,20 +50,20 @@ export default function DeleteConfirmation(props) {
 
     const smallModal = {
         content: {
-            left: '35%',
-            right: 'auto',
-            bottom: 'auto',
-            width: '30%',
-            padding: '40px'
+            left: "35%",
+            right: "auto",
+            bottom: "auto",
+            width: "30%",
+            padding: "40px",
         },
-    };
+    }
 
-    const title = `Delete ${activeItem.name}`
+    const title = `Delete Item`
 
     return (
         <div className="">
             <div>
-                <button style={{ float: 'right' }} onClick={toggleModal}>
+                <button style={{ float: "right" }} onClick={toggleModal}>
                     Delete
                 </button>
             </div>
@@ -75,15 +76,17 @@ export default function DeleteConfirmation(props) {
             >
                 <CloseButton name={title} func={toggleModal} />
 
-                <div style={{ marginTop: '20px' }}>
-                    Are you sure you want to delete {activeItem.name}?
-                </div>
+                <div style={{ marginTop: "20px" }}>Are you sure you want to delete {activeItem.name}?</div>
 
-                <button style={{ marginTop: '20px' }} className="button-green rounded" onClick={handleOk}>
+                <button style={{ marginTop: "20px" }} className="button-green rounded" onClick={handleOk}>
                     OK
                 </button>
 
-                <button style={{ marginTop: '20px', marginLeft: '10px' }} className="button-grey rounded" onClick={toggleModal}>
+                <button
+                    style={{ marginTop: "20px", marginLeft: "10px" }}
+                    className="button-grey rounded"
+                    onClick={toggleModal}
+                >
                     Cancel
                 </button>
             </Modal>
