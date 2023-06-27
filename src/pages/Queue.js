@@ -42,10 +42,10 @@ export const Queue = () => {
         return queues.map((row, index) => (
             <tr
                 title="Double Click to Show Profile"
-                className={
-                    onFocusIndex === row.id
-                        ? "w-full h-10 bg-gray-400  font-bold border-l border-t border-b border-black"
-                        : "w-full h-10 bg-gray-200 font-bold border-l border-t border-b border-black"
+                className={`w-full h-10 font-bold border-l border-t border-b border-black
+                ${onFocusIndex === row.id
+                        ? "bg-gray-400"
+                        : "bg-gray-200"}`
                 }
                 key={row.id}
                 onClick={() => {
