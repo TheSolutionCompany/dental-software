@@ -68,12 +68,15 @@ const Header = ({ currentPage, handleLogout }) => {
                     }`}
                     onClick={handleQueuePage}
                 >
+                    <div className="flex">
+
                     Queue
                     {waitingQueueSize > 0 && (
-                        <span className="inline-flex items-center justify-center w-3 h-3 p-3 ml-2 text-sm font-medium text-red-200 bg-red-600 rounded-full">
+                        <span className="flex items-center justify-center w-3 h-3 p-3 ml-2 text-sm font-medium text-red-200 bg-red-600 rounded-full">
                             {waitingQueueSize}
                         </span>
                     )}
+                    </div>
                 </button>
                 <button
                     className={`p-4 h-full ${
