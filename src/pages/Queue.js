@@ -49,7 +49,7 @@ export const Queue = () => {
                 }
                 key={row.id}
                 onClick={() => {
-                    row.id == onFocusIndex
+                    row.id === onFocusIndex
                         ? setOnFocusIndex(null)
                         : setOnFocusIndex(row.id)
                 }}
