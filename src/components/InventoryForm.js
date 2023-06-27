@@ -41,7 +41,7 @@ export default function InventoryForm(props) {
         event.preventDefault()
 
         for (let item of inventory) {
-            if (item.data().name === name && item.data().type === type) {
+            if (!editMode && item.data().name === name && item.data().type === type) {
                 setHasDuplicate(true)
                 return
             }
@@ -70,6 +70,11 @@ export default function InventoryForm(props) {
                 })
                 toast.clearWaitingQueue()
             } else {
+                document.getElementById("name").disabled = false
+                document.getElementById("unitPrice").disabled = false
+                document.getElementById("stock").disabled = false
+                document.getElementById("threshold").disabled = false
+                document.getElementById("submitbutton").disabled = false
                 toast.error("Failed to edit item. Please try again later.", {
                     position: "top-center",
                     autoClose: 1000,
@@ -98,6 +103,12 @@ export default function InventoryForm(props) {
                 toast.clearWaitingQueue()
                 resetForm()
             } else {
+                document.getElementById("name").disabled = false
+                document.getElementById("type").disabled = false
+                document.getElementById("unitPrice").disabled = false
+                document.getElementById("stock").disabled = false
+                document.getElementById("threshold").disabled = false
+                document.getElementById("submitbutton").disabled = false
                 toast.error("Failed to add item. Please try again later.", {
                     position: "top-center",
                     autoClose: 1000,

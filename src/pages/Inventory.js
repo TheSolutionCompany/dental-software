@@ -6,6 +6,7 @@ import SideBar from "../components/SideBar"
 import { useDatabase } from "../contexts/DatabaseContext"
 import InventoryForm from "../components/InventoryForm"
 import DeleteConfirmation from "../components/DeleteConfirmation"
+import AddStockForm from "../components/AddStockForm"
 
 const Inventory = () => {
     const navigate = useNavigate()
@@ -35,11 +36,13 @@ const Inventory = () => {
             <td><DeleteConfirmation docName={"inventory"}
                 activeItem={{ id: inventoryRow.id, ...inventoryRow.data() }}
             /></td>
+            <td><AddStockForm activeItem={{ id: inventoryRow.id, ...inventoryRow.data() }}/></td>
         </tr>))
     }
 
     function generateTreatmentRows(inventoryTable) {
-        return inventoryTable.map((inventoryRow) => (<tr key={inventoryRow.id}>
+        return inventoryTable.map((inventoryRow) => 
+        (<tr key={inventoryRow.id}>
             <td>{inventoryRow.data().name}</td>
             <td>{Number(inventoryRow.data().unitPrice).toFixed(2)}</td>
             <td><InventoryForm data={{ editMode: true, activeItem: { id: inventoryRow.id, ...inventoryRow.data() } }} /></td>
