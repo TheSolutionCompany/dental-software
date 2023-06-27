@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import SideBar from "../components/SideBar";
 import { updateDoc, doc } from "firebase/firestore";
-import BellIcon from "../assets/icons/bell.svg";
 
 export const Queue = () => {
     const navigate = useNavigate();
@@ -40,50 +39,49 @@ export const Queue = () => {
     }, [filter]);
 
     function generateQueue(queues) {
-        return queues.map((queue, index) => (
+        return queues.map((row, index) => (
             <tr
                 title="Double Click to Show Profile"
                 className={
-                    onFocusIndex === queue.id
+                    onFocusIndex === row.id
                         ? "w-full h-10 bg-gray-400  font-bold border-l border-t border-b border-black"
                         : "w-full h-10 bg-gray-200 font-bold border-l border-t border-b border-black"
                 }
-                key={queue.id}
+                key={row.id}
                 onClick={() => {
-                    queue.id == onFocusIndex
+                    row.id == onFocusIndex
                         ? setOnFocusIndex(null)
-                        : setOnFocusIndex(queue.id);
-                    console.log(queue.id);
+                        : setOnFocusIndex(row.id)
                 }}
                 onDoubleClick={() =>
-                    handlePatientProfile(queue.data().patientId)
+                    handlePatientProfile(row.data().patientId)
                 }
             >
                 <td className="border-r border-b border-black">
-                    {queue.data().patientName}
+                    {row.data().patientName}
                 </td>
                 <td className="border-r border-b border-black">
-                    {queue.data().gender}
+                    {row.data().gender}
                 </td>
                 <td className="border-r border-b w-[4%] border-black">
-                    {queue.data().age}
+                    {row.data().age}
                 </td>
                 <td className="border-r border-b w-[20%] border-black">
-                    {queue.data().ic}
+                    {row.data().ic}
                 </td>
                 <td className="border-r border-b w-[30%] border-black">
-                    {queue.data().complains}
+                    {row.data().complains}
                 </td>
                 <td className="border-r border-b border-black">
-                    {queue.data().status}
+                    {row.data().status}
                 </td>
-                {queue.data().status === "waiting" && (
+                {row.data().status === "waiting" && (
                     <td title="call" className="border-r border-b border-black">
                         <button
                             className="pt-2 hover:text-green-500"
                             onClick={(e) => {
                                 e.stopPropagation();
-                                handlePatientCall(queue.id);
+                                handlePatientCall(row.id);
                             }}
                         >
                             <span class="">
