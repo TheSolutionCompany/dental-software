@@ -1,11 +1,9 @@
-import React, { useState, useEffect } from "react"
-import { db } from "../firebase"
+import React, { useState } from "react"
 import { useAuth } from "../contexts/AuthContext"
 import { useDatabase } from "../contexts/DatabaseContext"
 import { useNavigate } from "react-router-dom"
 import Header from "../components/Header"
 import SideBar from "../components/SideBar"
-import { updateDoc, doc } from "firebase/firestore"
 
 export const Queue = () => {
     const navigate = useNavigate()
@@ -16,6 +14,9 @@ export const Queue = () => {
 
     // Variables in DatabaseContext
     const { allQueue, waitingQueue, inProgressQueue, completedQueue } = useDatabase()
+
+    // Functions in DatabaseContext
+    const { updatePatientStatus } = useDatabase()
 
     const [filter, setFilter] = useState("waiting")
 
@@ -42,8 +43,7 @@ export const Queue = () => {
                         <button
                             className="pt-2 hover:text-green-500"
                             onClick={(e) => {
-                                e.stopPropagation()
-                                handlePatientCall(row.id)
+                                handlePatientCall(row.id, row.data().patientId)
                             }}
                         >
                             <span class="">
@@ -69,10 +69,10 @@ export const Queue = () => {
         ))
     }
 
-    const handlePatientCall = async (queueId) => {
-        await updateDoc(doc(db, "queues", queueId), {
-            status: "in progress",
-        })
+    const handlePatientCall = async (queueId, patientId) => {
+        await updatePatientStatus(queueId, "in progress")
+        alert(queueId + " " + patientId)
+        //navigate("/PatientProfile", { state: { patientId: patientId } })
     }
 
     const handlePatientProfile = (patientId) => {
