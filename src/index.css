@@ -13,3 +13,23 @@ body {
 code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
+
+.table-gray {
+    @apply w-full h-10 bg-gray-300 font-bold border border-black;
+}
+
+.table-tr-thead-gray {
+    @apply w-full h-10 bg-gray-300 font-bold border-l border-t border-b border-black;
+}
+
+.table-tr-tbody-gray{
+    @apply w-full h-10 bg-gray-200 font-bold border-l border-t border-b border-black;
+}
+
+.table-th-gray {
+    @apply border-r border-black;
+}
+
+.table-td-gray {
+    @apply border-r border-b border-black;
+}
