@@ -241,7 +241,8 @@ export function DatabaseProvider({ children }) {
             date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate(),
             "queue"
         )
-        await updateDoc(doc(dayQueueRef, subCollectionRef, queueId), {
+        const docRef = doc(subCollectionRef, queueId);
+        await updateDoc(docRef, {
             status: status,
         })
     }
