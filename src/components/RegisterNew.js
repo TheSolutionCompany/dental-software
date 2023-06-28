@@ -13,6 +13,9 @@ const RegisterNew = () => {
     // Functions from DatabaseContext
     const { checkRepeatedIc, registerNewPatient, addToQueue } = useDatabase()
 
+    const [addtoQueueLoading, setAddToQueueLoading] = useState(false)
+    const [registerLoading, setRegisterLoading] = useState(false)
+
     const [isCreate, setIsCreate] = useState(false)
     const [isOpen, setIsOpen] = useState(false)
     const [isInnerOpen, setIsInnerOpen] = useState(false)
@@ -127,9 +130,10 @@ const RegisterNew = () => {
 
     const handleCreate = async (event) => {
         event.preventDefault()
+        setRegisterLoading(true)
         const repeated = await checkRepeatedIc(ic)
         if (!repeated) {
-            await registerNewPatient(
+            const id = await registerNewPatient(
                 title,
                 name,
                 ic,
@@ -156,7 +160,7 @@ const RegisterNew = () => {
                 allergy,
                 remark
             )
-            setIsCreate(true)
+            setPatientId(id)
             const alertCreateSuccess = () =>
                 toast.success("Patient created successfully", {
                     position: "top-center",
@@ -168,7 +172,6 @@ const RegisterNew = () => {
                     progress: undefined,
                     theme: "colored",
                 })
-            toast.dismiss()
             toast.clearWaitingQueue()
             alertCreateSuccess()
             document.getElementById("title").disabled = true
@@ -196,6 +199,7 @@ const RegisterNew = () => {
             document.getElementById("secondAddress").disabled = true
             document.getElementById("allergy").disabled = true
             document.getElementById("remark").disabled = true
+            setIsCreate(true)
         } else {
             const alertPatientExists = () =>
                 toast.warn("Patient with the same IC/Passport number already exists", {
@@ -212,8 +216,10 @@ const RegisterNew = () => {
             toast.clearWaitingQueue()
             alertPatientExists()
         }
+        setRegisterLoading(false)
     }
 
+    // To toggle inner modal
     const handleSendToQueue = (event) => {
         event.preventDefault()
         toggleInnerModal()
@@ -221,7 +227,10 @@ const RegisterNew = () => {
 
     const handleAddToQueue = async (e) => {
         e.preventDefault()
+        setAddToQueueLoading(true)
+        alert(patientId)
         await addToQueue(patientId, name, age, ic, gender, doctorId, complains, "waiting")
+        setAddToQueueLoading(false)
         const alertAddToQueueSuccess = () =>
             toast.success("Added to queue successfully", {
                 position: "top-center",
@@ -238,6 +247,7 @@ const RegisterNew = () => {
         alertAddToQueueSuccess()
         toggleInnerModal()
         toggleModal()
+        
     }
 
     return (
@@ -480,6 +490,7 @@ const RegisterNew = () => {
                             Create
                         </button>
                         <button
+                            disabled={registerLoading}
                             id="sendToQueueButton"
                             hidden="true"
                             className="button-green rounded m-2"
@@ -533,12 +544,12 @@ const RegisterNew = () => {
                             <select className="select-dropdown" onChange={(e) => setDoctorId(e.target.value)} required>
                                 <option disabled selected></option>
                                 {availableDoctors.map((doctor) => (
-                                    <option value={doctor.id}>{doctor.data().name}</option>
+                                    <option value={doctor.id}>{doctor.data().displayName}</option>
                                 ))}
                             </select>
                         </div>
                         <div className="flex justify-center pt-4">
-                            <button className="button-green rounded" type="submit">
+                            <button disabled={addtoQueueLoading} className="button-green rounded" type="submit">
                                 Add To Queue
                             </button>
                         </div>

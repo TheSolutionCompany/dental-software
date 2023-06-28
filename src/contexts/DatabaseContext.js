@@ -206,7 +206,7 @@ export function DatabaseProvider({ children }) {
         allergy,
         remarks
     ) {
-        await addDoc(collection(db, "patients"), {
+        const docRef = await addDoc(collection(db, "patients"), {
             title,
             name,
             ic,
@@ -233,6 +233,8 @@ export function DatabaseProvider({ children }) {
             allergy,
             remarks,
         })
+        alert(docRef.id)
+        return docRef.id
     }
 
     async function updatePatientStatus(queueId, status) {
