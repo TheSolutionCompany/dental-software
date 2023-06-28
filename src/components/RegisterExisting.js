@@ -120,7 +120,7 @@ export const RegisterExisting = () => {
                 shouldCloseOnOverlayClick={false}
             >
                 <CloseButton name="Register Existing" func={toggleModal} />
-                <div className="relative">
+                <div className="w-full">
                     <div className="w-full grid grid-cols-3 h-full gap-4 pb-6">
                         <div className="">
                             <label>Search By Name:</label>
@@ -146,28 +146,33 @@ export const RegisterExisting = () => {
                             />
                         </div>
                     </div>
-                    <table className="table-gray">
-                        <thead>
+                    <div className="flex flex-col w-full">
+                        <table className="table-gray">
                             <tr className="table-tr-thead-gray border-black">
                                 <th className="table-th-gray w-1/3">Name</th>
                                 <th className="table-th-gray w-1/3">IC</th>
                                 <th className="table-th-gray w-1/3">Mobile Number</th>
                             </tr>
-                        </thead>
-                        <tbody>
+                        </table>
+                    </div>
+                    <div className="flex flex-col w-full h-fit mt-[-1px] overflow-auto">
+                        <table>
                             {patientsList.map((patient) => (
                                 <tr
                                     className="table-tr-tbody-gray hover:bg-green-400 cursor-pointer"
                                     key={patient.id}
                                     onClick={() => handleRegister(patient)}
                                 >
-                                    <td className="border-r border-b border-black">{patient.data().name}</td>
-                                    <td className="border-r border-b border-black">{patient.data().ic}</td>
-                                    <td className="border-r border-b border-black">{patient.data().mobileNumber}</td>
+                                    <td className="border-r border-b border-black w-1/3">{patient.data().name}</td>
+                                    <td className="border-r border-b border-black w-1/3">{patient.data().ic}</td>
+                                    <td className="border-r border-b border-black w-1/3">
+                                        {patient.data().mobileNumber}
+                                    </td>
                                 </tr>
                             ))}
-                        </tbody>
-                    </table>
+                        </table>
+                    </div>
+
                     <Modal
                         isOpen={isInnerOpen}
                         onRequestClose={toggleInnerModal}

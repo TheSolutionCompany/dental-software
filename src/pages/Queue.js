@@ -23,7 +23,6 @@ export const Queue = () => {
     function generateQueue(queues) {
         return queues.map((row) => (
             <tr
-                title="Double Click to Show Profile"
                 className={`w-full h-10 font-bold border-l border-t border-b border-black
                 ${onFocusIndex === row.id ? "bg-gray-400" : "bg-gray-200"}`}
                 key={row.id}
@@ -32,14 +31,14 @@ export const Queue = () => {
                 }}
                 onDoubleClick={() => handlePatientProfile(row.data().patientId)}
             >
-                <td className="border-r border-b border-black">{row.data().patientName}</td>
-                <td className="border-r border-b border-black">{row.data().gender}</td>
-                <td className="border-r border-b border-black">{row.data().age}</td>
-                <td className="border-r border-b border-black">{row.data().ic}</td>
-                <td className="border-r border-b border-black">{row.data().complains}</td>
-                <td className="border-r border-b border-black">{row.data().status}</td>
-                {row.data().status === "waiting" && (
-                    <td title="call" className="border-r border-b border-black">
+                <td className="border-r border-b border-black w-[20%]">{row.data().patientName}</td>
+                <td className="border-r border-b border-black w-[10%]">{row.data().gender}</td>
+                <td className="border-r border-b border-black w-[5%]">{row.data().age}</td>
+                <td className="border-r border-b border-black w-[18%]">{row.data().ic}</td>
+                <td className="border-r border-b border-black w-[30%]">{row.data().complains}</td>
+                <td className="border-r border-b border-black w-[10%]">{row.data().status}</td>
+                <td className="border-r border-b border-black w-[7%]">
+                    {row.data().status === "waiting" && (
                         <button
                             className="pt-2 hover:text-green-500"
                             onClick={(e) => {
@@ -63,8 +62,8 @@ export const Queue = () => {
                                 </svg>
                             </span>
                         </button>
-                    </td>
-                )}
+                    )}
+                </td>
             </tr>
         ))
     }
@@ -97,8 +96,8 @@ export const Queue = () => {
             <Header className="z-50" currentPage={"Queue"} handleLogout={handleLogout} />
             <div className="flex h-full">
                 <SideBar />
-                <div className="w-full bg-gray-200 px-8">
-                    <div className="p-4 text-left">
+                <div className="w-full bg-gray-200 h-full">
+                    <div className="pt-4 pl-10 text-left">
                         <p className="">Filter by status</p>
                         <select className="rounded border-2 border-black" value={filter} onChange={handleFilter}>
                             <option value="all">All</option>
@@ -107,8 +106,8 @@ export const Queue = () => {
                             <option value="completed">Completed</option>
                         </select>
                     </div>
-                    <table className="table-gray">
-                        <thead>
+                    <div className="flex flex-col pt-10 px-8 w-full">
+                        <table className="table-gray">
                             <tr className="w-full h-10 bg-gray-300 font-bold border-l border-t border-b border-black">
                                 <th className="table-th-gray w-[20%]">Patient Name</th>
                                 <th className="table-th-gray w-[10%]">Gender</th>
@@ -118,14 +117,16 @@ export const Queue = () => {
                                 <th className="table-th-gray w-[10%]">Status</th>
                                 <th className="table-th-gray w-[7%]">Action</th>
                             </tr>
-                        </thead>
-                        <tbody>
+                        </table>
+                    </div>
+                    <div className="flex flex-col w-full mt-[-1px] px-8 h-[82%] overflow-auto">
+                        <table>
                             {filter === "all" && generateQueue(allQueue)}
                             {filter === "waiting" && generateQueue(waitingQueue)}
                             {filter === "inProgress" && generateQueue(inProgressQueue)}
                             {filter === "completed" && generateQueue(completedQueue)}
-                        </tbody>
-                    </table>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
