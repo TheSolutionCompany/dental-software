@@ -19,19 +19,6 @@ export const Queue = () => {
 
     const [filter, setFilter] = useState("waiting")
 
-    useEffect(() => {
-        const queueNames = ["allQueue", "waitingQueue", "inProgressQueue", "completedQueue"]
-        for (let item of queueNames) {
-            let result = item.substring(0, item.length - 5)
-            if (result !== filter) {
-                document.getElementById(item).hidden = true
-            } else {
-                document.getElementById(item).hidden = false
-            }
-        }
-        document.getElementById("tableHeader")
-    }, [filter])
-
     function generateQueue(queues) {
         return queues.map((row) => (
             <tr
@@ -123,19 +110,21 @@ export const Queue = () => {
                     <table className="table-gray">
                         <thead>
                             <tr className="w-full h-10 bg-gray-300 font-bold border-l border-t border-b border-black">
-                                <th className="table-th-gray">Patient Name</th>
-                                <th className="table-th-gray">Gender</th>
-                                <th className="table-th-gray w-[4%]">Age</th>
-                                <th className="table-th-gray w-[20%]">IC/Passport number</th>
+                                <th className="table-th-gray w-[20%]">Patient Name</th>
+                                <th className="table-th-gray w-[10%]">Gender</th>
+                                <th className="table-th-gray w-[5%]">Age</th>
+                                <th className="table-th-gray w-[18%]">IC/Passport number</th>
                                 <th className="table-th-gray w-[30%]">Complains</th>
-                                <th className="table-th-gray">Status</th>
-                                <th className="table-th-gray">Action</th>
+                                <th className="table-th-gray w-[10%]">Status</th>
+                                <th className="table-th-gray w-[7%]">Action</th>
                             </tr>
                         </thead>
-                        <tbody id="allQueue">{generateQueue(allQueue)}</tbody>
-                        <tbody id="waitingQueue">{generateQueue(waitingQueue)}</tbody>
-                        <tbody id="inProgressQueue">{generateQueue(inProgressQueue)}</tbody>
-                        <tbody id="completedQueue">{generateQueue(completedQueue)}</tbody>
+                        <tbody>
+                            {filter === "all" && generateQueue(allQueue)}
+                            {filter === "waiting" && generateQueue(waitingQueue)}
+                            {filter === "inProgress" && generateQueue(inProgressQueue)}
+                            {filter === "completed" && generateQueue(completedQueue)}
+                        </tbody>
                     </table>
                 </div>
             </div>

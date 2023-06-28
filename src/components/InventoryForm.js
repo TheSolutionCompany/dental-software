@@ -171,7 +171,7 @@ export default function InventoryForm(props) {
     return (
         <div className="">
             <div>
-                <button style={{ float: "right" }} onClick={toggleModal}>
+                <button onClick={toggleModal}>
                     {title}
                 </button>
             </div>
