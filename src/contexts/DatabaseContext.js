@@ -86,6 +86,7 @@ export function DatabaseProvider({ children }) {
                 setInProgressQueue([])
                 setCompletedQueue([])
                 querySnapshot.forEach((doc) => {
+                    setAllQueue((prev) => [...prev, doc])
                     if (doc.data().status === "waiting") {
                         setWaitingQueue((prev) => [...prev, doc])
                     } else if (doc.data().status === "in progress") {

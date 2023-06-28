@@ -21,7 +21,7 @@ export default function DeleteConfirmation(props) {
     const handleOk = async (event) => {
         event.preventDefault()
         if (await deleteObject(docName, activeItem.id)) {
-            toast.success(`${activeItem.name} deleted successfully`, {
+            toast.success(`Item deleted successfully`, {
                 position: "top-center",
                 autoClose: 1000,
                 hideProgressBar: true,
@@ -34,7 +34,7 @@ export default function DeleteConfirmation(props) {
             toast.clearWaitingQueue()
             toggleModal()
         } else {
-            toast.error(`Failed to delete ${activeItem.name}. Please try again later.`, {
+            toast.error(`Failed to delete item. Please try again later.`, {
                 position: "top-center",
                 autoClose: 1000,
                 hideProgressBar: true,
@@ -63,9 +63,7 @@ export default function DeleteConfirmation(props) {
     return (
         <div className="">
             <div>
-                <button style={{ float: "right" }} onClick={toggleModal}>
-                    Delete
-                </button>
+                <button onClick={toggleModal}>Delete</button>
             </div>
             <Modal
                 isOpen={isOpen}
@@ -76,7 +74,9 @@ export default function DeleteConfirmation(props) {
             >
                 <CloseButton name={title} func={toggleModal} />
 
-                <div style={{ marginTop: "20px" }}>Are you sure you want to delete {activeItem.name}?</div>
+                <div style={{ marginTop: "20px" }}>
+                    Are you sure you want to delete <strong>{activeItem.name}</strong>?
+                </div>
 
                 <button style={{ marginTop: "20px" }} className="button-green rounded" onClick={handleOk}>
                     OK

@@ -8,11 +8,12 @@ import "react-toastify/dist/ReactToastify.css"
 Modal.setAppElement("#root")
 
 export default function AddStockForm(props) {
-
     const [isOpen, setIsOpen] = useState(false)
     const { editInventoryItem } = useDatabase()
 
-    const toggleModal = () => { setIsOpen(!isOpen) }
+    const toggleModal = () => {
+        setIsOpen(!isOpen)
+    }
 
     const activeItem = props.activeItem
 
@@ -21,13 +22,13 @@ export default function AddStockForm(props) {
 
     const smallModal = {
         content: {
-            left: '35%',
-            right: 'auto',
-            bottom: 'auto',
-            width: '30%',
-            padding: '40px'
+            left: "35%",
+            right: "auto",
+            bottom: "auto",
+            width: "30%",
+            padding: "40px",
         },
-    };
+    }
 
     const title = `Add Stock`
 
@@ -41,7 +42,16 @@ export default function AddStockForm(props) {
         let newStock = Number(activeItem.stock) + Number(stockToAdd)
         document.getElementById("stockToAdd").disabled = true
         document.getElementById("submitButton").disabled = true
-        if (await editInventoryItem(activeItem.id, activeItem.name, activeItem.type, activeItem.unitPrice, newStock, activeItem.threshold)) {
+        if (
+            await editInventoryItem(
+                activeItem.id,
+                activeItem.name,
+                activeItem.type,
+                activeItem.unitPrice,
+                newStock,
+                activeItem.threshold
+            )
+        ) {
             toggleModal()
             toast.success("Stock updated successfully", {
                 position: "top-center",
@@ -74,11 +84,7 @@ export default function AddStockForm(props) {
     return (
         <div className="">
             <div>
-                <button style={{ float: 'right' }}
-                    onClick={toggleModal}
-                >
-                    Add Stock
-                </button>
+                <button onClick={toggleModal}>Add Stock</button>
             </div>
 
             <Modal
@@ -92,23 +98,33 @@ export default function AddStockForm(props) {
                 <form onSubmit={handleSubmit}>
                     <div className="grid grid-cols-1 gap-1">
                         <div className="flex flex-col">
-                            <p>Item name: <b>{activeItem.name}</b></p>
+                            <p>
+                                Item name: <b>{activeItem.name}</b>
+                            </p>
+                            <br />
                             <label>Quantity</label>
-                            <input id="stockToAdd" value={stockToAdd}
-                                onChange={(e) => { setStockToAdd(Number(e.target.value)); }}
+                            <input
+                                id="stockToAdd"
+                                value={stockToAdd}
+                                onChange={(e) => {
+                                    setStockToAdd(Number(e.target.value))
+                                }}
                                 required
                                 type="number"
                             />
-                            <p hidden={isStockToAddValid}
-                                style={{ fontSize: '12px' }}
-                            >
+                            <p hidden={isStockToAddValid} style={{ fontSize: "12px" }}>
                                 This field must be a non-negative integer.
                             </p>
 
-                            <p style={{ fontSize: '12px' }}>Current stock: {activeItem.stock}</p>
-                            <p style={{ fontSize: '12px' }}> Updated stock: {isStockToAddValid ? Number(activeItem.stock) + Number(stockToAdd) : "---"}</p>
+                            <p style={{ fontSize: "12px" }}>Current stock: {activeItem.stock}</p>
+                            <p style={{ fontSize: "12px" }}>
+                                {" "}
+                                Updated stock:{" "}
+                                {isStockToAddValid ? Number(activeItem.stock) + Number(stockToAdd) : "---"}
+                            </p>
 
-                            <button style={{ marginTop: '20px' }}
+                            <button
+                                style={{ marginTop: "20px" }}
                                 className="button-green rounded"
                                 type="submit"
                                 id="submitButton"
