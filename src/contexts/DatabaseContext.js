@@ -35,6 +35,7 @@ export function DatabaseProvider({ children }) {
     const [treatmentInventory, setTreatmentInventory] = useState([])
     const [otherInventory, setOtherInventory] = useState([])
     const [waitingQueueSize, setWaitingQueueSize] = useState(0)
+    const [employees, setEmployees] = useState([])
     const [date, setDate] = useState(new Date())
     const dayQueueRef = collection(db, "queues")
     const inventoryRef = collection(db, "inventory")
@@ -54,14 +55,19 @@ export function DatabaseProvider({ children }) {
     }, [date])
 
     useEffect(() => {
-        // AvailableDoctors Listener
-        const q = query(collection(db, "users"), where("position", "in", ["Doctor", "Locum Doctor"]))
-        onSnapshot(q, (querySnapshot) => {
+        // Employees Listener
+        const employeesQ = query(collection(db, "users"))
+        onSnapshot(employeesQ, (querySnapshot) => {
+            setEmployees([])
             setAvailableDoctors([])
             querySnapshot.forEach((doc) => {
-                setAvailableDoctors((prev) => [...prev, doc])
+                setEmployees((prev) => [...prev, doc])
+                if(doc.data().position === "Doctor" || doc.data().position === "Locum Doctor"){
+                    setAvailableDoctors((prev) => [...prev, doc])
+                }
             })
         })
+
         // Waiting Queue Size Listener
         const q1 = query(
             collection(dayQueueRef, date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate(), "queue"),
@@ -290,6 +296,7 @@ export function DatabaseProvider({ children }) {
         treatmentInventory: treatmentInventory,
         otherInventory: otherInventory,
         waitingQueueSize: waitingQueueSize,
+        employees: employees,
         search,
         addToQueue,
         checkRepeatedIc,

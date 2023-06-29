@@ -60,10 +60,8 @@ const Inventory = () => {
                 <td className="table-td-gray w-[10%]">
                     <DeleteConfirmation
                         docName={"inventory"}
-                        activeItem={{
-                            id: inventoryRow.id,
-                            ...inventoryRow.data(),
-                        }}
+                        activeItemId={inventoryRow.id}
+                        activeItemName={inventoryRow.data().name}
                     />
                 </td>
             </tr>

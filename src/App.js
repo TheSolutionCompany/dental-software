@@ -12,6 +12,7 @@ import Inventory from "./pages/Inventory"
 import { AuthProvider } from "./contexts/AuthContext"
 import { DatabaseProvider } from "./contexts/DatabaseContext"
 import Setting from "./pages/Setting"
+import Employee from "./pages/Employee"
 
 function App() {
     return (
@@ -82,6 +83,14 @@ function App() {
                                 element={
                                     <ProtectedRoute>
                                         <Setting />
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route
+                                path="/Employee"
+                                element={
+                                    <ProtectedRoute>
+                                        <Employee />
                                     </ProtectedRoute>
                                 }
                             />
