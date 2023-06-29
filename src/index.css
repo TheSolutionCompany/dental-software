@@ -14,22 +14,30 @@ code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
 
+tr:nth-child(even) {
+    @apply bg-gray-300;
+}
+
+thead tr {
+    @apply bg-gray-600;
+}
+
 .table-gray {
-    @apply w-full h-10 bg-gray-300 font-bold border border-black;
+    @apply w-full h-10 font-bold border-collapse;
 }
 
 .table-tr-thead-gray {
-    @apply w-full h-10 bg-gray-300 font-bold border-l border-t border-b border-black;
+    @apply w-full h-10 bg-gray-400 font-bold;
 }
 
 .table-tr-tbody-gray{
-    @apply w-full h-10 bg-gray-200 font-bold border-l border-t border-b border-black;
+    @apply w-full h-10 bg-gray-200 font-bold;
 }
 
 .table-th-gray {
-    @apply border-r border-black;
-}
+    @apply border-black border-x;
+} 
 
 .table-td-gray {
-    @apply border-r border-b border-black;
+    @apply border-black border-x;
 }

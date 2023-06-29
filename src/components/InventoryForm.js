@@ -169,9 +169,9 @@ export default function InventoryForm(props) {
     }
 
     return (
-        <div className="">
-            <div>
-                <button onClick={toggleModal}>
+        <div className="ml-auto">
+            <div className=" ">
+                <button className={` ${editMode ? "": "p-4 border-black border hover:bg-gray-300" }`} onClick={toggleModal}>
                     {title}
                 </button>
             </div>

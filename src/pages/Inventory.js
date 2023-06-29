@@ -31,9 +31,8 @@ const Inventory = () => {
         return inventoryTable.map((inventoryRow) => (
             <tr
                 key={inventoryRow.id}
-                className={`table-tr-tbody-gray ${
-                    inventoryRow.data().stock <= inventoryRow.data().threshold ? "text-red-600" : ""
-                }`}
+                className={`table-tr-tbody-gray ${inventoryRow.data().stock <= inventoryRow.data().threshold ? "text-red-600" : ""
+                    }`}
             >
                 <td className="table-td-gray w-[35%]">{inventoryRow.data().name}</td>
                 <td className="table-td-gray w-[20%]">{Number(inventoryRow.data().unitPrice).toFixed(2)}</td>
@@ -109,28 +108,34 @@ const Inventory = () => {
             <div className="flex h-full">
                 <SideBar />
                 <div className="w-full h-full bg-gray-200">
-                    <button onClick={(e) => setFilter("medicine")}>Medicine</button>
-                    <button onClick={(e) => setFilter("product")}>Non-medicine Product</button>
-                    <button onClick={(e) => setFilter("treatment")}>Treatment</button>
-                    <InventoryForm data={{ editMode: false, activeItem: null }} />
-                    <div className="flex flex-col pt-10 px-8 w-full">
-                        <table className="table-gray">
-                            <tr className="table-tr-thead-gray">
-                                <th className="table-th-gray w-[35%]">Name</th>
-                                <th className="table-th-gray w-[20%]">Unit Price(RM)</th>
-                                <th className="table-th-gray w-[15%]">Stock</th>
-                                <th className="table-th-gray w-[10%]">Add Stock</th>
-                                <th className="table-th-gray w-[10%]">Edit Item</th>
-                                <th className="table-th-gray w-[10%]">Delete Item</th>
-                            </tr>
-                        </table>
-                    </div>
-                    <div className="flex flex-col w-full mt-[-1px] px-8 h-[82%] overflow-auto">
-                        <table>
-                            {filter === "medicine" && generateProductRows(medicineInventory)}
-                            {filter === "product" && generateProductRows(otherInventory)}
-                            {filter === "treatment" && generateTreatmentRows(treatmentInventory)}
-                        </table>
+                    <div className="p-8">
+                        <div className="flex justify-start py-4">
+
+                            <button className="border-black p-2 hover:bg-gray-300 border-2" onClick={(e) => setFilter("medicine")}>Medicine</button>
+                            <button className="border-black p-2 hover:bg-gray-300 border-y-2" onClick={(e) => setFilter("product")}>Non-medicine Product</button>
+                            <button className="border-black p-2 hover:bg-gray-300 border-2" onClick={(e) => setFilter("treatment")}>Treatment</button>
+                            <InventoryForm data={{ editMode: false, activeItem: null }} />
+                        </div>
+                        <div className="flex flex-col w-full h-[242px] border-black overflow-auto">
+                            <table className="table-gray">
+                                <thead className="">
+                                    <tr className="table-tr-thead-gray sticky top-0">
+                                        <th className="table-th-gray w-[35%]">Name</th>
+                                        <th className="table-th-gray w-[20%]">Unit Price(RM)</th>
+                                        <th className="table-th-gray w-[15%]">Stock</th>
+                                        <th className="table-th-gray w-[10%]">Add Stock</th>
+                                        <th className="table-th-gray w-[10%]">Edit Item</th>
+                                        <th className="table-th-gray w-[10%]">Delete Item</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    {filter === "medicine" && generateProductRows(medicineInventory)}
+                                    {filter === "product" && generateProductRows(otherInventory)}
+                                    {filter === "treatment" && generateTreatmentRows(treatmentInventory)}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
