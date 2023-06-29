@@ -5,6 +5,7 @@ import Header from "../components/Header";
 import SideBar from "../components/SideBar";
 import { useDatabase } from "../contexts/DatabaseContext";
 import DeleteConfirmation from "../components/DeleteConfirmation"
+import EmployeeDetailForm from "../components/EmployeeDetailForm";
 
 export default function Employee() {
     const navigate = useNavigate();
@@ -27,7 +28,17 @@ export default function Employee() {
                 <td className="table-td-gray w-[30%]">{employeeRow.data().displayName}</td>
                 <td className="table-td-gray w-[25%]">{employeeRow.data().email}</td>
                 <td className="table-td-gray w-[10%]">{employeeRow.data().position}</td>
-                <td className="table-td-gray w-[10%]">Edit Details</td>
+                <td className="table-td-gray w-[10%]">
+                    <EmployeeDetailForm
+                        data={{
+                            editMode: true,
+                            activeEmployee: {
+                                id: employeeRow.id,
+                                ...employeeRow.data()
+                            }
+                        }}
+                    />
+                </td>
                 <td className="table-td-gray w-[10%]">Edit Working Hours</td>
                 <td className="table-td-gray w-[10%]">
                     <DeleteConfirmation
@@ -46,6 +57,7 @@ export default function Employee() {
                 <SideBar />
                 <div className="w-full h-full bg-gray-200">
                     <h1>Employee List</h1>
+                    <EmployeeDetailForm data={{editMode: false, activeEmployee: null}}/>
                     <div className="flex flex-col pt-10 px-8 w-full">
                         <table className="table-gray">
                             <tr className="table-tr-thead-gray">

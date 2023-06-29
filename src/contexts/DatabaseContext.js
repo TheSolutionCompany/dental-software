@@ -22,7 +22,7 @@ export function useDatabase() {
 
 export function DatabaseProvider({ children }) {
     // Variables in AuthContext
-    const { user } = useAuth()
+    const { user, signup, updateEmail } = useAuth()
 
     const [loading, setLoading] = useState(true)
     const [availableDoctors, setAvailableDoctors] = useState([])
@@ -39,6 +39,7 @@ export function DatabaseProvider({ children }) {
     const [date, setDate] = useState(new Date())
     const dayQueueRef = collection(db, "queues")
     const inventoryRef = collection(db, "inventory")
+    const employeeRef = collection(db, "users")
 
     useEffect(() => {
         const timer = setInterval(() => {
@@ -56,7 +57,7 @@ export function DatabaseProvider({ children }) {
 
     useEffect(() => {
         // Employees Listener
-        const employeesQ = query(collection(db, "users"))
+        const employeesQ = query(employeeRef)
         onSnapshot(employeesQ, (querySnapshot) => {
             setEmployees([])
             setAvailableDoctors([])
@@ -124,7 +125,7 @@ export function DatabaseProvider({ children }) {
         })
 
         setLoading(false)
-    }, [user, date, dayQueueRef, inventoryRef])
+    }, [user, date, dayQueueRef, inventoryRef, employeeRef])
 
     async function search(name, ic, mobileNumber) {
         if (name) {
@@ -275,6 +276,32 @@ export function DatabaseProvider({ children }) {
         }
     }
 
+    async function addEmployee(displayName, email, position, password) {
+        try {
+            let workingHours = ['-','-','-','-','-','-','-']
+            await signup(email, password)
+            await addDoc(employeeRef, {displayName, email, position, workingHours})
+            return true
+        } catch (e) {
+            console.log(e)
+            return false
+        }
+    }
+
+    // For admin usage only. Should be the logged in user that changes the email not the admin
+    // totally not because i realize i cannot change the email that is stored in the authentication
+    // tab in firebase thru auth context lol
+    async function editEmployee(id, displayName, position) {
+        try {
+            await updateDoc(doc(db, "users", id), {displayName: displayName, position: position})
+            return true
+        } catch (e) {
+            console.log(e)
+            return false
+        }
+    }
+    // write another function that allows users to edit their own email under profile page
+
     async function deleteObject(docName, id) {
         try {
             await deleteDoc(doc(db, docName, id))
@@ -306,6 +333,8 @@ export function DatabaseProvider({ children }) {
         deleteObject,
         issueMc,
         updatePatientStatus,
+        addEmployee,
+        editEmployee
     }
 
     return <DatabaseContext.Provider value={value}>{!loading && children}</DatabaseContext.Provider>
