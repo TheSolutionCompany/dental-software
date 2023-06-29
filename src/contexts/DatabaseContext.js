@@ -51,7 +51,7 @@ export function DatabaseProvider({ children }) {
             }
         }, 1000)
         return () => clearInterval(timer)
-    }, [])
+    }, [date])
 
     useEffect(() => {
         // AvailableDoctors Listener
@@ -206,7 +206,7 @@ export function DatabaseProvider({ children }) {
         allergy,
         remarks
     ) {
-        await addDoc(collection(db, "patients"), {
+        const docRef = await addDoc(collection(db, "patients"), {
             title,
             name,
             ic,
@@ -232,6 +232,20 @@ export function DatabaseProvider({ children }) {
             secondAddress,
             allergy,
             remarks,
+        })
+        alert(docRef.id)
+        return docRef.id
+    }
+
+    async function updatePatientStatus(queueId, status) {
+        const subCollectionRef = collection(
+            dayQueueRef,
+            date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate(),
+            "queue"
+        )
+        const docRef = doc(subCollectionRef, queueId);
+        await updateDoc(docRef, {
+            status: status,
         })
     }
 
@@ -284,6 +298,7 @@ export function DatabaseProvider({ children }) {
         editInventoryItem,
         deleteObject,
         issueMc,
+        updatePatientStatus,
     }
 
     return <DatabaseContext.Provider value={value}>{!loading && children}</DatabaseContext.Provider>

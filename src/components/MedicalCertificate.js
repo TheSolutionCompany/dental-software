@@ -37,7 +37,7 @@ export const MedicalCertificate = () => {
             setPatientsList(result)
         })
     }, [searchByName, searchByIc, searchByMobileNumber, search])
-    
+
     const toggleModal = () => {
         if (isOpen) {
             setPatientsList([])
@@ -170,7 +170,7 @@ export const MedicalCertificate = () => {
                 shouldCloseOnOverlayClick={false}
             >
                 <CloseButton name="Medical Certificate" func={toggleModal} />
-                <div className="relative">
+                <div className="w-full">
                     <div className="w-full grid grid-cols-3 h-full gap-4 pb-6">
                         <div className="">
                             <label>Search By Name:</label>
@@ -196,34 +196,39 @@ export const MedicalCertificate = () => {
                             />
                         </div>
                     </div>
-                    <table className="w-full h-10 bg-gray-300 font-bold border border-black">
-                        <thead>
+                    <div className="flex flex-col w-full">
+                        <table className="w-full h-10 bg-gray-300 font-bold border border-black">
                             <tr className="w-full grid grid-cols-3 h-10 bg-gray-300 font-bold border-l border-t border-b border-black">
                                 <th className="border-r border-black">Name</th>
                                 <th className="border-r border-black">IC</th>
                                 <th className="border-r border-black">Mobile Number</th>
                             </tr>
-                        </thead>
-                        <tbody>
+                        </table>
+                    </div>
+                    <div className="flex flex-col w-full h-fit mt-[-1px] overflow-auto">
+                        <table>
                             {patientsList.map((patient) => (
                                 <tr
-                                    className="w-full grid grid-cols-3 h-10 bg-gray-200 font-semibold border-l border-black hover:bg-green-400 cursor-pointer"
+                                    className="table-tr-tbody-gray hover:bg-green-400 cursor-pointer"
                                     key={patient.id}
                                     onClick={() => handleIssue(patient)}
                                 >
-                                    <td key={patient.data().name} className="border-r border-b border-black">
+                                    <td key={patient.data().name} className="border-r border-b border-black w-1/3">
                                         {patient.data().name}
                                     </td>
-                                    <td key={patient.data().ic} className="border-r border-b border-black">
+                                    <td key={patient.data().ic} className="border-r border-b border-black w-1/3">
                                         {patient.data().ic}
                                     </td>
-                                    <td key={patient.data().mobileNumber} className="border-r border-b border-black">
+                                    <td
+                                        key={patient.data().mobileNumber}
+                                        className="border-r border-b border-black w-1/3"
+                                    >
                                         {patient.data().mobileNumber}
                                     </td>
                                 </tr>
                             ))}
-                        </tbody>
-                    </table>
+                        </table>
+                    </div>
 
                     <Modal
                         isOpen={isInnerOpen}
