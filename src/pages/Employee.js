@@ -26,21 +26,10 @@ export default function Employee() {
         return employeeTable.map((employeeRow) => (
             <tr className="table-tr-tbody-gray" key={employeeRow.id}>
                 <td className="table-td-gray w-[30%]">{employeeRow.data().displayName}</td>
-                <td className="table-td-gray w-[25%]">{employeeRow.data().email}</td>
+                <td className="table-td-gray w-[30%]">{employeeRow.data().email}</td>
                 <td className="table-td-gray w-[10%]">{employeeRow.data().position}</td>
-                <td className="table-td-gray w-[10%]">
-                    <EmployeeDetailForm
-                        data={{
-                            editMode: true,
-                            activeEmployee: {
-                                id: employeeRow.id,
-                                ...employeeRow.data()
-                            }
-                        }}
-                    />
-                </td>
-                <td className="table-td-gray w-[10%]">Edit Working Hours</td>
-                <td className="table-td-gray w-[10%]">
+                <td className="table-td-gray w-[15%]">Edit Working Hours</td>
+                <td className="table-td-gray w-[15%]">
                     <DeleteConfirmation
                         docName={"users"}
                         activeItemId={employeeRow.id}
@@ -62,9 +51,8 @@ export default function Employee() {
                         <table className="table-gray">
                             <tr className="table-tr-thead-gray">
                                 <th className="table-th-gray w-[30%]">Name</th>
-                                <th className="table-th-gray w-[25%]">Email</th>
+                                <th className="table-th-gray w-[30%]">Email</th>
                                 <th className="table-th-gray w-[10%]">Position</th>
-                                <th className="table-th-gray w-[10%]">Edit Details</th>
                                 <th className="table-th-gray w-[15%]">Edit Working Hours</th>
                                 <th className="table-th-gray w-[15%]">Delete Employee</th>
                             </tr>

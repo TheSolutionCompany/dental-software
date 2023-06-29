@@ -22,7 +22,7 @@ export function useDatabase() {
 
 export function DatabaseProvider({ children }) {
     // Variables in AuthContext
-    const { user, signup, updateEmail } = useAuth()
+    const { user, signupWithName, updateEmail } = useAuth()
 
     const [loading, setLoading] = useState(true)
     const [availableDoctors, setAvailableDoctors] = useState([])
@@ -279,7 +279,7 @@ export function DatabaseProvider({ children }) {
     async function addEmployee(displayName, email, position, password) {
         try {
             let workingHours = ['-','-','-','-','-','-','-']
-            await signup(email, password)
+            await signupWithName(email, password, displayName)
             await addDoc(employeeRef, {displayName, email, position, workingHours})
             return true
         } catch (e) {

@@ -49,7 +49,6 @@ export default function EmployeeDetailForm(props) {
 
         document.getElementById("name").disabled = true;
         document.getElementById("position").disabled = true;
-        
 
         if (editMode) {
             if (await editEmployee(activeEmployee.id, displayName, position)) {
