@@ -12,6 +12,7 @@ import {
     onSnapshot,
     doc,
     deleteDoc,
+    orderBy,
 } from "firebase/firestore"
 
 const DatabaseContext = React.createContext()
@@ -124,25 +125,26 @@ export function DatabaseProvider({ children }) {
         if (name) {
             const start = name
             const end = start.replace(/.$/, (c) => String.fromCharCode(c.charCodeAt(0) + 1))
-            const q = query(collection(db, "patients"), where("name", ">=", start), where("name", "<", end))
+            const q = query(collection(db, "patients"), where("name", ">=", start), where("name", "<", end), orderBy("name", "asc"))
             const result = (await getDocs(q)).docs.map((doc) => doc)
-            return Object.values(result.sort())
+            return Object.values(result)
         } else if (ic) {
             const start = ic
             const end = start.replace(/.$/, (c) => String.fromCharCode(c.charCodeAt(0) + 1))
-            const q = query(collection(db, "patients"), where("ic", ">=", start), where("ic", "<", end))
+            const q = query(collection(db, "patients"), where("ic", ">=", start), where("ic", "<", end), orderBy("ic", "asc"))
             const result = (await getDocs(q)).docs.map((doc) => doc)
-            return Object.values(result.sort())
+            return Object.values(result)
         } else if (mobileNumber) {
             const start = mobileNumber
             const end = start.replace(/.$/, (c) => String.fromCharCode(c.charCodeAt(0) + 1))
             const q = query(
                 collection(db, "patients"),
                 where("mobileNumber", ">=", start),
-                where("mobileNumber", "<", end)
+                where("mobileNumber", "<", end),
+                orderBy("mobileNumber", "asc")
             )
             const result = (await getDocs(q)).docs.map((doc) => doc)
-            return Object.values(result.sort())
+            return Object.values(result)
         } else {
             return []
         }
@@ -249,6 +251,13 @@ export function DatabaseProvider({ children }) {
         })
     }
 
+    async function getConsultationHistory(patientId, timeCreated) {
+        const subCollectionRef = collection(db, "patients", patientId, "consultationHistory")
+        const q = query(subCollectionRef, where("timeCreated", "!=", timeCreated ), orderBy("timeCreated", "desc"))
+        const result = (await getDocs(q)).docs.map((doc) => doc)
+        return Object.values(result)
+    }
+
     async function addInventoryItem(name, type, unitPrice, stock, threshold) {
         try {
             await addDoc(inventoryRef, { name, type, unitPrice, stock, threshold })
@@ -299,6 +308,7 @@ export function DatabaseProvider({ children }) {
         deleteObject,
         issueMc,
         updatePatientStatus,
+        getConsultationHistory,
     }
 
     return <DatabaseContext.Provider value={value}>{!loading && children}</DatabaseContext.Provider>

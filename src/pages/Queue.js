@@ -70,12 +70,11 @@ export const Queue = () => {
 
     const handlePatientCall = async (queueId, patientId) => {
         await updatePatientStatus(queueId, "in progress")
-        alert(queueId + " " + patientId)
-        //navigate("/PatientProfile", { state: { patientId: patientId } })
+        navigate("/PatientProfile", { state: { patientId: patientId, mode: "view" } })
     }
 
-    const handlePatientProfile = (patientId) => {
-        navigate("/PatientProfile", { state: { patientId: patientId } })
+    const handlePatientProfile = (patientId, filter) => {
+        navigate("/PatientProfile", { state: { patientId: patientId, mode: "consult" } })
     }
 
     async function handleLogout() {
