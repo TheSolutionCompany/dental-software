@@ -34,9 +34,9 @@ const Inventory = () => {
                 className={`table-tr-tbody-gray ${inventoryRow.data().stock <= inventoryRow.data().threshold ? "text-red-600" : ""
                     }`}
             >
-                <td className="table-td-gray w-[35%]">{inventoryRow.data().name}</td>
-                <td className="table-td-gray w-[20%]">{Number(inventoryRow.data().unitPrice).toFixed(2)}</td>
-                <td className="table-td-gray w-[15%]">{inventoryRow.data().stock}</td>
+                <td className="table-td-gray w-[35%] text-left px-2">{inventoryRow.data().name}</td>
+                <td className="table-td-gray w-[20%] text-right px-2">{Number(inventoryRow.data().unitPrice).toFixed(2)}</td>
+                <td className="table-td-gray w-[15%] text-right px-2">{inventoryRow.data().stock}</td>
                 <td className="table-td-gray w-[10%]">
                     <AddStockForm
                         activeItem={{
