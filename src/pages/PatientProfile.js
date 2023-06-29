@@ -4,15 +4,22 @@ import { useLocation, useNavigate } from "react-router-dom"
 import { getDoc, doc } from "firebase/firestore"
 import Header from "../components/Header"
 import SideBar from "../components/SideBar"
+import ConsultationForm from "../components/ConsultationForm"
 import { useAuth } from "../contexts/AuthContext"
+import { useDatabase } from "../contexts/DatabaseContext"
 
 const PatientProfile = () => {
     // Variables from AuthContext
     const { logout } = useAuth()
-    
+
+    // Functions from DatabaseContext
+    const { getConsultationHistory } = useDatabase()
+
     const navigate = useNavigate()
+
     const { state } = useLocation()
-    const { patientId } = state
+    const { patientId, mode } = state
+
     const [title, setTitle] = useState("")
     const [name, setName] = useState("")
     const [ic, setIc] = useState("")
@@ -38,6 +45,8 @@ const PatientProfile = () => {
     const [secondAddress, setSecondAddress] = useState("")
     const [allergy, setAllergy] = useState("")
     const [remark, setRemark] = useState("")
+
+    const [consultationHistory, setConsultationHistory] = useState([])
 
     async function handleLogout() {
         try {
@@ -77,8 +86,10 @@ const PatientProfile = () => {
             setAllergy(doc.data().allergy)
             setRemark(doc.data().remark)
         })
-
-    }, [patientId])
+        // getConsultationHistory(patientId, "timeCreated").then((data) => {
+        //     setConsultationHistory(data)
+        // })
+    }, [patientId, getConsultationHistory])
 
     return (
         <div className="flex flex-col h-full">
@@ -87,7 +98,21 @@ const PatientProfile = () => {
                 <SideBar />
                 <div className="w-full bg-gray-200 p-4">
                     <div>
-                        <p>name: <b>{name}</b></p>
+                        <p>
+                            name: <b>{name}</b>
+                        </p>
+                        <p>
+                            ic: <b>{ic}</b>
+                        </p>
+                        <p>
+                            gender: <b>{gender}</b>
+                        </p>
+                    </div>
+                    <ConsultationForm />
+                    <div>
+                        {consultationHistory.map((consultation) => (
+                            <p>{consultation.data().consultation}</p>
+                        ))}
                     </div>
                 </div>
             </div>
