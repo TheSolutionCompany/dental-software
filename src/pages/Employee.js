@@ -6,6 +6,7 @@ import SideBar from "../components/SideBar";
 import { useDatabase } from "../contexts/DatabaseContext";
 import DeleteConfirmation from "../components/DeleteConfirmation"
 import EmployeeDetailForm from "../components/EmployeeDetailForm";
+import { encode, verify } from "../util/JwtUtil"
 
 export default function Employee() {
     const navigate = useNavigate();
@@ -28,15 +29,27 @@ export default function Employee() {
                 <td className="table-td-gray w-[30%]">{employeeRow.data().displayName}</td>
                 <td className="table-td-gray w-[30%]">{employeeRow.data().email}</td>
                 <td className="table-td-gray w-[10%]">{employeeRow.data().position}</td>
-                <td className="table-td-gray w-[15%]">Edit Working Hours</td>
-                <td className="table-td-gray w-[15%]">
+                <td className="table-td-gray w-[10%]">Edit Working Hours</td>
+                <td className="table-td-gray w-[10%]">
                     <DeleteConfirmation
                         docName={"users"}
                         activeItemId={employeeRow.id}
                         activeItemName={employeeRow.data().displayName}
                     /></td>
+                <th className="table-th-gray w-[10%]">
+                    <button onClick={()=>showToken(employeeRow.data(), employeeRow.id)}>
+                        Generate Token
+                    </button>
+                </th>
             </tr>
         ))
+    }
+
+    async function showToken(employee, id){
+        let jwt = await encode({name: employee.displayName, email: employee.email, position: employee.position}, id)
+        alert(jwt)
+        let decrypted = await verify(jwt, id)
+        console.log(decrypted)
     }
 
     return (
@@ -53,8 +66,9 @@ export default function Employee() {
                                 <th className="table-th-gray w-[30%]">Name</th>
                                 <th className="table-th-gray w-[30%]">Email</th>
                                 <th className="table-th-gray w-[10%]">Position</th>
-                                <th className="table-th-gray w-[15%]">Edit Working Hours</th>
-                                <th className="table-th-gray w-[15%]">Delete Employee</th>
+                                <th className="table-th-gray w-[10%]">Edit Working Hours</th>
+                                <th className="table-th-gray w-[10%]">Delete Employee</th>
+                                <th className="table-th-gray w-[10%]">Generate Token</th>
                             </tr>
                             <tbody>
                                 {generateEmployeeRows(employees)}
