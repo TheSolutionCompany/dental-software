@@ -288,7 +288,7 @@ export function DatabaseProvider({ children }) {
     async function addEmployee(displayName, email, position, password) {
         try {
             let workingHours = ['-','-','-','-','-','-','-']
-            await signupWithName(email, password, displayName)
+            //await signupWithName(email, password, displayName)
             await addDoc(employeeRef, {displayName, email, position, workingHours})
             return true
         } catch (e) {

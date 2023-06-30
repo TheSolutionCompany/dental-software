@@ -16,10 +16,6 @@ export function AuthProvider({ children }) {
         return createUserWithEmailAndPassword(auth, email, password)
     }
 
-    function signupWithName(email, password, name) {
-        return signup(email, password).then(auth => (updateProfile(auth.user, {displayName: name})))
-    }
-
     function login(email, password) {
         setPersistence(auth, browserSessionPersistence)
             .then(() => {
@@ -65,7 +61,6 @@ export function AuthProvider({ children }) {
     const value = {
         user,
         signup,
-        signupWithName,
         login,
         logout,
         resetPassword,
