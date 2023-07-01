@@ -27,11 +27,13 @@ export const RegisterExisting = () => {
     const [complains, setComplains] = useState("")
     const [doctorId, setDoctorId] = useState("")
 
+    const [addToQueueSuccess, setAddToQueueSuccess] = useState(false)
+
     useEffect(() => {
         search(searchByName, searchByIc, searchByMobileNumber).then((result) => {
             setPatientsList(result)
         })
-    }, [searchByName, searchByIc, searchByMobileNumber, search])
+    }, [searchByName, searchByIc, searchByMobileNumber])
 
     const toggleModal = () => {
         if (isOpen) {
@@ -84,6 +86,7 @@ export const RegisterExisting = () => {
 
     const handleAddToQueue = async (e) => {
         e.preventDefault()
+        setAddToQueueSuccess(true)
         await addToQueue(patientId, patientName, age, ic, gender, doctorId, complains, "waiting")
         const alertAddToQueueSuccess = () =>
             toast.success("Added to queue successfully", {
@@ -101,6 +104,7 @@ export const RegisterExisting = () => {
         alertAddToQueueSuccess()
         toggleInnerModal()
         toggleModal()
+        setAddToQueueSuccess(false)
     }
 
     return (
@@ -225,7 +229,7 @@ export const RegisterExisting = () => {
                                 </select>
                             </div>
                             <div className="flex justify-center pt-4">
-                                <button className="button-green rounded" type="submit">
+                                <button disabled={addToQueueSuccess} className="button-green rounded" type="submit">
                                     Add To Queue
                                 </button>
                             </div>

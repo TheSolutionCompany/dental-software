@@ -36,7 +36,7 @@ export const MedicalCertificate = () => {
         search(searchByName, searchByIc, searchByMobileNumber).then((result) => {
             setPatientsList(result)
         })
-    }, [searchByName, searchByIc, searchByMobileNumber, search])
+    }, [searchByName, searchByIc, searchByMobileNumber])
 
     const toggleModal = () => {
         if (isOpen) {

@@ -29,7 +29,7 @@ export const Queue = () => {
                 onClick={() => {
                     row.id === onFocusIndex ? setOnFocusIndex(null) : setOnFocusIndex(row.id)
                 }}
-                onDoubleClick={() => handlePatientProfile(row.data().patientId)}
+                onDoubleClick={() => handlePatientProfile(row.data().patientId, row.id)}
             >
                 <td className="border-r border-b border-black w-[20%]">{row.data().patientName}</td>
                 <td className="border-r border-b border-black w-[10%]">{row.data().gender}</td>
@@ -42,7 +42,7 @@ export const Queue = () => {
                         <button
                             className="pt-2 hover:text-green-500"
                             onClick={(e) => {
-                                handlePatientCall(row.id, row.data().patientId)
+                                handlePatientCall(row.data().patientId, row.id)
                             }}
                         >
                             <span class="">
@@ -68,13 +68,13 @@ export const Queue = () => {
         ))
     }
 
-    const handlePatientCall = async (queueId, patientId) => {
+    const handlePatientCall = async (patientId, queueId) => {
         await updatePatientStatus(queueId, "in progress")
-        navigate("/PatientProfile", { state: { patientId: patientId, mode: "view" } })
+        handlePatientProfile(patientId, queueId)
     }
 
-    const handlePatientProfile = (patientId, filter) => {
-        navigate("/PatientProfile", { state: { patientId: patientId, mode: "consult" } })
+    const handlePatientProfile = (patientId, queueId) => {
+        navigate("/PatientProfile", { state: { patientId: patientId, mode: "consult", queueId: queueId} })
     }
 
     async function handleLogout() {

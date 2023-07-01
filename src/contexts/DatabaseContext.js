@@ -13,6 +13,9 @@ import {
     doc,
     deleteDoc,
     orderBy,
+    getDoc,
+    setDoc,
+    increment,
 } from "firebase/firestore"
 
 const DatabaseContext = React.createContext()
@@ -79,7 +82,7 @@ export function DatabaseProvider({ children }) {
                     date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate(),
                     "queue"
                 ),
-                where("doctorId", "==", user.uid)
+                orderBy("queueNumber", "asc")
             )
             onSnapshot(q2, (querySnapshot) => {
                 setAllQueue([])
@@ -87,13 +90,15 @@ export function DatabaseProvider({ children }) {
                 setInProgressQueue([])
                 setCompletedQueue([])
                 querySnapshot.forEach((doc) => {
-                    setAllQueue((prev) => [...prev, doc])
-                    if (doc.data().status === "waiting") {
-                        setWaitingQueue((prev) => [...prev, doc])
-                    } else if (doc.data().status === "in progress") {
-                        setInProgressQueue((prev) => [...prev, doc])
-                    } else if (doc.data().status === "completed") {
-                        setCompletedQueue((prev) => [...prev, doc])
+                    if (doc.data().doctorId === user.uid) {
+                        setAllQueue((prev) => [...prev, doc])
+                        if (doc.data().status === "waiting") {
+                            setWaitingQueue((prev) => [...prev, doc])
+                        } else if (doc.data().status === "in progress") {
+                            setInProgressQueue((prev) => [...prev, doc])
+                        } else if (doc.data().status === "completed") {
+                            setCompletedQueue((prev) => [...prev, doc])
+                        }
                     }
                 })
             })
@@ -119,19 +124,29 @@ export function DatabaseProvider({ children }) {
         })
 
         setLoading(false)
-    }, [user, date, dayQueueRef, inventoryRef])
+    }, [user, date])
 
     async function search(name, ic, mobileNumber) {
         if (name) {
             const start = name
             const end = start.replace(/.$/, (c) => String.fromCharCode(c.charCodeAt(0) + 1))
-            const q = query(collection(db, "patients"), where("name", ">=", start), where("name", "<", end), orderBy("name", "asc"))
+            const q = query(
+                collection(db, "patients"),
+                where("name", ">=", start),
+                where("name", "<", end),
+                orderBy("name", "asc")
+            )
             const result = (await getDocs(q)).docs.map((doc) => doc)
             return Object.values(result)
         } else if (ic) {
             const start = ic
             const end = start.replace(/.$/, (c) => String.fromCharCode(c.charCodeAt(0) + 1))
-            const q = query(collection(db, "patients"), where("ic", ">=", start), where("ic", "<", end), orderBy("ic", "asc"))
+            const q = query(
+                collection(db, "patients"),
+                where("ic", ">=", start),
+                where("ic", "<", end),
+                orderBy("ic", "asc")
+            )
             const result = (await getDocs(q)).docs.map((doc) => doc)
             return Object.values(result)
         } else if (mobileNumber) {
@@ -151,9 +166,19 @@ export function DatabaseProvider({ children }) {
     }
 
     async function addToQueue(patientId, patientName, age, ic, gender, doctorId, complains, status) {
-        await addDoc(
+        const creationDate = Date.now()
+        const q = doc(dayQueueRef, date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate())
+        var res = await getDoc(q)
+        if (!res.exists()) {
+            await setDoc(q, { queueNumber: 1 })
+        } else {
+            await updateDoc(q, { queueNumber: increment(1) })
+        }
+        res = await getDoc(q)
+        const docRef = await addDoc(
             collection(dayQueueRef, date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate(), "queue"),
             {
+                queueNumber: res.data().queueNumber,
                 patientId,
                 patientName,
                 age,
@@ -162,8 +187,19 @@ export function DatabaseProvider({ children }) {
                 doctorId,
                 complains,
                 status,
+                creationDate,
+                frontDeskMessage: "",
             }
         )
+        const consultationRef = collection(db, "patients", patientId, "consultation")
+        await addDoc(consultationRef, {
+            queueId: docRef.id,
+            creationDate,
+            consultation: "",
+            frontDeskMessage: "",
+            complains,
+            items: [],
+        })
     }
 
     async function checkRepeatedIc(ic) {
@@ -235,7 +271,6 @@ export function DatabaseProvider({ children }) {
             allergy,
             remarks,
         })
-        alert(docRef.id)
         return docRef.id
     }
 
@@ -245,17 +280,33 @@ export function DatabaseProvider({ children }) {
             date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate(),
             "queue"
         )
-        const docRef = doc(subCollectionRef, queueId);
+        const docRef = doc(subCollectionRef, queueId)
         await updateDoc(docRef, {
             status: status,
         })
     }
 
-    async function getConsultationHistory(patientId, timeCreated) {
-        const subCollectionRef = collection(db, "patients", patientId, "consultationHistory")
-        const q = query(subCollectionRef, where("timeCreated", "!=", timeCreated ), orderBy("timeCreated", "desc"))
+    async function getCurrentConsultation(patientId, queueId) {
+        const subCollectionRef = collection(db, "patients", patientId, "consultation")
+        const q = query(subCollectionRef, where("queueId", "==", queueId))
+        const result = (await getDocs(q)).docs[0]
+        return result
+    }
+
+    async function getConsultationHistory(patientId) {
+        const subCollectionRef = collection(db, "patients", patientId, "consultation")
+        const q = query(subCollectionRef, orderBy("creationDate", "desc"))
         const result = (await getDocs(q)).docs.map((doc) => doc)
         return Object.values(result)
+    }
+
+    async function updateConsultation(patientId, consultationId, consultation, frontDeskMessage, items) {
+        const docRef = doc(db, "patients", patientId, "consultation", consultationId)
+        await updateDoc(docRef, {
+            consultation: consultation,
+            frontDeskMessage: frontDeskMessage,
+            items: items,
+        })
     }
 
     async function addInventoryItem(name, type, unitPrice, stock, threshold) {
@@ -308,7 +359,9 @@ export function DatabaseProvider({ children }) {
         deleteObject,
         issueMc,
         updatePatientStatus,
+        getCurrentConsultation,
         getConsultationHistory,
+        updateConsultation,
     }
 
     return <DatabaseContext.Provider value={value}>{!loading && children}</DatabaseContext.Provider>

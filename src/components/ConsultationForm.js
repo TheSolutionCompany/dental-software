@@ -1,23 +1,42 @@
 import React, { useEffect, useState } from "react"
 import { useDatabase } from "../contexts/DatabaseContext"
 
-const ConsultationForm = () => {
+const ConsultationForm = ({patientId, queueId}) => {
     // Functions from DatabaseContext
-    const { addConsultation } = useDatabase()
+    const { getCurrentConsultation, updateConsultation } = useDatabase()
 
-    const [tableList, setTableList] = useState([])
+    const [loading, setLoading] = useState(false)
+    const [saved, setSaved] = useState(false)
+
+    const [itemList, setItemList] = useState([])
     const [consultation, setConsultation] = useState("")
     const [frontDeskMessage, setFrontDeskMessage] = useState("")
-    const [grandTotal, setGrandTotal] = useState(0)
+    const [complains, setComplains] = useState("")
 
     const [itemName, setItemName] = useState("")
     const [unitPrice, setUnitPrice] = useState(0)
     const [quantity, setQuantity] = useState(0)
     const [totalPrice, setTotalPrice] = useState(0)
+    const [grandTotal, setGrandTotal] = useState(0)
 
-    async function handleSubmit(e) {
+    const [consultationId, setConsultationId] = useState("")
+
+    useEffect(() => {
+        getCurrentConsultation(patientId, queueId).then((res) => {
+            setConsultation(res.data().consultation)
+            setFrontDeskMessage(res.data().frontDeskMessage)
+            setComplains(res.data().complains)
+            setItemList(res.data().items)
+            setConsultationId(res.id)
+        })
+    }, [])
+
+    async function handleSave(e) {
         e.preventDefault()
-        await addConsultation(consultation, frontDeskMessage, tableList, grandTotal)
+        setLoading(true)
+        await updateConsultation(patientId, consultationId, consultation, frontDeskMessage, itemList)
+        setLoading(false)
+        setSaved(true)
     }
 
     function generateTable(list) {
@@ -47,7 +66,7 @@ const ConsultationForm = () => {
         setUnitPrice(0)
         setQuantity(0)
         setTotalPrice(0)
-        setTableList([...tableList, item])
+        setItemList([...itemList, item])
         setGrandTotal(grandTotal + item.totalPrice)
     }
 
@@ -64,11 +83,13 @@ const ConsultationForm = () => {
                 <input type="number" value={totalPrice} readOnly />
                 <button type="submit">Add</button>
             </form>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSave}>
+                <label>Complains</label>
+                <textarea rows={4} value={complains} readOnly></textarea>
                 <label>Consultation</label>
-                <textarea rows={10} onChange={(e) => setConsultation(e.target.value)}></textarea>
+                <textarea rows={10} value={consultation} onChange={(e) => setConsultation(e.target.value)}></textarea>
                 <label>Frontdesk Message</label>
-                <textarea rows={5} onChange={(e) => setFrontDeskMessage(e.target.value)}></textarea>
+                <textarea rows={5} defaultValue={frontDeskMessage} onChange={(e) => setFrontDeskMessage(e.target.value)}></textarea>
                 <table>
                     <tr>
                         <th>Treatment/Medicine/Product</th>
@@ -77,8 +98,9 @@ const ConsultationForm = () => {
                         <th>Total Price</th>
                     </tr>
                 </table>
-                <table>{generateTable(tableList)}</table>
-                <button type="submit">Save</button>
+                <table>{generateTable(itemList)}</table>
+                <button type="submit" disabled={loading} hidden={saved}>Save</button>
+                <button type="button" hidden={!saved}>Send for payment</button>
             </form>
         </div>
     )
