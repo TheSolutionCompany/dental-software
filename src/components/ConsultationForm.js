@@ -16,7 +16,7 @@ const ConsultationForm = ({patientId, queueId}) => {
     const [itemName, setItemName] = useState("")
     const [unitPrice, setUnitPrice] = useState(0)
     const [quantity, setQuantity] = useState(0)
-    const [totalPrice, setTotalPrice] = useState(0)
+    const [subtotal, setSubtotal] = useState(0)
     const [grandTotal, setGrandTotal] = useState(0)
 
     const [consultationId, setConsultationId] = useState("")
@@ -34,7 +34,7 @@ const ConsultationForm = ({patientId, queueId}) => {
     async function handleSave(e) {
         e.preventDefault()
         setLoading(true)
-        await updateConsultation(patientId, consultationId, consultation, frontDeskMessage, itemList)
+        await updateConsultation(patientId, consultationId, consultation, frontDeskMessage, itemList, grandTotal)
         setLoading(false)
         setSaved(true)
     }
@@ -45,13 +45,13 @@ const ConsultationForm = ({patientId, queueId}) => {
                 <td>{item.name}</td>
                 <td>{item.unitPrice}</td>
                 <td>{item.quantity}</td>
-                <td>{item.totalPrice}</td>
+                <td>{item.subtotal}</td>
             </tr>
         ))
     }
 
     useEffect(() => {
-        setTotalPrice(unitPrice * quantity)
+        setSubtotal(unitPrice * quantity)
     }, [unitPrice, quantity])
 
     function handleAddItem(e) {
@@ -60,14 +60,14 @@ const ConsultationForm = ({patientId, queueId}) => {
             name: itemName,
             unitPrice: unitPrice,
             quantity: quantity,
-            totalPrice: unitPrice * quantity,
+            subtotal: unitPrice * quantity,
         }
         setItemName("")
         setUnitPrice(0)
         setQuantity(0)
-        setTotalPrice(0)
+        setSubtotal(0)
         setItemList([...itemList, item])
-        setGrandTotal(grandTotal + item.totalPrice)
+        setGrandTotal(grandTotal + item.subtotal)
     }
 
     return (
@@ -79,8 +79,8 @@ const ConsultationForm = ({patientId, queueId}) => {
                 <input type="number" value={unitPrice} onChange={(e) => setUnitPrice(e.target.value)} />
                 <label>quantity</label>
                 <input type="number" value={quantity} onChange={(e) => setQuantity(e.target.value)} />
-                <label>totalPrice</label>
-                <input type="number" value={totalPrice} readOnly />
+                <label>subtotal</label>
+                <input type="number" value={subtotal} readOnly />
                 <button type="submit">Add</button>
             </form>
             <form onSubmit={handleSave}>

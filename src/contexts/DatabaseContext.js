@@ -61,19 +61,23 @@ export function DatabaseProvider({ children }) {
         // AvailableDoctors Listener
         const q = query(collection(db, "users"), where("position", "in", ["Doctor", "Locum Doctor"]))
         onSnapshot(q, (querySnapshot) => {
+            console.log("available doctors listener")
             setAvailableDoctors([])
             querySnapshot.forEach((doc) => {
                 setAvailableDoctors((prev) => [...prev, doc])
             })
         })
+
         // Waiting Queue Size Listener
         const q1 = query(
             collection(dayQueueRef, date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate(), "queue"),
             where("status", "==", "waiting")
         )
         onSnapshot(q1, (querySnapshot) => {
+            console.log("waiting queue size listener")
             setWaitingQueueSize(querySnapshot.size)
         })
+
         // Queue Listener
         if (user) {
             const q2 = query(
@@ -85,6 +89,7 @@ export function DatabaseProvider({ children }) {
                 orderBy("queueNumber", "asc")
             )
             onSnapshot(q2, (querySnapshot) => {
+                console.log("queue listener")
                 setAllQueue([])
                 setWaitingQueue([])
                 setInProgressQueue([])
@@ -107,6 +112,7 @@ export function DatabaseProvider({ children }) {
         // Inventory Listener
         const inventoryQ = query(collection(db, "inventory"))
         onSnapshot(inventoryQ, (querySnapshot) => {
+            console.log("inventory listener")
             setInventory([])
             setMedicineInventory([])
             setTreatmentInventory([])
@@ -300,12 +306,13 @@ export function DatabaseProvider({ children }) {
         return Object.values(result)
     }
 
-    async function updateConsultation(patientId, consultationId, consultation, frontDeskMessage, items) {
+    async function updateConsultation(patientId, consultationId, consultation, frontDeskMessage, items, grandTotal) {
         const docRef = doc(db, "patients", patientId, "consultation", consultationId)
         await updateDoc(docRef, {
             consultation: consultation,
             frontDeskMessage: frontDeskMessage,
             items: items,
+            grandTotal: grandTotal,
         })
     }
 

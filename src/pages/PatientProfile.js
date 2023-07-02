@@ -18,7 +18,7 @@ const PatientProfile = () => {
     const navigate = useNavigate()
 
     const { state } = useLocation()
-    const { patientId, mode , queueId} = state
+    const { patientId, mode, queueId } = state
 
     const [title, setTitle] = useState("")
     const [name, setName] = useState("")
@@ -127,11 +127,39 @@ const PatientProfile = () => {
                             Consultation History
                         </button>
                     </div>
-                    {mode === "consult" && page === "consultation" && <ConsultationForm patientId={patientId} queueId={queueId}/>}
+                    {mode === "consult" && page === "consultation" && (
+                        <ConsultationForm patientId={patientId} queueId={queueId} />
+                    )}
                     {page === "history" && (
                         <div>
                             {consultationHistory.map((consultation) => (
-                                <p>{consultation.data().consultation}</p>
+                                <div className="border-black border p-2 m-4">
+                                    <p>Date: {new Date(consultation.data().creationDate).toDateString()}</p>
+                                    <p>Complains: {consultation.data().complains}</p>
+                                    <p>Consultation: {consultation.data().consultation}</p>
+                                    <p>Frontdesk Message: {consultation.data().frontDeskMessage}</p>
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Item</th>
+                                                <th>Price</th>
+                                                <th>Quantity</th>
+                                                <th>Subtotal</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {consultation.data().items.map((item, index) => (
+                                                <tr key={index}>
+                                                    <td>{item.name}</td>
+                                                    <td>{item.unitPrice}</td>
+                                                    <td>{item.quantity}</td>
+                                                    <td>{item.subtotal}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                    <p>Grand Total: {consultation.data().grandTotal}</p>
+                                </div>
                             ))}
                         </div>
                     )}
