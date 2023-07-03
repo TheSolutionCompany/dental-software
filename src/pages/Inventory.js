@@ -116,7 +116,7 @@ const Inventory = () => {
                             <button className="border-black p-2 hover:bg-gray-300 border-2" onClick={(e) => setFilter("treatment")}>Treatment</button>
                             <InventoryForm data={{ editMode: false, activeItem: null }} />
                         </div>
-                        <div className="flex flex-col w-full h-[77vh] border-black overflow-auto">
+                        <div className="flex flex-col w-full h-[77vh] overflow-auto">
                             <table className="table-gray">
                                 <thead>
                                     <tr>
