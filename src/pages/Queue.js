@@ -23,8 +23,8 @@ export const Queue = () => {
     function generateQueue(queues) {
         return queues.map((row) => (
             <tr
-                className={`w-full h-10 font-bold border-l border-t border-b border-black
-                ${onFocusIndex === row.id ? "bg-gray-400" : "bg-gray-200"}`}
+                className={`cursor-pointer
+                ${onFocusIndex === row.id ? "tr-focus" :""}`}
                 key={row.id}
                 onClick={() => {
                     row.id === onFocusIndex ? setOnFocusIndex(null) : setOnFocusIndex(row.id)
@@ -32,13 +32,13 @@ export const Queue = () => {
                 // The onDoubleClick is for testing purposes. It will be removed later.
                 onDoubleClick={() => handlePatientProfile(row.data().patientId, row.id)}
             >
-                <td className="border-r border-b border-black w-[20%]">{row.data().patientName}</td>
-                <td className="border-r border-b border-black w-[10%]">{row.data().gender}</td>
-                <td className="border-r border-b border-black w-[5%]">{row.data().age}</td>
-                <td className="border-r border-b border-black w-[18%]">{row.data().ic}</td>
-                <td className="border-r border-b border-black w-[30%]">{row.data().complains}</td>
-                <td className="border-r border-b border-black w-[10%]">{row.data().status}</td>
-                <td className="border-r border-b border-black w-[7%]">
+                <td className="w-[20%]">{row.data().patientName}</td>
+                <td className="w-[10%]">{row.data().gender}</td>
+                <td className="w-[5%] ">{row.data().age}</td>
+                <td className="w-[18%]">{row.data().ic}</td>
+                <td className="w-[30%]">{row.data().complains}</td>
+                <td className="w-[10%]">{row.data().status}</td>
+                <td className="w-[7%]">
                     {row.data().status === "waiting" && (
                         <button
                             className="pt-2 hover:text-green-500"
@@ -109,24 +109,28 @@ export const Queue = () => {
                     </div>
                     <div className="flex flex-col pt-10 px-8 w-full">
                         <table className="table-gray">
-                            <tr className="w-full h-10 bg-gray-300 font-bold border-l border-t border-b border-black">
-                                <th className="table-th-gray w-[20%]">Patient Name</th>
-                                <th className="table-th-gray w-[10%]">Gender</th>
-                                <th className="table-th-gray w-[5%]">Age</th>
-                                <th className="table-th-gray w-[18%]">IC/Passport number</th>
-                                <th className="table-th-gray w-[30%]">Complains</th>
-                                <th className="table-th-gray w-[10%]">Status</th>
-                                <th className="table-th-gray w-[7%]">Action</th>
-                            </tr>
+                            <thead>
+                                <tr>
+                                    <th className="w-[20%]">Patient Name</th>
+                                    <th className="w-[10%]">Gender</th>
+                                    <th className="w-[5%]">Age</th>
+                                    <th className="w-[18%]">IC/Passport number</th>
+                                    <th className="w-[30%]">Complains</th>
+                                    <th className="w-[10%]">Status</th>
+                                    <th className="w-[7%]">Action</th>
+                                </tr>
+                            </thead>
                         </table>
                     </div>
                     <div className="flex flex-col w-full mt-[-1px] px-8 h-[82%] overflow-auto">
-                        <table>
-                            {filter === "all" && generateQueue(allQueue)}
-                            {filter === "waiting" && generateQueue(waitingQueue)}
-                            {filter === "inProgress" && generateQueue(inProgressQueue)}
-                            {filter === "pendingBilling" && generateQueue(pendingBillingQueue)}
-                            {filter === "completed" && generateQueue(completedQueue)}
+                        <table className="table-gray">
+                            <tbody>
+                                {filter === "all" && generateQueue(allQueue)}
+                                {filter === "waiting" && generateQueue(waitingQueue)}
+                                {filter === "inProgress" && generateQueue(inProgressQueue)}
+                                {filter === "pendingBilling" && generateQueue(pendingBillingQueue)}
+                                {filter === "completed" && generateQueue(completedQueue)}
+                            </tbody>
                         </table>
                     </div>
                 </div>

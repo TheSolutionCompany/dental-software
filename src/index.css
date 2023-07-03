@@ -15,21 +15,37 @@ code {
 }
 
 .table-gray {
-    @apply w-full h-10 bg-gray-300 font-bold border border-black;
+    @apply w-full h-10 font-bold border-collapse;
 }
 
-.table-tr-thead-gray {
-    @apply w-full h-10 bg-gray-300 font-bold border-l border-t border-b border-black;
+.table-gray thead tr {
+    @apply w-full h-10 bg-gray-500 font-bold;
 }
 
-.table-tr-tbody-gray{
-    @apply w-full h-10 bg-gray-200 font-bold border-l border-t border-b border-black;
+.table-gray tbody tr {
+    @apply w-full h-10 border border-black font-semibold;
 }
 
-.table-th-gray {
-    @apply border-r border-black;
+.table-gray tbody tr:nth-child(odd) {
+    @apply bg-white;
 }
 
-.table-td-gray {
-    @apply border-r border-b border-black;
+.table-gray tbody tr:nth-child(even) {
+    @apply bg-gray-300;
+}
+
+.table-gray th {
+    @apply border-black border-x;
+} 
+
+.table-gray td {
+    @apply border-black border-x;
+}
+
+.tr-focus {
+    @apply bg-green-200 font-bold !important;
+}
+
+.tr-hover {
+    @apply hover:bg-green-400 cursor-pointer !important;
 }
