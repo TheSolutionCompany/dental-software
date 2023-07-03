@@ -36,7 +36,7 @@ export const MedicalCertificate = () => {
         search(searchByName, searchByIc, searchByMobileNumber).then((result) => {
             setPatientsList(result)
         })
-    }, [searchByName, searchByIc, searchByMobileNumber, search])
+    }, [searchByName, searchByIc, searchByMobileNumber])
 
     const toggleModal = () => {
         if (isOpen) {
@@ -197,36 +197,41 @@ export const MedicalCertificate = () => {
                         </div>
                     </div>
                     <div className="flex flex-col w-full">
-                        <table className="w-full h-10 bg-gray-300 font-bold border border-black">
-                            <tr className="w-full grid grid-cols-3 h-10 bg-gray-300 font-bold border-l border-t border-b border-black">
-                                <th className="border-r border-black">Name</th>
-                                <th className="border-r border-black">IC</th>
-                                <th className="border-r border-black">Mobile Number</th>
-                            </tr>
+                        <table className="table-gray">
+                            <thead>
+                                <tr>
+                                    <th className="w-1/3">Name</th>
+                                    <th className="w-1/3">IC</th>
+                                    <th className="w-1/3">Mobile Number</th>
+                                </tr>
+                            </thead>
                         </table>
                     </div>
                     <div className="flex flex-col w-full h-fit mt-[-1px] overflow-auto">
-                        <table>
+                        <table className="table-gray">
+                            <tbody>
+
                             {patientsList.map((patient) => (
                                 <tr
-                                    className="table-tr-tbody-gray hover:bg-green-400 cursor-pointer"
+                                    className="tr-hover"
                                     key={patient.id}
                                     onClick={() => handleIssue(patient)}
                                 >
-                                    <td key={patient.data().name} className="border-r border-b border-black w-1/3">
+                                    <td key={patient.data().name} className="w-1/3">
                                         {patient.data().name}
                                     </td>
-                                    <td key={patient.data().ic} className="border-r border-b border-black w-1/3">
+                                    <td key={patient.data().ic} className="bw-1/3">
                                         {patient.data().ic}
                                     </td>
                                     <td
                                         key={patient.data().mobileNumber}
-                                        className="border-r border-b border-black w-1/3"
-                                    >
+                                        className="w-1/3"
+                                        >
                                         {patient.data().mobileNumber}
                                     </td>
                                 </tr>
                             ))}
+                            </tbody>
                         </table>
                     </div>
 

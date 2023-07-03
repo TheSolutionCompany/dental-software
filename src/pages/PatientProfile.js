@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react"
 import { db } from "../firebase"
 import { useLocation, useNavigate } from "react-router-dom"
-import { getDoc, doc } from "firebase/firestore"
+import { getDoc, doc, collection } from "firebase/firestore"
 import Header from "../components/Header"
 import SideBar from "../components/SideBar"
 import ConsultationForm from "../components/ConsultationForm"
@@ -18,13 +18,13 @@ const PatientProfile = () => {
     const navigate = useNavigate()
 
     const { state } = useLocation()
-    const { patientId, mode } = state
+    const { patientId, mode, queueId } = state
 
     const [title, setTitle] = useState("")
     const [name, setName] = useState("")
     const [ic, setIc] = useState("")
     const [gender, setGender] = useState("")
-    const [DOB, setDOB] = useState("")
+    const [dob, setDob] = useState("")
     const [age, setAge] = useState("")
     const [mobileNumber, setMobileNumber] = useState("")
     const [phoneNumber, setPhoneNumber] = useState("")
@@ -46,6 +46,8 @@ const PatientProfile = () => {
     const [allergy, setAllergy] = useState("")
     const [remark, setRemark] = useState("")
 
+    const [page, setPage] = useState("consultation")
+
     const [consultationHistory, setConsultationHistory] = useState([])
 
     async function handleLogout() {
@@ -64,7 +66,7 @@ const PatientProfile = () => {
             setName(doc.data().name)
             setIc(doc.data().ic)
             setGender(doc.data().gender)
-            setDOB(doc.data().DOB)
+            setDob(doc.data().dob)
             setAge(doc.data().age)
             setMobileNumber(doc.data().mobileNumber)
             setPhoneNumber(doc.data().phoneNumber)
@@ -86,10 +88,10 @@ const PatientProfile = () => {
             setAllergy(doc.data().allergy)
             setRemark(doc.data().remark)
         })
-        // getConsultationHistory(patientId, "timeCreated").then((data) => {
-        //     setConsultationHistory(data)
-        // })
-    }, [patientId, getConsultationHistory])
+        getConsultationHistory(patientId, queueId).then((result) => {
+            setConsultationHistory(result)
+        })
+    }, [patientId])
 
     return (
         <div className="flex flex-col h-full">
@@ -97,23 +99,72 @@ const PatientProfile = () => {
             <div className="flex h-full">
                 <SideBar />
                 <div className="w-full bg-gray-200 p-4">
-                    <div>
-                        <p>
-                            name: <b>{name}</b>
+                    <div className="flex flex-row pb-4">
+                        <p className="pr-2">
+                            Patient name: <b>{name}</b>
                         </p>
-                        <p>
-                            ic: <b>{ic}</b>
+                        <p className="pr-2">
+                            IC: <b>{ic}</b>
                         </p>
-                        <p>
-                            gender: <b>{gender}</b>
+                        <p className="pr-2">
+                            Gender: <b>{gender}</b>
+                        </p>
+                        <p className="pr-2">
+                            DOB: <b>{dob}</b>
+                        </p>
+                        <p className="pr-2">
+                            Age: <b>{age}</b>
+                        </p>
+                        <p className="pr-2">
+                            Mobile number: <b>{mobileNumber}</b>
                         </p>
                     </div>
-                    <ConsultationForm />
                     <div>
-                        {consultationHistory.map((consultation) => (
-                            <p>{consultation.data().consultation}</p>
-                        ))}
+                        <button type="button" hidden={mode === "view"} onClick={(e) => setPage("consultation")}>
+                            Current Consultation
+                        </button>
+                        <button type="button" onClick={(e) => setPage("history")}>
+                            Consultation History
+                        </button>
                     </div>
+                    {mode === "consult" && page === "consultation" && (
+                        <ConsultationForm patientId={patientId} queueId={queueId} />
+                    )}
+                    {page === "history" && (
+                        <div>
+                            {consultationHistory.map((consultation) => (
+                                <div>
+                                    <p>Date: {new Date(consultation.data().creationDate).toDateString()}</p>
+                                    <div className="border-black border p-2 m-4">
+                                        <p>Complains: {consultation.data().complains}</p>
+                                        <p>Consultation: {consultation.data().consultation}</p>
+                                        <p>Frontdesk Message: {consultation.data().frontDeskMessage}</p>
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                    <th>Item</th>
+                                                    <th>Price</th>
+                                                    <th>Quantity</th>
+                                                    <th>Subtotal</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {consultation.data().items.map((item, index) => (
+                                                    <tr key={index}>
+                                                        <td>{item.name}</td>
+                                                        <td>{item.unitPrice}</td>
+                                                        <td>{item.quantity}</td>
+                                                        <td>{item.subtotal}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                        <p>Grand Total: {consultation.data().grandTotal}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

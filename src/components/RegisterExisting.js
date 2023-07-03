@@ -27,11 +27,13 @@ export const RegisterExisting = () => {
     const [complains, setComplains] = useState("")
     const [doctorId, setDoctorId] = useState("")
 
+    const [addToQueueSuccess, setAddToQueueSuccess] = useState(false)
+
     useEffect(() => {
         search(searchByName, searchByIc, searchByMobileNumber).then((result) => {
             setPatientsList(result)
         })
-    }, [searchByName, searchByIc, searchByMobileNumber, search])
+    }, [searchByName, searchByIc, searchByMobileNumber])
 
     const toggleModal = () => {
         if (isOpen) {
@@ -84,6 +86,7 @@ export const RegisterExisting = () => {
 
     const handleAddToQueue = async (e) => {
         e.preventDefault()
+        setAddToQueueSuccess(true)
         await addToQueue(patientId, patientName, age, ic, gender, doctorId, complains, "waiting")
         const alertAddToQueueSuccess = () =>
             toast.success("Added to queue successfully", {
@@ -101,6 +104,7 @@ export const RegisterExisting = () => {
         alertAddToQueueSuccess()
         toggleInnerModal()
         toggleModal()
+        setAddToQueueSuccess(false)
     }
 
     return (
@@ -146,30 +150,24 @@ export const RegisterExisting = () => {
                             />
                         </div>
                     </div>
-                    <div className="flex flex-col w-full">
+                    <div className="flex flex-col w-full overflow-auto">
                         <table className="table-gray">
-                            <tr className="table-tr-thead-gray border-black">
-                                <th className="table-th-gray w-1/3">Name</th>
-                                <th className="table-th-gray w-1/3">IC</th>
-                                <th className="table-th-gray w-1/3">Mobile Number</th>
-                            </tr>
-                        </table>
-                    </div>
-                    <div className="flex flex-col w-full h-fit mt-[-1px] overflow-auto">
-                        <table>
-                            {patientsList.map((patient) => (
-                                <tr
-                                    className="table-tr-tbody-gray hover:bg-green-400 cursor-pointer"
-                                    key={patient.id}
-                                    onClick={() => handleRegister(patient)}
-                                >
-                                    <td className="border-r border-b border-black w-1/3">{patient.data().name}</td>
-                                    <td className="border-r border-b border-black w-1/3">{patient.data().ic}</td>
-                                    <td className="border-r border-b border-black w-1/3">
-                                        {patient.data().mobileNumber}
-                                    </td>
+                            <thead>
+                                <tr>
+                                    <th className="w-1/3">Name</th>
+                                    <th className="w-1/3">IC</th>
+                                    <th className="w-1/3">Mobile Number</th>
                                 </tr>
-                            ))}
+                            </thead>
+                            <tbody>
+                                {patientsList.map((patient) => (
+                                    <tr className="tr-hover" key={patient.id} onClick={() => handleRegister(patient)}>
+                                        <td className="w-1/3 text-left px-2">{patient.data().name}</td>
+                                        <td className="w-1/3 text-left px-2">{patient.data().ic}</td>
+                                        <td className="w-1/3 text-left px-2">{patient.data().mobileNumber}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
                         </table>
                     </div>
 
@@ -225,7 +223,7 @@ export const RegisterExisting = () => {
                                 </select>
                             </div>
                             <div className="flex justify-center pt-4">
-                                <button className="button-green rounded" type="submit">
+                                <button disabled={addToQueueSuccess} className="button-green rounded" type="submit">
                                     Add To Queue
                                 </button>
                             </div>
