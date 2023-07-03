@@ -19,11 +19,11 @@ code {
 }
 
 .table-gray thead tr {
-    @apply w-full h-10 bg-gray-500 font-bold;
+    @apply w-full h-10 bg-gray-400 font-bold;
 }
 
 .table-gray tbody tr {
-    @apply w-full h-10 border border-black font-semibold;
+    @apply w-full h-10 border border-black font-semibold bg-gray-100;
 }
 
 .table-gray tbody tr:nth-child(odd) {
@@ -31,15 +31,15 @@ code {
 }
 
 .table-gray tbody tr:nth-child(even) {
-    @apply bg-gray-300;
+    @apply bg-gray-100;
 }
 
 .table-gray th {
-    @apply border-black border-x;
+    @apply border-black border-x py-2.5;
 } 
 
 .table-gray td {
-    @apply border-black border-x;
+    @apply border-black border-x py-2.5;
 }
 
 .tr-focus {

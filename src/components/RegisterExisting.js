@@ -164,19 +164,13 @@ export const RegisterExisting = () => {
                     <div className="flex flex-col w-full h-fit mt-[-1px] overflow-auto">
                         <table className="table-gray">
                             <tbody>
-                            {patientsList.map((patient) => (
-                                <tr
-                                    className="tr-hover"
-                                    key={patient.id}
-                                    onClick={() => handleRegister(patient)}
-                                    >
-                                    <td className="w-1/3">{patient.data().name}</td>
-                                    <td className="w-1/3">{patient.data().ic}</td>
-                                    <td className="w-1/3">
-                                        {patient.data().mobileNumber}
-                                    </td>
-                                </tr>
-                            ))}
+                                {patientsList.map((patient) => (
+                                    <tr className="tr-hover" key={patient.id} onClick={() => handleRegister(patient)}>
+                                        <td className="w-1/3">{patient.data().name}</td>
+                                        <td className="w-1/3">{patient.data().ic}</td>
+                                        <td className="w-1/3">{patient.data().mobileNumber}</td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
                     </div>

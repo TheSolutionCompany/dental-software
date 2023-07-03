@@ -116,7 +116,7 @@ const Inventory = () => {
                             <button className="border-black p-2 hover:bg-gray-300 border-2" onClick={(e) => setFilter("treatment")}>Treatment</button>
                             <InventoryForm data={{ editMode: false, activeItem: null }} />
                         </div>
-                        <div className="flex flex-col w-full h-[242px] border-black overflow-auto">
+                        <div className="flex flex-col w-full h-[77vh] border-black overflow-auto">
                             <table className="table-gray">
                                 <thead className="">
                                     <tr className="sticky top-0">
@@ -129,7 +129,6 @@ const Inventory = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-
                                     {filter === "medicine" && generateProductRows(medicineInventory)}
                                     {filter === "product" && generateProductRows(otherInventory)}
                                     {filter === "treatment" && generateTreatmentRows(treatmentInventory)}

@@ -97,41 +97,39 @@ export const Queue = () => {
             <div className="flex h-full">
                 <SideBar />
                 <div className="w-full bg-gray-200 h-full">
-                    <div className="pt-4 pl-10 text-left">
-                        <p className="">Filter by status</p>
-                        <select className="rounded border-2 border-black" value={filter} onChange={handleFilter}>
-                            <option value="all">All</option>
-                            <option value="waiting">Waiting</option>
-                            <option value="inProgress">In Progress</option>
-                            <option value="pendingBilling">Pending Billing</option>
-                            <option value="completed">Completed</option>
-                        </select>
-                    </div>
-                    <div className="flex flex-col pt-10 px-8 w-full">
-                        <table className="table-gray">
-                            <thead>
-                                <tr>
-                                    <th className="w-[20%]">Patient Name</th>
-                                    <th className="w-[10%]">Gender</th>
-                                    <th className="w-[5%]">Age</th>
-                                    <th className="w-[18%]">IC/Passport number</th>
-                                    <th className="w-[30%]">Complains</th>
-                                    <th className="w-[10%]">Status</th>
-                                    <th className="w-[7%]">Action</th>
-                                </tr>
-                            </thead>
-                        </table>
-                    </div>
-                    <div className="flex flex-col w-full mt-[-1px] px-8 h-[82%] overflow-auto">
-                        <table className="table-gray">
-                            <tbody>
-                                {filter === "all" && generateQueue(allQueue)}
-                                {filter === "waiting" && generateQueue(waitingQueue)}
-                                {filter === "inProgress" && generateQueue(inProgressQueue)}
-                                {filter === "pendingBilling" && generateQueue(pendingBillingQueue)}
-                                {filter === "completed" && generateQueue(completedQueue)}
-                            </tbody>
-                        </table>
+                    <div className="p-8">
+                        <div className="pb-8 text-left">
+                            <p className="">Filter by status</p>
+                            <select className="rounded border-2 border-black" value={filter} onChange={handleFilter}>
+                                <option value="all">All</option>
+                                <option value="waiting">Waiting</option>
+                                <option value="inProgress">In Progress</option>
+                                <option value="pendingBilling">Pending Billing</option>
+                                <option value="completed">Completed</option>
+                            </select>
+                        </div>
+                        <div className="flex flex-col w-full border-black overflow-auto">
+                            <table className="table-gray">
+                                <thead>
+                                    <tr className="sticky top-0">
+                                        <th className="w-[20%]">Patient Name</th>
+                                        <th className="w-[10%]">Gender</th>
+                                        <th className="w-[5%]">Age</th>
+                                        <th className="w-[18%]">IC/Passport number</th>
+                                        <th className="w-[30%]">Complains</th>
+                                        <th className="w-[10%]">Status</th>
+                                        <th className="w-[7%]">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {filter === "all" && generateQueue(allQueue)}
+                                    {filter === "waiting" && generateQueue(waitingQueue)}
+                                    {filter === "inProgress" && generateQueue(inProgressQueue)}
+                                    {filter === "pendingBilling" && generateQueue(pendingBillingQueue)}
+                                    {filter === "completed" && generateQueue(completedQueue)}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
