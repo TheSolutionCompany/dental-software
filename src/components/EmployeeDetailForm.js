@@ -7,7 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 Modal.setAppElement("#root");
 
-export default function EmployeeDetailForm(props) {
+export default function EmployeeDetailForm() {
     const [isOpen, setIsOpen] = useState(false);
     const { addEmployee } = useDatabase();
 
