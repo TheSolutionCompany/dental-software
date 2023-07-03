@@ -13,7 +13,7 @@ export const Queue = () => {
     const [onFocusIndex, setOnFocusIndex] = useState("")
 
     // Variables in DatabaseContext
-    const { allQueue, waitingQueue, inProgressQueue, completedQueue } = useDatabase()
+    const { allQueue, waitingQueue, inProgressQueue, pendingBillingQueue, completedQueue } = useDatabase()
 
     // Functions in DatabaseContext
     const { updatePatientStatus } = useDatabase()
@@ -29,6 +29,7 @@ export const Queue = () => {
                 onClick={() => {
                     row.id === onFocusIndex ? setOnFocusIndex(null) : setOnFocusIndex(row.id)
                 }}
+                // The onDoubleClick is for testing purposes. It will be removed later.
                 onDoubleClick={() => handlePatientProfile(row.data().patientId, row.id)}
             >
                 <td className="border-r border-b border-black w-[20%]">{row.data().patientName}</td>
@@ -102,6 +103,7 @@ export const Queue = () => {
                             <option value="all">All</option>
                             <option value="waiting">Waiting</option>
                             <option value="inProgress">In Progress</option>
+                            <option value="pendingBilling">Pending Billing</option>
                             <option value="completed">Completed</option>
                         </select>
                     </div>
@@ -123,6 +125,7 @@ export const Queue = () => {
                             {filter === "all" && generateQueue(allQueue)}
                             {filter === "waiting" && generateQueue(waitingQueue)}
                             {filter === "inProgress" && generateQueue(inProgressQueue)}
+                            {filter === "pendingBilling" && generateQueue(pendingBillingQueue)}
                             {filter === "completed" && generateQueue(completedQueue)}
                         </table>
                     </div>

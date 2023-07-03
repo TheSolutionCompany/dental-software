@@ -133,32 +133,34 @@ const PatientProfile = () => {
                     {page === "history" && (
                         <div>
                             {consultationHistory.map((consultation) => (
-                                <div className="border-black border p-2 m-4">
+                                <div>
                                     <p>Date: {new Date(consultation.data().creationDate).toDateString()}</p>
-                                    <p>Complains: {consultation.data().complains}</p>
-                                    <p>Consultation: {consultation.data().consultation}</p>
-                                    <p>Frontdesk Message: {consultation.data().frontDeskMessage}</p>
-                                    <table>
-                                        <thead>
-                                            <tr>
-                                                <th>Item</th>
-                                                <th>Price</th>
-                                                <th>Quantity</th>
-                                                <th>Subtotal</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {consultation.data().items.map((item, index) => (
-                                                <tr key={index}>
-                                                    <td>{item.name}</td>
-                                                    <td>{item.unitPrice}</td>
-                                                    <td>{item.quantity}</td>
-                                                    <td>{item.subtotal}</td>
+                                    <div className="border-black border p-2 m-4">
+                                        <p>Complains: {consultation.data().complains}</p>
+                                        <p>Consultation: {consultation.data().consultation}</p>
+                                        <p>Frontdesk Message: {consultation.data().frontDeskMessage}</p>
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                    <th>Item</th>
+                                                    <th>Price</th>
+                                                    <th>Quantity</th>
+                                                    <th>Subtotal</th>
                                                 </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                    <p>Grand Total: {consultation.data().grandTotal}</p>
+                                            </thead>
+                                            <tbody>
+                                                {consultation.data().items.map((item, index) => (
+                                                    <tr key={index}>
+                                                        <td>{item.name}</td>
+                                                        <td>{item.unitPrice}</td>
+                                                        <td>{item.quantity}</td>
+                                                        <td>{item.subtotal}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                        <p>Grand Total: {consultation.data().grandTotal}</p>
+                                    </div>
                                 </div>
                             ))}
                         </div>

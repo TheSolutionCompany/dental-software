@@ -30,15 +30,19 @@ export function DatabaseProvider({ children }) {
 
     const [loading, setLoading] = useState(true)
     const [availableDoctors, setAvailableDoctors] = useState([])
+
     const [allQueue, setAllQueue] = useState([])
     const [waitingQueue, setWaitingQueue] = useState([])
     const [inProgressQueue, setInProgressQueue] = useState([])
+    const [pendingBillingQueue, setPendingBillingQueue] = useState([])
     const [completedQueue, setCompletedQueue] = useState([])
+    const [waitingQueueSize, setWaitingQueueSize] = useState(0)
+
     const [inventory, setInventory] = useState([])
     const [medicineInventory, setMedicineInventory] = useState([])
     const [treatmentInventory, setTreatmentInventory] = useState([])
     const [otherInventory, setOtherInventory] = useState([])
-    const [waitingQueueSize, setWaitingQueueSize] = useState(0)
+
     const [date, setDate] = useState(new Date())
     const dayQueueRef = collection(db, "queues")
     const inventoryRef = collection(db, "inventory")
@@ -101,6 +105,8 @@ export function DatabaseProvider({ children }) {
                             setWaitingQueue((prev) => [...prev, doc])
                         } else if (doc.data().status === "in progress") {
                             setInProgressQueue((prev) => [...prev, doc])
+                        } else if (doc.data().status === "pending billing") {
+                            setPendingBillingQueue((prev) => [...prev, doc])
                         } else if (doc.data().status === "completed") {
                             setCompletedQueue((prev) => [...prev, doc])
                         }
