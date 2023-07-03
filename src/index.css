@@ -35,7 +35,7 @@ code {
 }
 
 .table-gray th {
-    @apply border-black border-x py-2.5;
+    @apply border-black border-x py-3;
 } 
 
 .table-gray td {
