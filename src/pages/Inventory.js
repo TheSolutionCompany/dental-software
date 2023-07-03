@@ -31,13 +31,13 @@ const Inventory = () => {
         return inventoryTable.map((inventoryRow) => (
             <tr
                 key={inventoryRow.id}
-                className={`table-tr-tbody-gray ${inventoryRow.data().stock <= inventoryRow.data().threshold ? "text-red-600" : ""
+                className={`${inventoryRow.data().stock <= inventoryRow.data().threshold ? "text-red-600" : ""
                     }`}
             >
-                <td className="table-td-gray w-[35%] text-left px-2">{inventoryRow.data().name}</td>
-                <td className="table-td-gray w-[20%] text-right px-2">{Number(inventoryRow.data().unitPrice).toFixed(2)}</td>
-                <td className="table-td-gray w-[15%] text-right px-2">{inventoryRow.data().stock}</td>
-                <td className="table-td-gray w-[10%]">
+                <td className="w-[35%] text-left px-2">{inventoryRow.data().name}</td>
+                <td className="w-[20%] text-right px-2">{Number(inventoryRow.data().unitPrice).toFixed(2)}</td>
+                <td className="w-[15%] text-right px-2">{inventoryRow.data().stock}</td>
+                <td className="w-[10%]">
                     <AddStockForm
                         activeItem={{
                             id: inventoryRow.id,
@@ -45,7 +45,7 @@ const Inventory = () => {
                         }}
                     />
                 </td>
-                <td className="table-td-gray w-[10%]">
+                <td className="w-[10%]">
                     <InventoryForm
                         data={{
                             editMode: true,
@@ -56,7 +56,7 @@ const Inventory = () => {
                         }}
                     />
                 </td>
-                <td className="table-td-gray w-[10%]">
+                <td className="w-[10%]">
                     <DeleteConfirmation
                         docName={"inventory"}
                         activeItem={{
@@ -71,12 +71,12 @@ const Inventory = () => {
 
     function generateTreatmentRows(inventoryTable) {
         return inventoryTable.map((inventoryRow) => (
-            <tr className="table-tr-tbody-gray" key={inventoryRow.id}>
-                <td className="table-td-gray w-[35%]">{inventoryRow.data().name}</td>
-                <td className="table-td-gray w-[20%]">{Number(inventoryRow.data().unitPrice).toFixed(2)}</td>
-                <td className="table-td-gray w-[15%]">N/A</td>
-                <td className="table-td-gray w-[10%]">N/A</td>
-                <td className="table-td-gray w-[10%]">
+            <tr className="" key={inventoryRow.id}>
+                <td className="w-[35%]">{inventoryRow.data().name}</td>
+                <td className="w-[20%]">{Number(inventoryRow.data().unitPrice).toFixed(2)}</td>
+                <td className="w-[15%]">N/A</td>
+                <td className="w-[10%]">N/A</td>
+                <td className="w-[10%]">
                     <InventoryForm
                         data={{
                             editMode: true,
@@ -87,7 +87,7 @@ const Inventory = () => {
                         }}
                     />
                 </td>
-                <td className="table-td-gray w-[10%]">
+                <td className="w-[10%]">
                     <DeleteConfirmation
                         docName={"inventory"}
                         activeItem={{
@@ -119,13 +119,13 @@ const Inventory = () => {
                         <div className="flex flex-col w-full h-[242px] border-black overflow-auto">
                             <table className="table-gray">
                                 <thead className="">
-                                    <tr className="table-tr-thead-gray sticky top-0">
-                                        <th className="table-th-gray w-[35%]">Name</th>
-                                        <th className="table-th-gray w-[20%]">Unit Price(RM)</th>
-                                        <th className="table-th-gray w-[15%]">Stock</th>
-                                        <th className="table-th-gray w-[10%]">Add Stock</th>
-                                        <th className="table-th-gray w-[10%]">Edit Item</th>
-                                        <th className="table-th-gray w-[10%]">Delete Item</th>
+                                    <tr className="sticky top-0">
+                                        <th className="w-[35%]">Name</th>
+                                        <th className="w-[20%]">Unit Price(RM)</th>
+                                        <th className="w-[15%]">Stock</th>
+                                        <th className="w-[10%]">Add Stock</th>
+                                        <th className="w-[10%]">Edit Item</th>
+                                        <th className="w-[10%]">Delete Item</th>
                                     </tr>
                                 </thead>
                                 <tbody>

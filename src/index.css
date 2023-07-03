@@ -14,30 +14,38 @@ code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
 
-tr:nth-child(even) {
-    @apply bg-gray-300;
-}
-
-thead tr {
-    @apply bg-gray-600;
-}
-
 .table-gray {
     @apply w-full h-10 font-bold border-collapse;
 }
 
-.table-tr-thead-gray {
-    @apply w-full h-10 bg-gray-400 font-bold;
+.table-gray thead tr {
+    @apply w-full h-10 bg-gray-500 font-bold;
 }
 
-.table-tr-tbody-gray{
-    @apply w-full h-10 bg-gray-200 font-bold;
+.table-gray tbody tr {
+    @apply w-full h-10 border border-black font-semibold;
 }
 
-.table-th-gray {
+.table-gray tbody tr:nth-child(odd) {
+    @apply bg-white;
+}
+
+.table-gray tbody tr:nth-child(even) {
+    @apply bg-gray-300;
+}
+
+.table-gray th {
     @apply border-black border-x;
 } 
 
-.table-td-gray {
+.table-gray td {
     @apply border-black border-x;
+}
+
+.tr-focus {
+    @apply bg-green-200 font-bold !important;
+}
+
+.tr-hover {
+    @apply hover:bg-green-400 cursor-pointer !important;
 }

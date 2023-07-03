@@ -148,28 +148,32 @@ export const RegisterExisting = () => {
                     </div>
                     <div className="flex flex-col w-full">
                         <table className="table-gray">
-                            <tr className="table-tr-thead-gray border-black">
-                                <th className="table-th-gray w-1/3">Name</th>
-                                <th className="table-th-gray w-1/3">IC</th>
-                                <th className="table-th-gray w-1/3">Mobile Number</th>
-                            </tr>
+                            <thead>
+                                <tr>
+                                    <th className="w-1/3">Name</th>
+                                    <th className="w-1/3">IC</th>
+                                    <th className="w-1/3">Mobile Number</th>
+                                </tr>
+                            </thead>
                         </table>
                     </div>
                     <div className="flex flex-col w-full h-fit mt-[-1px] overflow-auto">
-                        <table>
+                        <table className="table-gray">
+                            <tbody>
                             {patientsList.map((patient) => (
                                 <tr
-                                    className="table-tr-tbody-gray hover:bg-green-400 cursor-pointer"
+                                    className="tr-hover"
                                     key={patient.id}
                                     onClick={() => handleRegister(patient)}
-                                >
-                                    <td className="border-r border-b border-black w-1/3">{patient.data().name}</td>
-                                    <td className="border-r border-b border-black w-1/3">{patient.data().ic}</td>
-                                    <td className="border-r border-b border-black w-1/3">
+                                    >
+                                    <td className="w-1/3">{patient.data().name}</td>
+                                    <td className="w-1/3">{patient.data().ic}</td>
+                                    <td className="w-1/3">
                                         {patient.data().mobileNumber}
                                     </td>
                                 </tr>
                             ))}
+                            </tbody>
                         </table>
                     </div>
 
