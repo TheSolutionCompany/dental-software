@@ -41,7 +41,7 @@ export const Queue = () => {
                 <td className="w-[7%]">
                     {row.data().status === "waiting" && (
                         <button
-                            className="pt-2 hover:text-green-500"
+                            className="hover:text-green-500"
                             onClick={(e) => {
                                 handlePatientCall(row.data().patientId, row.id)
                             }}
@@ -111,7 +111,7 @@ export const Queue = () => {
                         <div className="flex flex-col w-full border-black overflow-auto">
                             <table className="table-gray">
                                 <thead>
-                                    <tr className="sticky top-0">
+                                    <tr>
                                         <th className="w-[20%]">Patient Name</th>
                                         <th className="w-[10%]">Gender</th>
                                         <th className="w-[5%]">Age</th>

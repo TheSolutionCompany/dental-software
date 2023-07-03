@@ -118,8 +118,8 @@ const Inventory = () => {
                         </div>
                         <div className="flex flex-col w-full h-[77vh] border-black overflow-auto">
                             <table className="table-gray">
-                                <thead className="">
-                                    <tr className="sticky top-0">
+                                <thead>
+                                    <tr>
                                         <th className="w-[35%]">Name</th>
                                         <th className="w-[20%]">Unit Price(RM)</th>
                                         <th className="w-[15%]">Stock</th>

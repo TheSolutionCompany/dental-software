@@ -150,7 +150,7 @@ export const RegisterExisting = () => {
                             />
                         </div>
                     </div>
-                    <div className="flex flex-col w-full">
+                    <div className="flex flex-col w-full overflow-auto">
                         <table className="table-gray">
                             <thead>
                                 <tr>
@@ -159,16 +159,12 @@ export const RegisterExisting = () => {
                                     <th className="w-1/3">Mobile Number</th>
                                 </tr>
                             </thead>
-                        </table>
-                    </div>
-                    <div className="flex flex-col w-full h-fit mt-[-1px] overflow-auto">
-                        <table className="table-gray">
                             <tbody>
                                 {patientsList.map((patient) => (
                                     <tr className="tr-hover" key={patient.id} onClick={() => handleRegister(patient)}>
-                                        <td className="w-1/3">{patient.data().name}</td>
-                                        <td className="w-1/3">{patient.data().ic}</td>
-                                        <td className="w-1/3">{patient.data().mobileNumber}</td>
+                                        <td className="w-1/3 text-left px-2">{patient.data().name}</td>
+                                        <td className="w-1/3 text-left px-2">{patient.data().ic}</td>
+                                        <td className="w-1/3 text-left px-2">{patient.data().mobileNumber}</td>
                                     </tr>
                                 ))}
                             </tbody>

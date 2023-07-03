@@ -19,7 +19,7 @@ code {
 }
 
 .table-gray thead tr {
-    @apply w-full h-10 bg-gray-400 font-bold;
+    @apply w-full h-10 bg-gray-400 font-bold sticky top-0;
 }
 
 .table-gray tbody tr {
