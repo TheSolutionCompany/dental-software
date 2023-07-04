@@ -11,6 +11,8 @@ import interactionPlugin from "@fullcalendar/interaction";
 
 Modal.setAppElement("#root");
 
+// I am so sorry to those who need to read this piece of code (other than me)
+// You can tell this feature is held tgt with a lot of bandaids...
 export default function WorkingHourForm(props) {
     const [isOpen, setIsOpen] = useState(false);
 
@@ -22,7 +24,8 @@ export default function WorkingHourForm(props) {
 
     const activeEmployee = props.activeEmployee;
 
-    const [eventCounter, setEventCounter] = useState(1);
+    const [timeslots, setTimeslots] = useState([]);
+    const [timeslotCounter, setTimeslotCounter] = useState(1);
 
     const toggleModal = () => {
         setIsOpen(!isOpen);
@@ -36,31 +39,112 @@ export default function WorkingHourForm(props) {
 
     const calendarRef = useRef();
 
-    function handleSubmit() {
+    useEffect(() => {
+        let flattened = Object.values(activeEmployee.workingHours).reduce(
+            (acc, newTimeslots) => acc.concat(newTimeslots),
+            []
+        );
+        flattened.sort(compareTwoTimeslots);
+        if (flattened.length > 0) {
+            // this is to help with the event id... i know, another strange code here...
+            let lastTimeslotIndex = Number(flattened[flattened.length - 1].id.split("_")[1]);
+            setTimeslotCounter(lastTimeslotIndex + 1);
+        }
+        flattened.forEach((timeslot) => {
+            timeslot.start = changeToCurrentWeek(timeslot.start);
+            timeslot.end = changeToCurrentWeek(timeslot.end);
+            timeslot.editable = true;
+        });
+        setTimeslots(flattened);
+    }, [activeEmployee.workingHours]);
+
+    function compareTwoTimeslots(timeslot1, timeslot2) {
+        let timeslotNumber1 = Number(timeslot1.id.split("_")[1]);
+        let timeslotNumber2 = Number(timeslot2.id.split("_")[1]);
+        if (timeslotNumber1 < timeslotNumber2) {
+            return -1;
+        } else if (timeslotNumber1 > timeslotNumber2) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    // very strange piece of code I know, but this is to ensure that even if time progresses further
+    // I will still be able to see the slots.
+    function changeToCurrentWeek(time) {
+        let initialTime = time.seconds ? new Date(time.seconds * 1000) : time;
+        let initialHours = initialTime.getHours();
+        let initialMinutes = initialTime.getMinutes();
+        let today = new Date();
+        let result = today.getDate() - today.getDay() + initialTime.getDay();
+        let resultDate = new Date(today.setDate(result))
+        let resultWithHours = new Date(resultDate.setHours(initialHours));
+        let resultWithMinutes = new Date(resultWithHours.setMinutes(initialMinutes));
+        let resultWithSeconds = new Date(resultWithMinutes.setSeconds(0));
+        return resultWithSeconds;
+    }
+
+    async function handleSubmit() {
         let calendarApi = calendarRef.current.getApi();
-        console.log(parseEventArrayToMap(calendarApi.getEvents()));
+        let finalWorkingHours = parseEventArrayToMap(calendarApi.getEvents());
+
+        document.getElementById("submitButton").disabled = true;
+
+        if (await editWorkingHours(activeEmployee.id, finalWorkingHours)) {
+            toggleModal();
+            toast.success("Working hours edited successfully", {
+                position: "top-center",
+                autoClose: 1000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            });
+            toast.clearWaitingQueue();
+        } else {
+            document.getElementById("submitButton").disabled = false;
+            toast.error("Failed to edit working hours. Please try again later.", {
+                position: "top-center",
+                autoClose: 1000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            });
+            toast.clearWaitingQueue();
+        }
     }
 
     // firebase cant support nested arrays. yup.
     function parseEventArrayToMap(eventArray) {
-        return eventArray.map((event) => ({
+        let simplifiedList = eventArray.map((event) => ({
             id: event.id,
             start: event.start,
             end: event.end,
             title: event.title,
         }));
+        let result = { 0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
+        for (let item of simplifiedList) {
+            result[item.start.getDay()].push(item);
+        }
+        return result;
     }
 
     function handleSelect(selectionInfo) {
         let calendarApi = calendarRef.current.getApi();
         let newEvent = {
-            id: `${activeEmployee.id}_${eventCounter}`,
+            id: `${activeEmployee.id}_${timeslotCounter}`,
             start: selectionInfo.start,
             end: selectionInfo.end,
             editable: true,
             title: "Working Hours",
         };
-        setEventCounter(eventCounter + 1);
+        setTimeslotCounter(timeslotCounter + 1);
         calendarApi.addEvent(newEvent);
     }
 
@@ -97,6 +181,7 @@ export default function WorkingHourForm(props) {
                             headerToolbar={{ left: "", right: "" }}
                             ref={calendarRef}
                             eventClick={handleEventClicked}
+                            events={timeslots}
                         />
                         <button onClick={handleSubmit} className="button-green rounded" id="submitButton">
                             Submit
