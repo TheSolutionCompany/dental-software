@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react"
 import { useDatabase } from "../contexts/DatabaseContext"
+import { useNavigate } from "react-router-dom"
 
 const ConsultationForm = ({patientId, queueId}) => {
     // Functions from DatabaseContext
-    const { getCurrentConsultation, updateConsultation } = useDatabase()
+    const { getCurrentConsultation, updateConsultation, updatePatientStatus } = useDatabase()
+
+    const navigate = useNavigate()
 
     const [loading, setLoading] = useState(false)
     const [saved, setSaved] = useState(false)
@@ -37,6 +40,12 @@ const ConsultationForm = ({patientId, queueId}) => {
         await updateConsultation(patientId, consultationId, consultation, frontDeskMessage, itemList, grandTotal)
         setLoading(false)
         setSaved(true)
+    }
+
+    async function handleSendForPayment(e) {
+        e.preventDefault()
+        await updatePatientStatus(queueId, "pending billing")
+        navigate("/queue")
     }
 
     function generateTable(list) {
@@ -100,7 +109,7 @@ const ConsultationForm = ({patientId, queueId}) => {
                 </table>
                 <table>{generateTable(itemList)}</table>
                 <button type="submit" disabled={loading} hidden={saved}>Save</button>
-                <button type="button" hidden={!saved}>Send for payment</button>
+                <button type="button" hidden={!saved} onClick={handleSendForPayment}>Send for payment</button>
             </form>
         </div>
     )
