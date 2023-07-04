@@ -11,8 +11,9 @@ export default function DeleteConfirmation(props) {
     const [isOpen, setIsOpen] = useState(false)
     const { deleteObject } = useDatabase()
 
-    const activeItem = props.activeItem
     const docName = props.docName
+    const activeItemId = props.activeItemId
+    const activeItemName = props.activeItemName
 
     const toggleModal = () => {
         setIsOpen(!isOpen)
@@ -20,7 +21,7 @@ export default function DeleteConfirmation(props) {
 
     const handleOk = async (event) => {
         event.preventDefault()
-        if (await deleteObject(docName, activeItem.id)) {
+        if (await deleteObject(docName, activeItemId)) {
             toast.success(`Item deleted successfully`, {
                 position: "top-center",
                 autoClose: 1000,
@@ -78,7 +79,7 @@ export default function DeleteConfirmation(props) {
                 <CloseButton name={title} func={toggleModal} />
 
                 <div style={{ marginTop: "20px" }}>
-                    Are you sure you want to delete <strong>{activeItem.name}</strong>?
+                    Are you sure you want to delete <strong>{activeItemName}</strong>?
                 </div>
 
                 <button style={{ marginTop: "20px" }} className="button-green rounded" onClick={handleOk}>

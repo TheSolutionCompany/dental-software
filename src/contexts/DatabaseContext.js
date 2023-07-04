@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useState } from "react"
-import { db } from "../firebase"
-import { useAuth } from "./AuthContext"
+import React, { useContext, useEffect, useState } from "react";
+import { db } from "../firebase";
+import { useAuth } from "./AuthContext";
 import {
     collection,
     query,
@@ -18,18 +18,20 @@ import {
     increment,
 } from "firebase/firestore"
 
-const DatabaseContext = React.createContext()
+const DatabaseContext = React.createContext();
 
 export function useDatabase() {
-    return useContext(DatabaseContext)
+    return useContext(DatabaseContext);
 }
 
 export function DatabaseProvider({ children }) {
     // Variables in AuthContext
-    const { user } = useAuth()
+    const { user, signupWithName, updateEmail } = useAuth();
 
     const [loading, setLoading] = useState(true)
     const [availableDoctors, setAvailableDoctors] = useState([])
+
+    const [employees, setEmployees] = useState([])
 
     const [allQueue, setAllQueue] = useState([])
     const [waitingQueue, setWaitingQueue] = useState([])
@@ -46,37 +48,41 @@ export function DatabaseProvider({ children }) {
     const [date, setDate] = useState(new Date())
     const dayQueueRef = collection(db, "queues")
     const inventoryRef = collection(db, "inventory")
+    const employeeRef = collection(db, "users")
 
     useEffect(() => {
         const timer = setInterval(() => {
-            const newDate = new Date()
+            const newDate = new Date();
             if (
                 date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() !==
                 newDate.getFullYear() + "-" + (newDate.getMonth() + 1) + "-" + newDate.getDate()
             ) {
-                setDate(new Date())
-                console.log("date changed")
+                setDate(new Date());
+                console.log("date changed");
             }
-        }, 1000)
-        return () => clearInterval(timer)
-    }, [date])
+        }, 1000);
+        return () => clearInterval(timer);
+    }, [date]);
 
     useEffect(() => {
-        // AvailableDoctors Listener
-        const q = query(collection(db, "users"), where("position", "in", ["Doctor", "Locum Doctor"]))
-        onSnapshot(q, (querySnapshot) => {
-            console.log("available doctors listener")
-            setAvailableDoctors([])
+        // Employees Listener
+        const employeesQ = query(employeeRef);
+        onSnapshot(employeesQ, (querySnapshot) => {
+            setEmployees([]);
+            setAvailableDoctors([]);
             querySnapshot.forEach((doc) => {
-                setAvailableDoctors((prev) => [...prev, doc])
-            })
-        })
+                setEmployees((prev) => [...prev, doc]);
+                if (doc.data().position === "Doctor" || doc.data().position === "Locum Doctor") {
+                    setAvailableDoctors((prev) => [...prev, doc]);
+                }
+            });
+        });
 
         // Waiting Queue Size Listener
         const q1 = query(
             collection(dayQueueRef, date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate(), "queue"),
             where("status", "==", "waiting")
-        )
+        );
         onSnapshot(q1, (querySnapshot) => {
             console.log("waiting queue size listener")
             setWaitingQueueSize(querySnapshot.size)
@@ -111,12 +117,12 @@ export function DatabaseProvider({ children }) {
                             setCompletedQueue((prev) => [...prev, doc])
                         }
                     }
-                })
-            })
+                });
+            });
         }
 
         // Inventory Listener
-        const inventoryQ = query(collection(db, "inventory"))
+        const inventoryQ = query(collection(db, "inventory"));
         onSnapshot(inventoryQ, (querySnapshot) => {
             console.log("inventory listener")
             setInventory([])
@@ -124,16 +130,16 @@ export function DatabaseProvider({ children }) {
             setTreatmentInventory([])
             setOtherInventory([])
             querySnapshot.forEach((doc) => {
-                setInventory((prev) => [...prev, doc])
+                setInventory((prev) => [...prev, doc]);
                 if (doc.data().type === "Medicine") {
-                    setMedicineInventory((prev) => [...prev, doc])
+                    setMedicineInventory((prev) => [...prev, doc]);
                 } else if (doc.data().type === "Treatment") {
-                    setTreatmentInventory((prev) => [...prev, doc])
+                    setTreatmentInventory((prev) => [...prev, doc]);
                 } else if (doc.data().type === "Other Product") {
-                    setOtherInventory((prev) => [...prev, doc])
+                    setOtherInventory((prev) => [...prev, doc]);
                 }
-            })
-        })
+            });
+        });
 
         setLoading(false)
     }, [user, date])
@@ -162,18 +168,18 @@ export function DatabaseProvider({ children }) {
             const result = (await getDocs(q)).docs.map((doc) => doc)
             return Object.values(result)
         } else if (mobileNumber) {
-            const start = mobileNumber
-            const end = start.replace(/.$/, (c) => String.fromCharCode(c.charCodeAt(0) + 1))
+            const start = mobileNumber;
+            const end = start.replace(/.$/, (c) => String.fromCharCode(c.charCodeAt(0) + 1));
             const q = query(
                 collection(db, "patients"),
                 where("mobileNumber", ">=", start),
                 where("mobileNumber", "<", end),
                 orderBy("mobileNumber", "asc")
-            )
-            const result = (await getDocs(q)).docs.map((doc) => doc)
-            return Object.values(result)
+            );
+            const result = (await getDocs(q)).docs.map((doc) => doc);
+            return Object.values(result);
         } else {
-            return []
+            return [];
         }
     }
 
@@ -215,8 +221,8 @@ export function DatabaseProvider({ children }) {
     }
 
     async function checkRepeatedIc(ic) {
-        const q = query(collection(db, "patients"), where("ic", "==", ic))
-        return (await getCountFromServer(q)).data().count === 0 ? false : true
+        const q = query(collection(db, "patients"), where("ic", "==", ic));
+        return (await getCountFromServer(q)).data().count === 0 ? false : true;
     }
 
     async function issueMc(patientId, doctorId, fromDate, toDate, remark) {
@@ -226,7 +232,7 @@ export function DatabaseProvider({ children }) {
             fromDate,
             toDate,
             remark,
-        })
+        });
     }
 
     async function registerNewPatient(
@@ -295,7 +301,7 @@ export function DatabaseProvider({ children }) {
         const docRef = doc(subCollectionRef, queueId)
         await updateDoc(docRef, {
             status: status,
-        })
+        });
     }
 
     async function getCurrentConsultation(patientId, queueId) {
@@ -324,31 +330,57 @@ export function DatabaseProvider({ children }) {
 
     async function addInventoryItem(name, type, unitPrice, stock, threshold) {
         try {
-            await addDoc(inventoryRef, { name, type, unitPrice, stock, threshold })
-            return true
+            await addDoc(inventoryRef, { name, type, unitPrice, stock, threshold });
+            return true;
         } catch (e) {
-            console.log(e)
-            return false
+            console.log(e);
+            return false;
         }
     }
 
     async function editInventoryItem(id, name, type, unitPrice, stock, threshold) {
         try {
-            await updateDoc(doc(db, "inventory", id), { name, type, unitPrice, stock, threshold })
-            return true
+            await updateDoc(doc(db, "inventory", id), { name, type, unitPrice, stock, threshold });
+            return true;
         } catch (e) {
-            console.log(e)
-            return false
+            console.log(e);
+            return false;
         }
     }
 
+    async function addEmployee(displayName, email, position, password) {
+        try {
+            let workingHours = { 0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
+            //await signupWithName(email, password, displayName)
+            await addDoc(employeeRef, { displayName, email, position, workingHours });
+            return true;
+        } catch (e) {
+            console.log(e);
+            return false;
+        }
+    }
+
+    // For admin usage only. Should be the logged in user that changes the email not the admin
+    // totally not because i realize i cannot change the email that is stored in the authentication
+    // tab in firebase thru auth context lol
+    async function editWorkingHours(id, workingHours) {
+        try {
+            await updateDoc(doc(db, "users", id), { workingHours });
+            return true;
+        } catch (e) {
+            console.log(e);
+            return false;
+        }
+    }
+    // write another function that allows users to edit their own email under profile page
+
     async function deleteObject(docName, id) {
         try {
-            await deleteDoc(doc(db, docName, id))
-            return true
+            await deleteDoc(doc(db, docName, id));
+            return true;
         } catch (e) {
-            console.log(e)
-            return false
+            console.log(e);
+            return false;
         }
     }
 
@@ -364,6 +396,7 @@ export function DatabaseProvider({ children }) {
         treatmentInventory: treatmentInventory,
         otherInventory: otherInventory,
         waitingQueueSize: waitingQueueSize,
+        employees: employees,
         search,
         addToQueue,
         checkRepeatedIc,
@@ -373,10 +406,12 @@ export function DatabaseProvider({ children }) {
         deleteObject,
         issueMc,
         updatePatientStatus,
+        addEmployee,
+        editWorkingHours,
         getCurrentConsultation,
         getConsultationHistory,
         updateConsultation,
     }
 
-    return <DatabaseContext.Provider value={value}>{!loading && children}</DatabaseContext.Provider>
+    return <DatabaseContext.Provider value={value}>{!loading && children}</DatabaseContext.Provider>;
 }

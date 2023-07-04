@@ -47,6 +47,12 @@ const Header = ({ currentPage, handleLogout }) => {
         }
     }
 
+    const handleEmployeePage = () => {
+        if (location.pathname !== "/Employee") {
+            navigate("/Employee")
+        }
+    }
+
     return (
         <header className="flex items-center justify-between bg-gray-800 h-14">
             <div className="h-full w-full flex items-center cursor-pointer ml-4 text-left">
@@ -93,6 +99,14 @@ const Header = ({ currentPage, handleLogout }) => {
                     onClick={handleInventoryPage}
                 >
                     Inventory
+                </button>
+                <button
+                    className={`p-4 h-full ${
+                        currentPage === "Employee" ? "bg-gray-200 text-black" : "hover:bg-gray-700 text-white "
+                    }`}
+                    onClick={handleEmployeePage}
+                >
+                    Employee
                 </button>
                 <div className="flex h-full">
                     <button
