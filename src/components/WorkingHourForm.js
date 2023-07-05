@@ -182,6 +182,7 @@ export default function WorkingHourForm(props) {
                             ref={calendarRef}
                             eventClick={handleEventClicked}
                             events={timeslots}
+                            allDaySlot={false}
                         />
                         <button onClick={handleSubmit} className="button-green rounded" id="submitButton">
                             Submit
