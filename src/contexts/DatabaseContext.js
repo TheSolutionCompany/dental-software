@@ -81,7 +81,7 @@ export function DatabaseProvider({ children }) {
         // Waiting Queue Size Listener
         const q1 = query(
             collection(dayQueueRef, date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate(), "queue"),
-            where("status", "==", "waiting")
+            where("status", "==", "waiting"), where("doctorId", "==", user.uid)
         );
         onSnapshot(q1, (querySnapshot) => {
             console.log("waiting queue size listener")
