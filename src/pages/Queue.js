@@ -29,8 +29,6 @@ export const Queue = () => {
                 onClick={() => {
                     row.id === onFocusIndex ? setOnFocusIndex(null) : setOnFocusIndex(row.id)
                 }}
-                // The onDoubleClick is for testing purposes. It will be removed later.
-                onDoubleClick={() => handlePatientProfile(row.data().patientId, row.id)}
             >
                 <td className="w-[20%]">{row.data().patientName}</td>
                 <td className="w-[10%]">{row.data().gender}</td>

@@ -122,7 +122,7 @@ const Header = ({ currentPage, handleLogout }) => {
                         <ul
                             onMouseEnter={() => setIsShown(true)}
                             onMouseLeave={() => setIsShown(false)}
-                            className="cursor-pointer absolute text-white top-14 bg-gray-800"
+                            className="cursor-pointer absolute text-white top-14 bg-gray-800 z-50"
                         >
                             <li className="px-4 py-2 hover:bg-gray-700" onClick={handleProfilePage}>
                                 Profile

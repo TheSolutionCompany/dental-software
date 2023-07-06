@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from "react"
 import { useDatabase } from "../contexts/DatabaseContext"
 import { useNavigate } from "react-router-dom"
+import Select from "react-select"
 
-const ConsultationForm = ({patientId, queueId}) => {
+const ConsultationForm = ({ patientId, queueId }) => {
+    // Variables from DatabaseContext
+    const { inventory } = useDatabase()
+
     // Functions from DatabaseContext
-    const { getCurrentConsultation, updateConsultation, updatePatientStatus } = useDatabase()
+    const { getCurrentConsultation, updateConsultation, updatePatientStatus, updateStock } = useDatabase()
 
     const navigate = useNavigate()
 
@@ -16,6 +20,7 @@ const ConsultationForm = ({patientId, queueId}) => {
     const [frontDeskMessage, setFrontDeskMessage] = useState("")
     const [complains, setComplains] = useState("")
 
+    const [itemId, setItemId] = useState("")
     const [itemName, setItemName] = useState("")
     const [unitPrice, setUnitPrice] = useState(0)
     const [quantity, setQuantity] = useState(0)
@@ -34,6 +39,22 @@ const ConsultationForm = ({patientId, queueId}) => {
         })
     }, [])
 
+    function handleSelectItem(e) {
+        setItemId(e.id)
+        setItemName(e.value)
+        setUnitPrice(e.unitPrice)
+        setQuantity(1)
+    }
+
+    function handleDeleteItem(e) {
+        let index = e.target.parentNode.parentNode.rowIndex - 1
+        console.log(index)
+        let item = itemList[index]
+        console.log(item)
+        setItemList(itemList.filter((i) => i !== item))
+        setGrandTotal(grandTotal - item.subtotal)
+    }
+
     async function handleSave(e) {
         e.preventDefault()
         setLoading(true)
@@ -44,6 +65,7 @@ const ConsultationForm = ({patientId, queueId}) => {
 
     async function handleSendForPayment(e) {
         e.preventDefault()
+        await updateStock(itemList)
         await updatePatientStatus(queueId, "pending billing")
         navigate("/queue")
     }
@@ -55,6 +77,11 @@ const ConsultationForm = ({patientId, queueId}) => {
                 <td>{item.unitPrice}</td>
                 <td>{item.quantity}</td>
                 <td>{item.subtotal}</td>
+                <td>
+                    <button type="button" onClick={handleDeleteItem}>
+                        Delete
+                    </button>
+                </td>
             </tr>
         ))
     }
@@ -66,6 +93,7 @@ const ConsultationForm = ({patientId, queueId}) => {
     function handleAddItem(e) {
         e.preventDefault()
         let item = {
+            id: itemId,
             name: itemName,
             unitPrice: unitPrice,
             quantity: quantity,
@@ -80,37 +108,90 @@ const ConsultationForm = ({patientId, queueId}) => {
     }
 
     return (
-        <div>
-            <form id="addItemForm" onSubmit={handleAddItem}>
-                <label>name</label>
-                <input type="text" value={itemName} onChange={(e) => setItemName(e.target.value)} />
-                <label>unitPrice</label>
-                <input type="number" value={unitPrice} onChange={(e) => setUnitPrice(e.target.value)} />
-                <label>quantity</label>
-                <input type="number" value={quantity} onChange={(e) => setQuantity(e.target.value)} />
-                <label>subtotal</label>
-                <input type="number" value={subtotal} readOnly />
-                <button type="submit">Add</button>
-            </form>
-            <form onSubmit={handleSave}>
-                <label>Complains</label>
-                <textarea rows={4} value={complains} readOnly></textarea>
-                <label>Consultation</label>
-                <textarea rows={10} value={consultation} onChange={(e) => setConsultation(e.target.value)}></textarea>
-                <label>Frontdesk Message</label>
-                <textarea rows={5} defaultValue={frontDeskMessage} onChange={(e) => setFrontDeskMessage(e.target.value)}></textarea>
-                <table>
-                    <tr>
-                        <th>Treatment/Medicine/Product</th>
-                        <th>Unit Price</th>
-                        <th>Quantity</th>
-                        <th>Total Price</th>
-                    </tr>
+        <div className="flex flex-row">
+            <div className="w-[50%] pr-4">
+                <form className="flex flex-col" onSubmit={handleSave}>
+                    <div className="flex flex-row pb-4">
+                        <div className="flex flex-col w-full pr-2">
+                            <label>Complains</label>
+                            <textarea rows={6} value={complains} readOnly></textarea>
+                        </div>
+                        <div className="flex flex-col w-full pl-2">
+                            <label>Frontdesk Message</label>
+                            <textarea
+                                rows={6}
+                                defaultValue={frontDeskMessage}
+                                onChange={(e) => setFrontDeskMessage(e.target.value)}
+                            ></textarea>
+                        </div>
+                    </div>
+                    <label>Consultation</label>
+                    <textarea
+                        rows={20}
+                        value={consultation}
+                        onChange={(e) => setConsultation(e.target.value)}
+                    ></textarea>
+                    <button type="submit" disabled={loading} hidden={saved}>
+                        Save
+                    </button>
+                    <button type="button" hidden={!saved} onClick={handleSendForPayment}>
+                        Send for payment
+                    </button>
+                </form>
+            </div>
+            <div className="w-[50%] pl-4">
+                <form className="flex flex-row pb-8" id="addItemForm" onSubmit={handleAddItem}>
+                    <div className="flex flex-col w-full">
+                        <label>Name</label>
+                        <Select
+                            options={inventory.map((res) => {
+                                return {
+                                    value: res.data().name,
+                                    label: res.data().name,
+                                    unitPrice: res.data().unitPrice,
+                                    id: res.id,
+                                }
+                            })}
+                            styles={{
+                                control: (base) => ({
+                                    ...base,
+                                    minHeight: "42px",
+                                }),
+                            }}
+                            onChange={(e) => {
+                                handleSelectItem(e)
+                            }}
+                            //unstyled
+                            required
+                        />
+                    </div>
+                    <div className="flex flex-col w-32">
+                        <label>Unit price</label>
+                        <input type="number" value={unitPrice} onChange={(e) => setUnitPrice(e.target.value)} />
+                    </div>
+                    <div className="flex flex-col w-32">
+                        <label>Quantity</label>
+                        <input type="number" value={quantity} onChange={(e) => setQuantity(e.target.value)} />
+                    </div>
+                    <div className="flex flex-col w-32">
+                        <label>Subtotal</label>
+                        <input type="number" value={subtotal} readOnly />
+                    </div>
+                    <button type="submit">Add</button>
+                </form>
+                <table className="table-gray">
+                    <thead>
+                        <tr>
+                            <th>Treatment/Medicine/Product</th>
+                            <th>Unit Price</th>
+                            <th>Quantity</th>
+                            <th>Total Price</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>{generateTable(itemList)}</tbody>
                 </table>
-                <table>{generateTable(itemList)}</table>
-                <button type="submit" disabled={loading} hidden={saved}>Save</button>
-                <button type="button" hidden={!saved} onClick={handleSendForPayment}>Send for payment</button>
-            </form>
+            </div>
         </div>
     )
 }

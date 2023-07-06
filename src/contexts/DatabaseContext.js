@@ -328,6 +328,16 @@ export function DatabaseProvider({ children }) {
         })
     }
 
+    async function updateStock(itemList) {
+        for (let item of itemList) {
+            alert(item.id + " " + item.quantity)
+            const docRef = doc(db, "inventory", item.id)
+            await updateDoc(docRef, {
+                stock: increment(-item.quantity),
+            })
+        }
+    }
+
     async function addInventoryItem(name, type, unitPrice, stock, threshold) {
         try {
             await addDoc(inventoryRef, { name, type, unitPrice, stock, threshold });
@@ -401,6 +411,7 @@ export function DatabaseProvider({ children }) {
         addToQueue,
         checkRepeatedIc,
         registerNewPatient,
+        updateStock,
         addInventoryItem,
         editInventoryItem,
         deleteObject,

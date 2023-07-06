@@ -187,7 +187,7 @@ export default function InventoryForm(props) {
                 shouldCloseOnOverlayClick={false}
                 style={smallModal}
             >
-                <CloseButton name={title} func={toggleModal} />
+                <CloseButton name={`${editMode ? "Edit Item" : "Add New Item"}`} func={toggleModal} />
                 <form onSubmit={handleSubmit}>
                     <div className="grid grid-cols-1 gap-1">
                         <div className="flex flex-col">

@@ -98,7 +98,7 @@ const PatientProfile = () => {
             <Header className="z-50" currentPage={"PatientProfile"} handleLogout={handleLogout} />
             <div className="flex h-full">
                 <SideBar />
-                <div className="w-full bg-gray-200 p-4">
+                <div className="w-full bg-gray-200 p-8">
                     <div className="flex flex-row pb-4">
                         <p className="pr-2">
                             Patient name: <b>{name}</b>
