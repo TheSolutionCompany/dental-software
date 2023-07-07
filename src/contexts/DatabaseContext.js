@@ -26,7 +26,7 @@ export function useDatabase() {
 
 export function DatabaseProvider({ children }) {
     // Variables in AuthContext
-    const { user, signupWithName, updateEmail } = useAuth();
+    const { user } = useAuth();
 
     const [loading, setLoading] = useState(true)
     const [availableDoctors, setAvailableDoctors] = useState([])
@@ -184,6 +184,7 @@ export function DatabaseProvider({ children }) {
     }
 
     async function addToQueue(patientId, patientName, age, ic, gender, doctorId, complains, status) {
+        // Used a nowDate variable to prevent the date from changing when the function is running
         const nowDate = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate()
         const creationDate = Date.now()
         const q = doc(dayQueueRef, nowDate)
@@ -194,6 +195,7 @@ export function DatabaseProvider({ children }) {
             await updateDoc(q, { queueNumber: increment(1) })
         }
         res = await getDoc(q)
+        // Create a new queue document
         const queueRef = await addDoc(
             collection(dayQueueRef, nowDate, "queue"),
             {
@@ -209,6 +211,7 @@ export function DatabaseProvider({ children }) {
             }
         )
         const consultationLocRef = collection(db, "patients", patientId, "consultation")
+        // Create a new consultation document
         const consultationRef = await addDoc(consultationLocRef, {
             queueId: queueRef.id,
             creationDate,
@@ -218,7 +221,8 @@ export function DatabaseProvider({ children }) {
             items: [],
             grandTotal: 0,
         })
-        await updateDoc(doc(dayQueueRef, date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate(), "queue", queueRef.id), {
+        // Update the queue document with the consultation id
+        await updateDoc(doc(dayQueueRef, nowDate, "queue", queueRef.id), {
             consultationId: consultationRef.id
         })
     }
