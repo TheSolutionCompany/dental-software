@@ -103,6 +103,7 @@ export function DatabaseProvider({ children }) {
                 setAllQueue([])
                 setWaitingQueue([])
                 setInProgressQueue([])
+                setPendingBillingQueue([])
                 setCompletedQueue([])
                 querySnapshot.forEach((doc) => {
                     if (doc.data().doctorId === user.uid) {
@@ -227,6 +228,7 @@ export function DatabaseProvider({ children }) {
         })
     }
 
+
     async function checkRepeatedIc(ic) {
         const q = query(collection(db, "patients"), where("ic", "==", ic));
         return (await getCountFromServer(q)).data().count === 0 ? false : true;
@@ -337,7 +339,6 @@ export function DatabaseProvider({ children }) {
 
     async function updateStock(itemList) {
         for (let item of itemList) {
-            alert(item.id + " " + item.quantity)
             const docRef = doc(db, "inventory", item.id)
             await updateDoc(docRef, {
                 stock: increment(-item.quantity),
