@@ -14,7 +14,12 @@ const ConsultationForm = ({ patientId, queueId }) => {
 
     const [loading, setLoading] = useState(false)
     const [saved, setSaved] = useState(false)
+    const [edited, setEdited] = useState(false)
 
+    const [oriItemList, setOriItemList] = useState([])
+    const [oriConsultation, setOriConsultation] = useState("")
+    const [oriFrontDeskMessage, setOriFrontDeskMessage] = useState("")
+    const [oriComplains, setOriComplains] = useState("")
     const [itemList, setItemList] = useState([])
     const [consultation, setConsultation] = useState("")
     const [frontDeskMessage, setFrontDeskMessage] = useState("")
@@ -31,13 +36,38 @@ const ConsultationForm = ({ patientId, queueId }) => {
 
     useEffect(() => {
         getCurrentConsultation(patientId, queueId).then((res) => {
+            setOriConsultation(res.data().consultation)
             setConsultation(res.data().consultation)
+            setOriFrontDeskMessage(res.data().frontDeskMessage)
             setFrontDeskMessage(res.data().frontDeskMessage)
+            setOriComplains(res.data().complains)
             setComplains(res.data().complains)
+            setOriItemList(res.data().items)
             setItemList(res.data().items)
+            setGrandTotal(res.data().grandTotal)
             setConsultationId(res.id)
         })
     }, [])
+
+    useEffect(() => {
+        if (
+            arraysEqual(itemList, oriItemList) &&
+            consultation === oriConsultation &&
+            frontDeskMessage === oriFrontDeskMessage &&
+            complains === oriComplains
+        ) {
+            console.log("no change")
+            setEdited(false)
+        } else {
+            console.log("change")
+            setEdited(true)
+        }
+    }, [itemList, consultation, frontDeskMessage, complains])
+
+    const objectsEqual = (o1, o2) =>
+        Object.keys(o1).length === Object.keys(o2).length && Object.keys(o1).every((p) => o1[p] === o2[p])
+
+    const arraysEqual = (a1, a2) => a1.length === a2.length && a1.every((o, idx) => objectsEqual(o, a2[idx]))
 
     function handleSelectItem(e) {
         setItemId(e.id)
@@ -105,6 +135,7 @@ const ConsultationForm = ({ patientId, queueId }) => {
         setSubtotal(0)
         setItemList([...itemList, item])
         setGrandTotal(grandTotal + item.subtotal)
+        setEdited(true)
     }
 
     return (
@@ -131,10 +162,14 @@ const ConsultationForm = ({ patientId, queueId }) => {
                         value={consultation}
                         onChange={(e) => setConsultation(e.target.value)}
                     ></textarea>
-                    <button type="submit" disabled={loading} hidden={saved}>
+                    <button type="submit" disabled={loading} hidden={`${edited ^ saved ? "" : "hidden"}`}>
                         Save
                     </button>
-                    <button type="button" hidden={!saved} onClick={handleSendForPayment}>
+                    <button
+                        type="button"
+                        hidden={`${!(edited ^ saved) ? "" : "hidden"}`}
+                        onClick={handleSendForPayment}
+                    >
                         Send for payment
                     </button>
                 </form>
@@ -161,7 +196,6 @@ const ConsultationForm = ({ patientId, queueId }) => {
                             onChange={(e) => {
                                 handleSelectItem(e)
                             }}
-                            //unstyled
                             required
                         />
                     </div>
@@ -185,12 +219,15 @@ const ConsultationForm = ({ patientId, queueId }) => {
                             <th>Treatment/Medicine/Product</th>
                             <th>Unit Price</th>
                             <th>Quantity</th>
-                            <th>Total Price</th>
+                            <th>Subtotal</th>
                             <th>Delete</th>
                         </tr>
                     </thead>
                     <tbody>{generateTable(itemList)}</tbody>
                 </table>
+                <p>
+                    Grand Total: <b>{grandTotal}</b>
+                </p>
             </div>
         </div>
     )

@@ -184,8 +184,9 @@ export function DatabaseProvider({ children }) {
     }
 
     async function addToQueue(patientId, patientName, age, ic, gender, doctorId, complains, status) {
+        const nowDate = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate()
         const creationDate = Date.now()
-        const q = doc(dayQueueRef, date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate())
+        const q = doc(dayQueueRef, nowDate)
         var res = await getDoc(q)
         if (!res.exists()) {
             await setDoc(q, { queueNumber: 1 })
@@ -193,8 +194,8 @@ export function DatabaseProvider({ children }) {
             await updateDoc(q, { queueNumber: increment(1) })
         }
         res = await getDoc(q)
-        const docRef = await addDoc(
-            collection(dayQueueRef, date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate(), "queue"),
+        const queueRef = await addDoc(
+            collection(dayQueueRef, nowDate, "queue"),
             {
                 queueNumber: res.data().queueNumber,
                 patientId,
@@ -205,18 +206,20 @@ export function DatabaseProvider({ children }) {
                 doctorId,
                 complains,
                 status,
-                creationDate,
-                frontDeskMessage: "",
             }
         )
-        const consultationRef = collection(db, "patients", patientId, "consultation")
-        await addDoc(consultationRef, {
-            queueId: docRef.id,
+        const consultationLocRef = collection(db, "patients", patientId, "consultation")
+        const consultationRef = await addDoc(consultationLocRef, {
+            queueId: queueRef.id,
             creationDate,
             consultation: "",
             frontDeskMessage: "",
             complains,
             items: [],
+            grandTotal: 0,
+        })
+        await updateDoc(doc(dayQueueRef, date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate(), "queue", queueRef.id), {
+            consultationId: consultationRef.id
         })
     }
 
