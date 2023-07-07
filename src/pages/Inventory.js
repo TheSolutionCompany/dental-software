@@ -1,27 +1,95 @@
-import React, { useState } from "react"
-import { useNavigate } from "react-router-dom"
-import { useAuth } from "../contexts/AuthContext"
-import Header from "../components/Header"
-import SideBar from "../components/SideBar"
-import { useDatabase } from "../contexts/DatabaseContext"
-import InventoryForm from "../components/InventoryForm"
-import DeleteConfirmation from "../components/DeleteConfirmation"
-import AddStockForm from "../components/AddStockForm"
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import Header from "../components/Header";
+import SideBar from "../components/SideBar";
+import { useDatabase } from "../contexts/DatabaseContext";
+import InventoryForm from "../components/InventoryForm";
+import DeleteConfirmation from "../components/DeleteConfirmation";
+import AddStockForm from "../components/AddStockForm";
 
 const Inventory = () => {
-    const navigate = useNavigate()
-    const { logout } = useAuth()
+    const navigate = useNavigate();
+    const { logout } = useAuth();
 
-    const [filter, setFilter] = useState("medicine")
+    const [filter, setFilter] = useState("medicine");
 
-    const { medicineInventory, treatmentInventory, otherInventory } = useDatabase()
+    const { medicineInventory, treatmentInventory, otherInventory } = useDatabase();
+
+    const [order, setOrder] = useState("DSC");
+    const [sortByLowStock, setSortByLowStock] = useState(false);
+    const [inv, setInv] = useState([medicineInventory]);
+
+    useEffect(() => {
+        if (filter === "medicine") {
+            setInv([
+                medicineInventory.sort((a, b) =>
+                    a.data().name.toLocaleLowerCase() > b.data().name.toLocaleLowerCase() ? 1 : -1
+                ),
+            ]);
+        } else if (filter === "product") {
+            setInv([otherInventory.sort((a, b) => (a.data().unitPrice > b.data().unitPrice ? 1 : -1))]);
+        } else {
+            setInv([treatmentInventory.sort((a, b) => (a.data().stock > b.data().stock ? 1 : -1))]);
+        }
+    }, [filter, medicineInventory, otherInventory, treatmentInventory]);
+
+    const sorting = (col) => {
+        console.log(inv);
+
+        if (col === "name") {
+            if (order === "ASC") {
+                inv[0].sort((a, b) => (a.data().name.toLocaleLowerCase() > b.data().name.toLocaleLowerCase() ? 1 : -1));
+                setOrder("DSC");
+            }
+
+            if (order === "DSC") {
+                inv[0].sort((a, b) => (a.data().name.toLocaleLowerCase() < b.data().name.toLocaleLowerCase() ? 1 : -1));
+                setOrder("ASC");
+            }
+        } else if (col === "unitPrice") {
+            if (order === "ASC") {
+                inv[0].sort((a, b) => (a.data().unitPrice > b.data().unitPrice ? 1 : -1));
+                setOrder("DSC");
+            }
+
+            if (order === "DSC") {
+                inv[0].sort((a, b) => (a.data().unitPrice < b.data().unitPrice ? 1 : -1));
+                setOrder("ASC");
+            }
+        } else {
+            if (order === "ASC") {
+                inv[0].sort((a, b) => (a.data().stock > b.data().stock ? 1 : -1));
+                setOrder("DSC");
+            }
+
+            if (order === "DSC") {
+                inv[0].sort((a, b) => (a.data().stock < b.data().stock ? 1 : -1));
+                setOrder("ASC");
+            }
+        }
+
+        if (sortByLowStock) {
+            inv[0].sort((a, b) => {
+                if (a.data().stock <= a.data().threshold && b.data().stock > b.data().threshold) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            });
+        }
+    };
+
+    const handleChange = () => {
+        !sortByLowStock ? setSortByLowStock(true) : setSortByLowStock(false);
+    };
 
     async function handleLogout() {
         try {
-            await logout()
-            navigate("/")
+            await logout();
+            navigate("/");
         } catch (error) {
-            console.log(error)
+            console.log(error);
         }
     }
 
@@ -31,8 +99,7 @@ const Inventory = () => {
         return inventoryTable.map((inventoryRow) => (
             <tr
                 key={inventoryRow.id}
-                className={`${inventoryRow.data().stock <= inventoryRow.data().threshold ? "text-red-600" : ""
-                    }`}
+                className={`${inventoryRow.data().stock <= inventoryRow.data().threshold ? "text-red-600" : ""}`}
             >
                 <td className="w-[35%] text-left px-2">{inventoryRow.data().name}</td>
                 <td className="w-[20%] text-right px-2">{Number(inventoryRow.data().unitPrice).toFixed(2)}</td>
@@ -64,7 +131,7 @@ const Inventory = () => {
                     />
                 </td>
             </tr>
-        ))
+        ));
     }
 
     function generateTreatmentRows(inventoryTable) {
@@ -95,7 +162,7 @@ const Inventory = () => {
                     />
                 </td>
             </tr>
-        ))
+        ));
     }
 
     // From jq: i will leave it as three tables in one page for now. general styling wise: i think putting three tables next to each other
@@ -108,28 +175,72 @@ const Inventory = () => {
                 <div className="w-full h-full bg-gray-200">
                     <div className="p-8">
                         <div className="flex justify-start py-4">
-
-                            <button className="border-black p-2 hover:bg-gray-300 border-2" onClick={(e) => setFilter("medicine")}>Medicine</button>
-                            <button className="border-black p-2 hover:bg-gray-300 border-y-2" onClick={(e) => setFilter("product")}>Non-medicine Product</button>
-                            <button className="border-black p-2 hover:bg-gray-300 border-2" onClick={(e) => setFilter("treatment")}>Treatment</button>
+                            <button
+                                className="border-black p-2 hover:bg-gray-300 border-2"
+                                onClick={(e) => setFilter("medicine")}
+                            >
+                                Medicine
+                            </button>
+                            <button
+                                className="border-black p-2 hover:bg-gray-300 border-y-2"
+                                onClick={(e) => setFilter("product")}
+                            >
+                                Non-medicine Product
+                            </button>
+                            <button
+                                className="border-black p-2 hover:bg-gray-300 border-2"
+                                onClick={(e) => setFilter("treatment")}
+                            >
+                                Treatment
+                            </button>
                             <InventoryForm data={{ editMode: false, activeItem: null }} />
+                        </div>
+                        <div className="">
+                            <label>Sort by low stock  </label>
+                            <input type="checkbox" onChange={handleChange} />
                         </div>
                         <div className="flex flex-col w-full h-[77vh] overflow-auto">
                             <table className="table-gray">
                                 <thead>
                                     <tr>
-                                        <th className="w-[35%]">Name</th>
-                                        <th className="w-[20%]">Unit Price(RM)</th>
-                                        <th className="w-[15%]">Stock</th>
+                                        <th
+                                            className="w-[35%]"
+                                            onClick={() => {
+                                                if (filter === "medicine") {
+                                                    setInv([medicineInventory]);
+                                                } else if (filter === "product") {
+                                                    setInv([otherInventory]);
+                                                } else {
+                                                    setInv([treatmentInventory]);
+                                                }
+                                            }}
+                                        >
+                                            Name
+                                            <span className="cursor-pointer" onClick={() => sorting("name")}>
+                                                {order === "ASC" ? "▲" : "▼"}
+                                            </span>
+                                        </th>
+                                        <th className="w-[20%]">
+                                            Unit Price(RM)
+                                            <span className="cursor-pointer" onClick={() => sorting("unitPrice")}>
+                                                {order === "ASC" ? "▲" : "▼"}
+                                            </span>
+                                        </th>
+                                        <th className="w-[15%]">
+                                            Stock
+                                            <span className="cursor-pointer" onClick={() => sorting("stock")}>
+                                                {order === "ASC" ? "▲" : "▼"}
+                                            </span>
+                                        </th>
                                         <th className="w-[10%]">Add Stock</th>
                                         <th className="w-[10%]">Edit Item</th>
                                         <th className="w-[10%]">Delete Item</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {filter === "medicine" && generateProductRows(medicineInventory)}
-                                    {filter === "product" && generateProductRows(otherInventory)}
-                                    {filter === "treatment" && generateTreatmentRows(treatmentInventory)}
+                                    {filter === "medicine" && generateProductRows(inv[0])}
+                                    {filter === "product" && generateProductRows(inv[0])}
+                                    {filter === "treatment" && generateTreatmentRows(inv[0])}
                                 </tbody>
                             </table>
                         </div>
@@ -137,7 +248,7 @@ const Inventory = () => {
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default Inventory
+export default Inventory;
