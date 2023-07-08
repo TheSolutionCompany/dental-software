@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react"
 import { db } from "../firebase"
 import { useLocation, useNavigate } from "react-router-dom"
-import { getDoc, doc, collection } from "firebase/firestore"
+import { getDoc, doc } from "firebase/firestore"
 import Header from "../components/Header"
 import SideBar from "../components/SideBar"
 import ConsultationForm from "../components/ConsultationForm"
@@ -47,7 +47,7 @@ const PatientProfile = () => {
     const [remark, setRemark] = useState("")
 
     const [page, setPage] = useState("consultation")
-
+    const [requireUpdate, setRequireUpdate] = useState(false)
     const [consultationHistory, setConsultationHistory] = useState([])
 
     async function handleLogout() {
@@ -57,6 +57,18 @@ const PatientProfile = () => {
         } catch (error) {
             console.log(error)
         }
+    }
+
+    useEffect(() => {
+        if (requireUpdate) {
+            getConsultationHistory(patientId, queueId).then((result) => {
+                setConsultationHistory(result)
+            })
+        }
+    }, [requireUpdate])
+
+    function setUpdate(e) {
+        setRequireUpdate(e)
     }
 
     useEffect(() => {
@@ -98,8 +110,8 @@ const PatientProfile = () => {
             <Header className="z-50" currentPage={"PatientProfile"} handleLogout={handleLogout} />
             <div className="flex h-full">
                 <SideBar />
-                <div className="w-full bg-gray-200 p-8">
-                    <div className="flex flex-row pb-4">
+                <div className="w-full bg-gray-200 h-full">
+                    <div className="flex flex-row px-8 pb-4 pt-8">
                         <p className="pr-2">
                             Patient name: <b>{name}</b>
                         </p>
@@ -119,47 +131,83 @@ const PatientProfile = () => {
                             Mobile number: <b>{mobileNumber}</b>
                         </p>
                     </div>
-                    <div>
-                        <button type="button" hidden={mode === "view"} onClick={(e) => setPage("consultation")}>
+                    <div className="flex flex-row pb-4 px-8">
+                        <button
+                            className="border border-black p-2"
+                            type="button"
+                            hidden={mode === "view"}
+                            onClick={(e) => setPage("consultation")}
+                        >
                             Current Consultation
                         </button>
-                        <button type="button" onClick={(e) => setPage("history")}>
+                        <button
+                            className="border border-black p-2 mr-2"
+                            type="button"
+                            onClick={(e) => setPage("history")}
+                        >
                             Consultation History
                         </button>
                     </div>
                     {mode === "consult" && page === "consultation" && (
-                        <ConsultationForm patientId={patientId} queueId={queueId} />
+                        <div className="px-8">
+                        <ConsultationForm patientId={patientId} queueId={queueId} setRequireUpdate={setUpdate} />
+                        </div>
                     )}
                     {page === "history" && (
-                        <div>
+                        <div className="flex flex-col overflow-auto h-[80vh] mx-8">
                             {consultationHistory.map((consultation) => (
                                 <div>
-                                    <p>Date: {new Date(consultation.data().creationDate).toDateString()}</p>
-                                    <div className="border-black border p-2 m-4">
-                                        <p>Complains: {consultation.data().complains}</p>
-                                        <p>Consultation: {consultation.data().consultation}</p>
-                                        <p>Frontdesk Message: {consultation.data().frontDeskMessage}</p>
-                                        <table>
-                                            <thead>
-                                                <tr>
-                                                    <th>Item</th>
-                                                    <th>Price</th>
-                                                    <th>Quantity</th>
-                                                    <th>Subtotal</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {consultation.data().items.map((item, index) => (
-                                                    <tr key={index}>
-                                                        <td>{item.name}</td>
-                                                        <td>{item.unitPrice}</td>
-                                                        <td>{item.quantity}</td>
-                                                        <td>{item.subtotal}</td>
+                                    <p className="text-left pl-2">
+                                        Date: {new Date(consultation.data().creationDate).toDateString()}
+                                    </p>
+                                    <div className="border-black border p-2 mb-4 flex flex-row bg-white">
+                                        <div className="w-[60%] flex flex-row">
+                                            <div className="w-[33.3%] pr-2">
+                                                <p className="text-left">Complains:</p>
+                                                <div className="w-full h-[88%] pr-2 border border-black bg-gray-100 text-left p-2">
+                                                    {consultation.data().complains}
+                                                </div>
+                                            </div>
+                                            <div className="w-[33.3%] pr-2">
+                                                <p className="text-left">Consultation:</p>
+                                                <div className="w-full h-[88%] pr-2 border border-black bg-gray-100 text-left p-2">
+                                                    {consultation.data().consultation}
+                                                </div>
+                                            </div>
+                                            <div className="w-[33.3%] pr-2">
+                                                <p className="text-left">Frontdesk Message:</p>
+                                                <div className="w-full h-full pr-2 border border-black bg-gray-100 text-left p-2">
+                                                    {consultation.data().frontDeskMessage}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="w-[40%] pb-2">
+                                            <p className="text-left">Items:</p>
+                                            <table className="table-gray">
+                                                <thead>
+                                                    <tr>
+                                                        <th className="w-[49%]">Item</th>
+                                                        <th className="w-[17%]">Price</th>
+                                                        <th className="w-[17%]">Quantity</th>
+                                                        <th className="w-[17%]">Subtotal</th>
                                                     </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
-                                        <p>Grand Total: {consultation.data().grandTotal}</p>
+                                                </thead>
+                                                <tbody>
+                                                    {consultation.data().items.map((item, index) => (
+                                                        <tr key={index}>
+                                                            <td>{item.name}</td>
+                                                            <td>{item.unitPrice}</td>
+                                                            <td>{item.quantity}</td>
+                                                            <td>{item.subtotal}</td>
+                                                        </tr>
+                                                    ))}
+                                                    <tr>
+                                                        <td colSpan="3">Grand Total</td>
+                                                        <td>{consultation.data().grandTotal}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
                             ))}

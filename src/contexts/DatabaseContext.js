@@ -26,7 +26,7 @@ export function useDatabase() {
 
 export function DatabaseProvider({ children }) {
     // Variables in AuthContext
-    const { user, signupWithName, updateEmail } = useAuth();
+    const { user } = useAuth();
 
     const [loading, setLoading] = useState(true)
     const [availableDoctors, setAvailableDoctors] = useState([])
@@ -103,6 +103,7 @@ export function DatabaseProvider({ children }) {
                 setAllQueue([])
                 setWaitingQueue([])
                 setInProgressQueue([])
+                setPendingBillingQueue([])
                 setCompletedQueue([])
                 querySnapshot.forEach((doc) => {
                     if (doc.data().doctorId === user.uid) {
@@ -184,8 +185,10 @@ export function DatabaseProvider({ children }) {
     }
 
     async function addToQueue(patientId, patientName, age, ic, gender, doctorId, complains, status) {
+        // Used a nowDate variable to prevent the date from changing when the function is running
+        const nowDate = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate()
         const creationDate = Date.now()
-        const q = doc(dayQueueRef, date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate())
+        const q = doc(dayQueueRef, nowDate)
         var res = await getDoc(q)
         if (!res.exists()) {
             await setDoc(q, { queueNumber: 1 })
@@ -193,8 +196,9 @@ export function DatabaseProvider({ children }) {
             await updateDoc(q, { queueNumber: increment(1) })
         }
         res = await getDoc(q)
-        const docRef = await addDoc(
-            collection(dayQueueRef, date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate(), "queue"),
+        // Create a new queue document
+        const queueRef = await addDoc(
+            collection(dayQueueRef, nowDate, "queue"),
             {
                 queueNumber: res.data().queueNumber,
                 patientId,
@@ -205,20 +209,25 @@ export function DatabaseProvider({ children }) {
                 doctorId,
                 complains,
                 status,
-                creationDate,
-                frontDeskMessage: "",
             }
         )
-        const consultationRef = collection(db, "patients", patientId, "consultation")
-        await addDoc(consultationRef, {
-            queueId: docRef.id,
+        const consultationLocRef = collection(db, "patients", patientId, "consultation")
+        // Create a new consultation document
+        const consultationRef = await addDoc(consultationLocRef, {
+            queueId: queueRef.id,
             creationDate,
             consultation: "",
             frontDeskMessage: "",
             complains,
             items: [],
+            grandTotal: 0,
+        })
+        // Update the queue document with the consultation id
+        await updateDoc(doc(dayQueueRef, nowDate, "queue", queueRef.id), {
+            consultationId: consultationRef.id
         })
     }
+
 
     async function checkRepeatedIc(ic) {
         const q = query(collection(db, "patients"), where("ic", "==", ic));
@@ -330,10 +339,30 @@ export function DatabaseProvider({ children }) {
 
     async function updateStock(itemList) {
         for (let item of itemList) {
-            alert(item.id + " " + item.quantity)
             const docRef = doc(db, "inventory", item.id)
             await updateDoc(docRef, {
                 stock: increment(-item.quantity),
+            })
+        }
+    }
+
+    async function makePayment(patientId, queueId, consultationId, remarks, payment, different) {
+        const collectionRef = collection(db, "payments")
+        const docRef = await addDoc(collectionRef, {
+            patientId,
+            queueId,
+            consultationId,
+            remarks,
+            payment,
+        })
+        const consultationRef = doc(db, "patients", patientId, "consultation", consultationId)
+        await updateDoc(consultationRef, {
+            paymentId: docRef.id,
+        })
+        if (different !== 0) {
+            const patientRef = doc(db, "patients", patientId)
+            await updateDoc(patientRef, {
+                balance: increment(different),
             })
         }
     }
@@ -422,6 +451,7 @@ export function DatabaseProvider({ children }) {
         getCurrentConsultation,
         getConsultationHistory,
         updateConsultation,
+        makePayment,
     }
 
     return <DatabaseContext.Provider value={value}>{!loading && children}</DatabaseContext.Provider>;
