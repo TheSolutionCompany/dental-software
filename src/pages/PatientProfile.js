@@ -133,7 +133,11 @@ const PatientProfile = () => {
                     </div>
                     <div className="flex flex-row pb-4 px-8">
                         <button
-                            className="border border-black p-2"
+                            className={`border border-black p-2
+                            ${page 
+                                === "consultation" 
+                                ? "bg-blue-300"
+                                : "bg-white" }`}
                             type="button"
                             hidden={mode === "view"}
                             onClick={(e) => setPage("consultation")}
@@ -141,7 +145,11 @@ const PatientProfile = () => {
                             Current Consultation
                         </button>
                         <button
-                            className="border border-black p-2 mr-2"
+                            className={`border border-black p-2
+                            ${page 
+                                === "history"
+                                ? "bg-blue-300"
+                                : "bg-white" }`}
                             type="button"
                             onClick={(e) => setPage("history")}
                         >
@@ -156,32 +164,32 @@ const PatientProfile = () => {
                     {page === "history" && (
                         <div className="flex flex-col overflow-auto h-[80vh] mx-8">
                             {consultationHistory.map((consultation) => (
-                                <div>
+                                <div className="flex flex-col">
                                     <p className="text-left pl-2">
                                         Date: {new Date(consultation.data().creationDate).toDateString()}
                                     </p>
                                     <div className="border-black border p-2 mb-4 flex flex-row bg-white">
-                                        <div className="w-[60%] flex flex-row">
-                                            <div className="w-[33.3%] pr-2">
+                                        <div className="w-3/5 flex flex-row">
+                                            <div className="w-1/3 pr-2 flex flex-col">
                                                 <p className="text-left">Complains:</p>
                                                 <div className="w-full h-[88%] pr-2 border border-black bg-gray-100 text-left p-2">
                                                     {consultation.data().complains}
                                                 </div>
                                             </div>
-                                            <div className="w-[33.3%] pr-2">
+                                            <div className="w-1/3 pr-2 flex flex-col">
                                                 <p className="text-left">Consultation:</p>
                                                 <div className="w-full h-[88%] pr-2 border border-black bg-gray-100 text-left p-2">
                                                     {consultation.data().consultation}
                                                 </div>
                                             </div>
-                                            <div className="w-[33.3%] pr-2">
+                                            <div className="w-1/3 pr-2 flex flex-col">
                                                 <p className="text-left">Frontdesk Message:</p>
                                                 <div className="w-full h-full pr-2 border border-black bg-gray-100 text-left p-2">
                                                     {consultation.data().frontDeskMessage}
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="w-[40%] pb-2">
+                                        <div className="w-2/5 flex flex-col">
                                             <p className="text-left">Items:</p>
                                             <table className="table-gray">
                                                 <thead>
