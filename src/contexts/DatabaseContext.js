@@ -346,6 +346,27 @@ export function DatabaseProvider({ children }) {
         }
     }
 
+    async function makePayment(patientId, queueId, consultationId, remarks, payment, different) {
+        const collectionRef = collection(db, "payments")
+        const docRef = await addDoc(collectionRef, {
+            patientId,
+            queueId,
+            consultationId,
+            remarks,
+            payment,
+        })
+        const consultationRef = doc(db, "patients", patientId, "consultation", consultationId)
+        await updateDoc(consultationRef, {
+            paymentId: docRef.id,
+        })
+        if (different !== 0) {
+            const patientRef = doc(db, "patients", patientId)
+            await updateDoc(patientRef, {
+                balance: increment(different),
+            })
+        }
+    }
+
     async function addInventoryItem(name, type, unitPrice, stock, threshold) {
         try {
             await addDoc(inventoryRef, { name, type, unitPrice, stock, threshold });
@@ -430,6 +451,7 @@ export function DatabaseProvider({ children }) {
         getCurrentConsultation,
         getConsultationHistory,
         updateConsultation,
+        makePayment,
     }
 
     return <DatabaseContext.Provider value={value}>{!loading && children}</DatabaseContext.Provider>;
