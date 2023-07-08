@@ -170,13 +170,13 @@ const PatientProfile = () => {
                                         <div className="w-3/5 flex flex-row">
                                             <div className="w-1/3 pr-2 flex flex-col">
                                                 <p className="text-left">Complains:</p>
-                                                <div className="w-full h-[88%] pr-2 border border-black bg-gray-100 text-left p-2">
+                                                <div className="w-full h-full pr-2 border border-black bg-gray-100 text-left p-2">
                                                     {consultation.data().complains}
                                                 </div>
                                             </div>
                                             <div className="w-1/3 pr-2 flex flex-col">
                                                 <p className="text-left">Consultation:</p>
-                                                <div className="w-full h-[88%] pr-2 border border-black bg-gray-100 text-left p-2">
+                                                <div className="w-full h-full pr-2 border border-black bg-gray-100 text-left p-2">
                                                     {consultation.data().consultation}
                                                 </div>
                                             </div>
