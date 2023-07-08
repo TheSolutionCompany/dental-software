@@ -144,7 +144,10 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
                     <div className="flex pb-4">
                         <div className="flex flex-col w-full pr-2">
                             <label>Complains</label>
-                            <textarea rows={10} value={complains} readOnly></textarea>
+                            <textarea 
+                                rows={10} 
+                                value={complains} 
+                                readOnly></textarea>
                         </div>
                         <div className="flex flex-col w-full pl-2">
                             <label>Frontdesk Message</label>
@@ -157,7 +160,7 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
                     </div>
                     <label>Consultation</label>
                     <textarea
-                        rows={15}
+                        rows={12}
                         value={consultation}
                         onChange={(e) => setConsultation(e.target.value)}
                     >

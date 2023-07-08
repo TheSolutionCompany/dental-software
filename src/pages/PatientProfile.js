@@ -111,24 +111,24 @@ const PatientProfile = () => {
             <div className="flex h-full">
                 <SideBar />
                 <div className="w-full bg-gray-200 h-full">
-                    <div className="flex flex-row px-8 pb-4 pt-8">
-                        <p className="pr-2">
-                            Patient name: <b>{name}</b>
+                    <div className="flex flex-row px-8 pb-4 pt-8 text-left">
+                        <p className="px-2 border border-black">
+                            Patient name: <br></br> <b>{name}</b>
                         </p>
-                        <p className="pr-2">
-                            IC: <b>{ic}</b>
+                        <p className="px-2 border border-black">
+                            IC: <br></br> <b>{ic}</b>
                         </p>
-                        <p className="pr-2">
-                            Gender: <b>{gender}</b>
+                        <p className="px-2 border border-black">
+                            Gender: <br></br> <b>{gender}</b>
                         </p>
-                        <p className="pr-2">
-                            DOB: <b>{dob}</b>
+                        <p className="px-2 border border-black">
+                            DOB: <br></br> <b>{dob}</b>
                         </p>
-                        <p className="pr-2">
-                            Age: <b>{age}</b>
+                        <p className="px-2 border border-black">
+                            Age: <br></br> <b>{age}</b>
                         </p>
-                        <p className="pr-2">
-                            Mobile number: <b>{mobileNumber}</b>
+                        <p className="px-2 border border-black">
+                            Mobile number: <br></br> <b>{mobileNumber}</b>
                         </p>
                     </div>
                     <div className="flex flex-row pb-4 px-8">
@@ -160,7 +160,7 @@ const PatientProfile = () => {
                         <ConsultationForm patientId={patientId} queueId={queueId} setRequireUpdate={setUpdate} />
                     )}
                     {page === "history" && (
-                        <div className="flex flex-col overflow-auto h-[80vh] mx-8">
+                        <div className="flex flex-col overflow-auto h-3/4 mx-8">
                             {consultationHistory.map((consultation) => (
                                 <div className="flex flex-col">
                                     <p className="text-left pl-2">
