@@ -157,9 +157,7 @@ const PatientProfile = () => {
                         </button>
                     </div>
                     {mode === "consult" && page === "consultation" && (
-                        <div className="px-8">
                         <ConsultationForm patientId={patientId} queueId={queueId} setRequireUpdate={setUpdate} />
-                        </div>
                     )}
                     {page === "history" && (
                         <div className="flex flex-col overflow-auto h-[80vh] mx-8">
