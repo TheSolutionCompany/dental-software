@@ -183,7 +183,6 @@ export default function InventoryForm(props) {
             <Modal
                 isOpen={isOpen}
                 onRequestClose={toggleModal}
-                contentLabel={title}
                 shouldCloseOnOverlayClick={false}
                 style={smallModal}
             >
