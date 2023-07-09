@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useRef } from "react"
 import { useDatabase } from "../contexts/DatabaseContext"
 import { useNavigate } from "react-router-dom"
 import Select from "react-select"
@@ -14,8 +14,9 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
 
     const navigate = useNavigate()
 
+    const selectRef = useRef(null)
+
     const [loading, setLoading] = useState(false)
-    const [saved, setSaved] = useState(false)
     const [edited, setEdited] = useState(false)
 
     const [itemList, setItemList] = useState([])
@@ -25,6 +26,7 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
 
     const [itemId, setItemId] = useState("")
     const [itemName, setItemName] = useState("")
+    const [itemType, setItemType] = useState("")
     const [unitPrice, setUnitPrice] = useState(0)
     const [quantity, setQuantity] = useState(0)
     const [subtotal, setSubtotal] = useState(0)
@@ -47,11 +49,55 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
         setEdited(true)
     }, [itemList, consultation, frontDeskMessage])
 
+    useEffect(() => {
+        setSubtotal(parseInt(unitPrice) * parseInt(quantity))
+    }, [unitPrice, quantity])
+
     function handleSelectItem(e) {
+        document.getElementById("quantity").disabled = false
+        document.getElementById("unitPrice").disabled = false
         setItemId(e.id)
         setItemName(e.value)
         setUnitPrice(e.unitPrice)
+        setItemType(e.type)
         setQuantity(1)
+        if (e.type === "Treatment") {
+            document.getElementById("quantity").disabled = true
+        }
+    }
+
+    function handleAddItem(e) {
+        e.preventDefault()
+        let item
+        if (itemType === "Treatment") {
+            item = {
+                id: itemId,
+                name: itemName,
+                type: itemType,
+                unitPrice: unitPrice,
+                subtotal: subtotal,
+            }
+        } else {
+            item = {
+                id: itemId,
+                name: itemName,
+                type: itemType,
+                unitPrice: unitPrice,
+                quantity: quantity,
+                subtotal: subtotal,
+            }
+        }
+        selectRef.current.setValue("")
+        setItemId("")
+        setItemName("")
+        setItemType("")
+        setUnitPrice(0)
+        setQuantity(0)
+        setSubtotal(0)
+        setItemList([...itemList, item])
+        setGrandTotal(grandTotal + item.subtotal)
+        document.getElementById("quantity").disabled = true
+        document.getElementById("unitPrice").disabled = true
     }
 
     function handleDeleteItem(index) {
@@ -67,7 +113,6 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
         setLoading(true)
         await updateConsultation(patientId, consultationId, consultation, frontDeskMessage, itemList, grandTotal)
         setLoading(false)
-        setSaved(true)
         setEdited(false)
         setRequireUpdate(true)
         toast.success("Consultation updated", {
@@ -88,7 +133,6 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
         setLoading(true)
         await updateStock(itemList)
         await updatePatientStatus(queueId, "pending billing")
-        setLoading(false)
         toast.success("Sent for payment", {
             position: "top-center",
             autoClose: 1000,
@@ -101,6 +145,7 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
         })
         toast.clearWaitingQueue()
         navigate("/queue")
+        setLoading(false)
     }
 
     function generateTable(list) {
@@ -108,7 +153,9 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
             <tr key={index}>
                 <td>{item.name}</td>
                 <td>{item.unitPrice}</td>
-                <td>{item.quantity}</td>
+                <td>
+                    {item.quantity} {inventory.filter((i) => i.id === item.id)[0].data().stock}
+                </td>
                 <td>{item.subtotal}</td>
                 <td>
                     <button type="button" className="hover:text-red-500" onClick={() => handleDeleteItem(index)}>
@@ -130,28 +177,6 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
                 </td>
             </tr>
         ))
-    }
-
-    useEffect(() => {
-        setSubtotal(parseInt(unitPrice) * parseInt(quantity))
-    }, [unitPrice, quantity])
-
-    function handleAddItem(e) {
-        e.preventDefault()
-        let item = {
-            id: itemId,
-            name: itemName,
-            unitPrice: unitPrice,
-            quantity: quantity,
-            subtotal: subtotal,
-        }
-        console.log(item)
-        setItemName("")
-        setUnitPrice(0)
-        setQuantity(0)
-        setSubtotal(0)
-        setItemList([...itemList, item])
-        setGrandTotal(grandTotal + item.subtotal)
     }
 
     return (
@@ -191,11 +216,13 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
                     <div className="flex flex-col w-full">
                         <label>Name</label>
                         <Select
+                            ref={selectRef}
                             options={inventory.map((res) => {
                                 return {
                                     value: res.data().name,
                                     label: res.data().name,
                                     unitPrice: res.data().unitPrice,
+                                    type: res.data().type,
                                     id: res.id,
                                 }
                             })}
@@ -213,11 +240,21 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
                     </div>
                     <div className="flex flex-col w-28">
                         <label>Unit price</label>
-                        <input type="number" value={unitPrice} onChange={(e) => setUnitPrice(e.target.value)} />
+                        <input
+                            id="unitPrice"
+                            type="number"
+                            value={unitPrice}
+                            onChange={(e) => setUnitPrice(e.target.value)}
+                        />
                     </div>
                     <div className="flex flex-col w-28">
                         <label>Quantity</label>
-                        <input type="number" value={quantity} onChange={(e) => setQuantity(e.target.value)} />
+                        <input
+                            id="quantity"
+                            type="number"
+                            value={quantity}
+                            onChange={(e) => setQuantity(e.target.value)}
+                        />
                     </div>
                     <div className="flex flex-col w-28">
                         <label>Subtotal</label>
@@ -247,7 +284,7 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
                     </tbody>
                 </table>
             </div>
-            <ToastContainer limit={1}/>
+            <ToastContainer limit={1} />
         </div>
     )
 }
