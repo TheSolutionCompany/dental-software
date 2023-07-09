@@ -196,7 +196,7 @@ const Inventory = () => {
                             <InventoryForm data={{ editMode: false, activeItem: null }} />
                         </div>
                         <div className="">
-                            <label>Sort by low stock  </label>
+                            <label>Sort by low stock </label>
                             <input type="checkbox" onChange={handleChange} />
                         </div>
                         <div className="flex flex-col w-full h-[77vh] overflow-auto">
