@@ -56,9 +56,8 @@ const BillingForm = ({ queueId, patientId, patientName }) => {
             method: paymentMethod4,
             amount: paymentAmount4
         }]
-        let total = paymentAmount1 + paymentAmount2 + paymentAmount3 + paymentAmount4
+        let total = Number(paymentAmount1) + Number(paymentAmount2) + Number(paymentAmount3) + Number(paymentAmount4)
         let different = total - grandTotal
-        console.log(total + " " + grandTotal + " " + different)
         await makePayment(patientId, queueId, consultationId, remarks, payment, different)
         await updatePatientStatus(queueId, "completed")
         toggleModal()
@@ -233,7 +232,7 @@ const BillingForm = ({ queueId, patientId, patientName }) => {
                     </div>
                 </div>
             </Modal>
-            <ToastContainer />
+            <ToastContainer limit={1}/>
         </div>
     )
 }
