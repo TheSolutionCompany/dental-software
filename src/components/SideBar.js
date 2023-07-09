@@ -2,6 +2,7 @@ import React from "react"
 import RegisterExisting from "./RegisterExisting"
 import RegisterNew from "./RegisterNew"
 import MedicalCertificate from "./MedicalCertificate"
+import MakeAppointment from "./MakeAppointment"
 
 const SideBar = () => {
     return (
@@ -15,16 +16,7 @@ const SideBar = () => {
                     <RegisterExisting />
                     <RegisterNew />
                     <MedicalCertificate />
-                    <li className="cursor-pointer select-none">
-
-                        <button
-                            className="flex w-full items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-                        >
-                            <span className="text-left flex-1 ml-3 whitespace-nowrap">
-                                Make Appointment
-                            </span>
-                        </button>
-                    </li>
+                    <MakeAppointment />
                 </ul>
             </div>
         </aside>
