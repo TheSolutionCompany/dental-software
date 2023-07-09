@@ -16,6 +16,8 @@ const Inventory = () => {
 
     const { medicineInventory, treatmentInventory, otherInventory } = useDatabase();
 
+    const [search, setSearch] = useState("");
+
     const [order, setOrder] = useState("DSC");
     const [sortByLowStock, setSortByLowStock] = useState(false);
     const [inv, setInv] = useState([medicineInventory]);
@@ -96,42 +98,46 @@ const Inventory = () => {
     // From jq: since we will explicitly tell users to restock stuff in the dashboard, i dont think i will display
     // the restock threshold here. instead, once the threshold is reached we can display the row in red.
     function generateProductRows(inventoryTable) {
-        return inventoryTable.map((inventoryRow) => (
-            <tr
-                key={inventoryRow.id}
-                className={`${inventoryRow.data().stock <= inventoryRow.data().threshold ? "text-red-600" : ""}`}
-            >
-                <td className="w-[35%] text-left px-2">{inventoryRow.data().name}</td>
-                <td className="w-[20%] text-right px-2">{Number(inventoryRow.data().unitPrice).toFixed(2)}</td>
-                <td className="w-[15%] text-right px-2">{inventoryRow.data().stock}</td>
-                <td className="w-[10%]">
-                    <AddStockForm
-                        activeItem={{
-                            id: inventoryRow.id,
-                            ...inventoryRow.data(),
-                        }}
-                    />
-                </td>
-                <td className="w-[10%]">
-                    <InventoryForm
-                        data={{
-                            editMode: true,
-                            activeItem: {
+        return inventoryTable
+            .filter((item) => {
+                return search === "" ? item : item.data().name.includes(search);
+            })
+            .map((inventoryRow) => (
+                <tr
+                    key={inventoryRow.id}
+                    className={`${inventoryRow.data().stock <= inventoryRow.data().threshold ? "text-red-600" : ""}`}
+                >
+                    <td className="w-[35%] text-left px-2">{inventoryRow.data().name}</td>
+                    <td className="w-[20%] text-right px-2">{Number(inventoryRow.data().unitPrice).toFixed(2)}</td>
+                    <td className="w-[15%] text-right px-2">{inventoryRow.data().stock}</td>
+                    <td className="w-[10%]">
+                        <AddStockForm
+                            activeItem={{
                                 id: inventoryRow.id,
                                 ...inventoryRow.data(),
-                            },
-                        }}
-                    />
-                </td>
-                <td className="w-[10%]">
-                    <DeleteConfirmation
-                        docName={"inventory"}
-                        activeItemId={inventoryRow.id}
-                        activeItemName={inventoryRow.data().name}
-                    />
-                </td>
-            </tr>
-        ));
+                            }}
+                        />
+                    </td>
+                    <td className="w-[10%]">
+                        <InventoryForm
+                            data={{
+                                editMode: true,
+                                activeItem: {
+                                    id: inventoryRow.id,
+                                    ...inventoryRow.data(),
+                                },
+                            }}
+                        />
+                    </td>
+                    <td className="w-[10%]">
+                        <DeleteConfirmation
+                            docName={"inventory"}
+                            activeItemId={inventoryRow.id}
+                            activeItemName={inventoryRow.data().name}
+                        />
+                    </td>
+                </tr>
+            ));
     }
 
     function generateTreatmentRows(inventoryTable) {
@@ -175,29 +181,25 @@ const Inventory = () => {
                 <div className="w-full h-full bg-gray-200">
                     <div className="p-8">
                         <div className="flex justify-start py-4">
-                            <button
-                                className="border-black p-2 hover:bg-gray-300 border-2"
-                                onClick={(e) => setFilter("medicine")}
+                            <p className="">Filter by status</p>
+                            <select
+                                className="rounded border-2 border-black"
+                                value={filter}
+                                onChange={(e) => setFilter(e.target.value)}
                             >
-                                Medicine
-                            </button>
-                            <button
-                                className="border-black p-2 hover:bg-gray-300 border-y-2"
-                                onClick={(e) => setFilter("product")}
-                            >
-                                Non-medicine Product
-                            </button>
-                            <button
-                                className="border-black p-2 hover:bg-gray-300 border-2"
-                                onClick={(e) => setFilter("treatment")}
-                            >
-                                Treatment
-                            </button>
+                                <option value="medicine">Medicine</option>
+                                <option value="treatment">Treatment</option>
+                                <option value="product">Other Inventory</option>
+                            </select>
                             <InventoryForm data={{ editMode: false, activeItem: null }} />
-                        </div>
-                        <div className="">
+                            <input
+                                className="w-96"
+                                type="search"
+                                placeholder="search for your product"
+                                onChange={(e) => setSearch(e.target.value)}
+                            />
                             <label>Sort by low stock </label>
-                            <input type="checkbox" onChange={handleChange} />
+                            <input className="flex justify-center" type="checkbox" onChange={handleChange} />
                         </div>
                         <div className="flex flex-col w-full h-[77vh] overflow-auto">
                             <table className="table-gray">
