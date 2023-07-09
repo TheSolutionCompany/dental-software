@@ -120,7 +120,7 @@ const BillingForm = ({ queueId, patientId, patientName }) => {
                                     <option value="Cash">Cash</option>
                                     <option value="Card">Credit Card</option>
                                     <option value="Cheque">Debit Card</option>
-                                    <option value="Cheque">QR Pay</option>
+                                    <option value="QRPay">QR Pay</option>
                                 </select>
                                 <label>Payment amount 1</label>
                                 <input
@@ -141,7 +141,7 @@ const BillingForm = ({ queueId, patientId, patientName }) => {
                                     <option value="Cash">Cash</option>
                                     <option value="Card">Credit Card</option>
                                     <option value="Cheque">Debit Card</option>
-                                    <option value="Cheque">QR Pay</option>
+                                    <option value="QRPay">QR Pay</option>
                                 </select>
                                 <label>Payment amount 2</label>
                                 <input
@@ -162,7 +162,7 @@ const BillingForm = ({ queueId, patientId, patientName }) => {
                                     <option value="Cash">Cash</option>
                                     <option value="Card">Credit Card</option>
                                     <option value="Cheque">Debit Card</option>
-                                    <option value="Cheque">QR Pay</option>
+                                    <option value="QRPay">QR Pay</option>
                                 </select>
                                 <label>Payment amount 3</label>
                                 <input
@@ -183,7 +183,7 @@ const BillingForm = ({ queueId, patientId, patientName }) => {
                                     <option value="Cash">Cash</option>
                                     <option value="Card">Credit Card</option>
                                     <option value="Cheque">Debit Card</option>
-                                    <option value="Cheque">QR Pay</option>
+                                    <option value="QRPay">QR Pay</option>
                                 </select>
                                 <label>Payment amount 4</label>
                                 <input
@@ -234,7 +234,7 @@ const BillingForm = ({ queueId, patientId, patientName }) => {
                     </div>
                 </div>
             </Modal>
-            <ToastContainer limit={1}/>
+            <ToastContainer limit={1} />
         </div>
     )
 }

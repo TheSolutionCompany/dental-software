@@ -150,11 +150,11 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
 
     function generateTable(list) {
         return list.map((item, index) => (
-            <tr key={index}>
+            <tr key={index} className={`${item.quantity > inventory.filter((i) => i.id === item.id)[0].data().stock ? "text-red-500" : ""}`}>
                 <td>{item.name}</td>
                 <td className="text-right px-2">{item.unitPrice}</td>
                 <td className="text-right px-2">
-                    {item.quantity} {inventory.filter((i) => i.id === item.id)[0].data().stock}
+                    {item.quantity} / {inventory.filter((i) => i.id === item.id)[0].data().stock}
                 </td>
                 <td className="text-right px-2">{item.subtotal}</td>
                 <td>

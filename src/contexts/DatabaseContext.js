@@ -373,7 +373,11 @@ export function DatabaseProvider({ children }) {
 
     async function addInventoryItem(name, type, unitPrice, stock, threshold) {
         try {
-            await addDoc(inventoryRef, { name, type, unitPrice, stock, threshold })
+            if (type === "Treatment") {
+                await addDoc(inventoryRef, { name, type, unitPrice })
+            } else {
+                await addDoc(inventoryRef, { name, type, unitPrice, stock, threshold })
+            }
             return true
         } catch (e) {
             console.log(e)

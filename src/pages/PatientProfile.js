@@ -135,10 +135,7 @@ const PatientProfile = () => {
                     <div className="flex flex-row pb-4 px-8">
                         <button
                             className={`border border-black p-2
-                            ${page 
-                                === "consultation" 
-                                ? "bg-blue-300"
-                                : "bg-white" }`}
+                            ${page === "consultation" ? "bg-blue-300" : "bg-white"}`}
                             type="button"
                             hidden={mode === "view"}
                             onClick={(e) => setPage("consultation")}
@@ -147,10 +144,7 @@ const PatientProfile = () => {
                         </button>
                         <button
                             className={`border border-black p-2
-                            ${page 
-                                === "history"
-                                ? "bg-blue-300"
-                                : "bg-white" }`}
+                            ${page === "history" ? "bg-blue-300" : "bg-white"}`}
                             type="button"
                             onClick={(e) => setPage("history")}
                         >
@@ -171,19 +165,19 @@ const PatientProfile = () => {
                                         <div className="w-3/5 flex flex-row">
                                             <div className="w-1/3 pr-2 flex flex-col">
                                                 <p className="text-left">Complains:</p>
-                                                <div className="w-full h-full pr-2 border border-black bg-gray-100 text-left p-2">
+                                                <div className="w-full h-full pr-2 border border-black bg-gray-100 text-left p-2 whitespace-pre-wrap">
                                                     {consultation.data().complains}
                                                 </div>
                                             </div>
                                             <div className="w-1/3 pr-2 flex flex-col">
                                                 <p className="text-left">Consultation:</p>
-                                                <div className="w-full h-full pr-2 border border-black bg-gray-100 text-left p-2">
+                                                <div className="w-full h-full pr-2 border border-black bg-gray-100 text-left p-2 whitespace-pre-wrap">
                                                     {consultation.data().consultation}
                                                 </div>
                                             </div>
                                             <div className="w-1/3 pr-2 flex flex-col">
                                                 <p className="text-left">Frontdesk Message:</p>
-                                                <div className="w-full h-full pr-2 border border-black bg-gray-100 text-left p-2">
+                                                <div className="w-full h-full pr-2 border border-black bg-gray-100 text-left p-2 whitespace-pre-wrap">
                                                     {consultation.data().frontDeskMessage}
                                                 </div>
                                             </div>
