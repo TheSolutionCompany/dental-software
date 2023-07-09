@@ -141,34 +141,38 @@ const Inventory = () => {
     }
 
     function generateTreatmentRows(inventoryTable) {
-        return inventoryTable.map((inventoryRow) => (
-            <tr className="" key={inventoryRow.id}>
-                <td className="w-[35%]">{inventoryRow.data().name}</td>
-                <td className="w-[20%]">{Number(inventoryRow.data().unitPrice).toFixed(2)}</td>
-                <td className="w-[15%]">N/A</td>
-                <td className="w-[10%]">N/A</td>
-                <td className="w-[10%]">
-                    <InventoryForm
-                        data={{
-                            editMode: true,
-                            activeItem: {
+        return inventoryTable
+            .filter((item) => {
+                return search === "" ? item : item.data().name.includes(search);
+            })
+            .map((inventoryRow) => (
+                <tr className="" key={inventoryRow.id}>
+                    <td className="w-[35%]">{inventoryRow.data().name}</td>
+                    <td className="w-[20%]">{Number(inventoryRow.data().unitPrice).toFixed(2)}</td>
+                    <td className="w-[15%]">N/A</td>
+                    <td className="w-[10%]">N/A</td>
+                    <td className="w-[10%]">
+                        <InventoryForm
+                            data={{
+                                editMode: true,
+                                activeItem: {
+                                    id: inventoryRow.id,
+                                    ...inventoryRow.data(),
+                                },
+                            }}
+                        />
+                    </td>
+                    <td className="w-[10%]">
+                        <DeleteConfirmation
+                            docName={"inventory"}
+                            activeItem={{
                                 id: inventoryRow.id,
                                 ...inventoryRow.data(),
-                            },
-                        }}
-                    />
-                </td>
-                <td className="w-[10%]">
-                    <DeleteConfirmation
-                        docName={"inventory"}
-                        activeItem={{
-                            id: inventoryRow.id,
-                            ...inventoryRow.data(),
-                        }}
-                    />
-                </td>
-            </tr>
-        ));
+                            }}
+                        />
+                    </td>
+                </tr>
+            ));
     }
 
     // From jq: i will leave it as three tables in one page for now. general styling wise: i think putting three tables next to each other
