@@ -64,6 +64,7 @@ const PatientProfile = () => {
             getConsultationHistory(patientId, queueId).then((result) => {
                 setConsultationHistory(result)
             })
+            setRequireUpdate(false)
         }
     }, [requireUpdate])
 

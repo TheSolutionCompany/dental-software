@@ -78,19 +78,23 @@ export function DatabaseProvider({ children }) {
             })
         })
 
-        // Waiting Queue Size Listener
-        const q1 = query(
-            collection(dayQueueRef, date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate(), "queue"),
-            where("status", "==", "waiting"),
-            where("doctorId", "==", user.uid)
-        )
-        onSnapshot(q1, (querySnapshot) => {
-            console.log("waiting queue size listener")
-            setWaitingQueueSize(querySnapshot.size)
-        })
-
-        // Queue Listener
         if (user) {
+            // Waiting Queue Size Listener
+            const q1 = query(
+                collection(
+                    dayQueueRef,
+                    date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate(),
+                    "queue"
+                ),
+                where("status", "==", "waiting"),
+                where("doctorId", "==", user.uid)
+            )
+            onSnapshot(q1, (querySnapshot) => {
+                console.log("waiting queue size listener")
+                setWaitingQueueSize(querySnapshot.size)
+            })
+
+            // Queue Listener
             const q2 = query(
                 collection(
                     dayQueueRef,
@@ -345,7 +349,7 @@ export function DatabaseProvider({ children }) {
         }
     }
 
-    async function makePayment(patientId, queueId, consultationId, remarks, payment, different) {
+    async function makePayment(patientId, queueId, consultationId, remarks, payment, different, creationDate) {
         const collectionRef = collection(db, "payments")
         const docRef = await addDoc(collectionRef, {
             patientId,
@@ -353,6 +357,7 @@ export function DatabaseProvider({ children }) {
             consultationId,
             remarks,
             payment,
+            creationDate,
         })
         const consultationRef = doc(db, "patients", patientId, "consultation", consultationId)
         await updateDoc(consultationRef, {
