@@ -31,7 +31,7 @@ const Inventory = () => {
         return inventoryTable.map((inventoryRow) => (
             <tr
                 key={inventoryRow.id}
-                className={`${inventoryRow.data().stock <= inventoryRow.data().threshold ? "text-red-600" : ""
+                className={`${inventoryRow.data().stock <= inventoryRow.data().threshold ? "text-red-500" : ""
                     }`}
             >
                 <td className="w-[35%] text-left px-2">{inventoryRow.data().name}</td>

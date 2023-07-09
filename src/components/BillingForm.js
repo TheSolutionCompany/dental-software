@@ -16,6 +16,7 @@ const BillingForm = ({ queueId, patientId, patientName }) => {
     const [itemList, setItemList] = useState([])
     const [grandTotal, setGrandTotal] = useState(0)
     const [frontDeskMessage, setFrontDeskMessage] = useState("")
+    const [creationDate, setCreationDate] = useState("")
 
     const [remarks, setRemarks] = useState("")
     const [consultationId, setConsultationId] = useState("")
@@ -34,6 +35,7 @@ const BillingForm = ({ queueId, patientId, patientName }) => {
 
     useEffect(() => {
         getCurrentConsultation(patientId, queueId).then((result) => {
+            setCreationDate(result.data().creationDate)
             setItemList(result.data().items)
             setGrandTotal(result.data().grandTotal)
             setFrontDeskMessage(result.data().frontDeskMessage)
@@ -58,7 +60,7 @@ const BillingForm = ({ queueId, patientId, patientName }) => {
         }]
         let total = Number(paymentAmount1) + Number(paymentAmount2) + Number(paymentAmount3) + Number(paymentAmount4)
         let different = total - grandTotal
-        await makePayment(patientId, queueId, consultationId, remarks, payment, different)
+        await makePayment(patientId, queueId, consultationId, remarks, payment, different, creationDate)
         await updatePatientStatus(queueId, "completed")
         toggleModal()
         toast.success("Payment done", {
@@ -118,7 +120,7 @@ const BillingForm = ({ queueId, patientId, patientName }) => {
                                     <option value="Cash">Cash</option>
                                     <option value="Card">Credit Card</option>
                                     <option value="Cheque">Debit Card</option>
-                                    <option value="Cheque">QR Pay</option>
+                                    <option value="QRPay">QR Pay</option>
                                 </select>
                                 <label>Payment amount 1</label>
                                 <input
@@ -139,7 +141,7 @@ const BillingForm = ({ queueId, patientId, patientName }) => {
                                     <option value="Cash">Cash</option>
                                     <option value="Card">Credit Card</option>
                                     <option value="Cheque">Debit Card</option>
-                                    <option value="Cheque">QR Pay</option>
+                                    <option value="QRPay">QR Pay</option>
                                 </select>
                                 <label>Payment amount 2</label>
                                 <input
@@ -160,7 +162,7 @@ const BillingForm = ({ queueId, patientId, patientName }) => {
                                     <option value="Cash">Cash</option>
                                     <option value="Card">Credit Card</option>
                                     <option value="Cheque">Debit Card</option>
-                                    <option value="Cheque">QR Pay</option>
+                                    <option value="QRPay">QR Pay</option>
                                 </select>
                                 <label>Payment amount 3</label>
                                 <input
@@ -181,7 +183,7 @@ const BillingForm = ({ queueId, patientId, patientName }) => {
                                     <option value="Cash">Cash</option>
                                     <option value="Card">Credit Card</option>
                                     <option value="Cheque">Debit Card</option>
-                                    <option value="Cheque">QR Pay</option>
+                                    <option value="QRPay">QR Pay</option>
                                 </select>
                                 <label>Payment amount 4</label>
                                 <input
@@ -232,7 +234,7 @@ const BillingForm = ({ queueId, patientId, patientName }) => {
                     </div>
                 </div>
             </Modal>
-            <ToastContainer limit={1}/>
+            <ToastContainer limit={1} />
         </div>
     )
 }

@@ -79,9 +79,7 @@ export default function WorkingHourForm(props) {
         let today = new Date();
         let result = today.getDate() - today.getDay() + initialTime.getDay();
         let resultDate = new Date(today.setDate(result))
-        let resultWithHours = new Date(resultDate.setHours(initialHours));
-        let resultWithMinutes = new Date(resultWithHours.setMinutes(initialMinutes));
-        let resultWithSeconds = new Date(resultWithMinutes.setSeconds(0));
+        let resultWithSeconds = new Date(resultDate.setHours(initialHours, initialMinutes, 0, 0));
         return resultWithSeconds;
     }
 

@@ -64,6 +64,7 @@ const PatientProfile = () => {
             getConsultationHistory(patientId, queueId).then((result) => {
                 setConsultationHistory(result)
             })
+            setRequireUpdate(false)
         }
     }, [requireUpdate])
 
@@ -111,29 +112,30 @@ const PatientProfile = () => {
             <div className="flex h-full">
                 <SideBar />
                 <div className="w-full bg-gray-200 h-full">
-                    <div className="flex flex-row px-8 pb-4 pt-8">
-                        <p className="pr-2">
-                            Patient name: <b>{name}</b>
+                    <div className="flex flex-row px-8 pb-4 pt-8 text-left">
+                        <p className="px-2 border border-black">
+                            Patient name: <br></br> <b>{name}</b>
                         </p>
-                        <p className="pr-2">
-                            IC: <b>{ic}</b>
+                        <p className="px-2 border border-black">
+                            IC: <br></br> <b>{ic}</b>
                         </p>
-                        <p className="pr-2">
-                            Gender: <b>{gender}</b>
+                        <p className="px-2 border border-black">
+                            Gender: <br></br> <b>{gender}</b>
                         </p>
-                        <p className="pr-2">
-                            DOB: <b>{dob}</b>
+                        <p className="px-2 border border-black">
+                            DOB: <br></br> <b>{dob}</b>
                         </p>
-                        <p className="pr-2">
-                            Age: <b>{age}</b>
+                        <p className="px-2 border border-black">
+                            Age: <br></br> <b>{age}</b>
                         </p>
-                        <p className="pr-2">
-                            Mobile number: <b>{mobileNumber}</b>
+                        <p className="px-2 border border-black">
+                            Mobile number: <br></br> <b>{mobileNumber}</b>
                         </p>
                     </div>
                     <div className="flex flex-row pb-4 px-8">
                         <button
-                            className="border border-black p-2"
+                            className={`border border-black p-2
+                            ${page === "consultation" ? "bg-blue-300" : "bg-white"}`}
                             type="button"
                             hidden={mode === "view"}
                             onClick={(e) => setPage("consultation")}
@@ -141,7 +143,8 @@ const PatientProfile = () => {
                             Current Consultation
                         </button>
                         <button
-                            className="border border-black p-2 mr-2"
+                            className={`border border-black p-2
+                            ${page === "history" ? "bg-blue-300" : "bg-white"}`}
                             type="button"
                             onClick={(e) => setPage("history")}
                         >
@@ -149,39 +152,37 @@ const PatientProfile = () => {
                         </button>
                     </div>
                     {mode === "consult" && page === "consultation" && (
-                        <div className="px-8">
                         <ConsultationForm patientId={patientId} queueId={queueId} setRequireUpdate={setUpdate} />
-                        </div>
                     )}
                     {page === "history" && (
-                        <div className="flex flex-col overflow-auto h-[80vh] mx-8">
+                        <div className="flex flex-col overflow-auto h-3/4 mx-8">
                             {consultationHistory.map((consultation) => (
-                                <div>
+                                <div className="flex flex-col">
                                     <p className="text-left pl-2">
                                         Date: {new Date(consultation.data().creationDate).toDateString()}
                                     </p>
                                     <div className="border-black border p-2 mb-4 flex flex-row bg-white">
-                                        <div className="w-[60%] flex flex-row">
-                                            <div className="w-[33.3%] pr-2">
+                                        <div className="w-3/5 flex flex-row">
+                                            <div className="w-1/3 pr-2 flex flex-col">
                                                 <p className="text-left">Complains:</p>
-                                                <div className="w-full h-[88%] pr-2 border border-black bg-gray-100 text-left p-2">
+                                                <div className="w-full h-full pr-2 border border-black bg-gray-100 text-left p-2 whitespace-pre-wrap">
                                                     {consultation.data().complains}
                                                 </div>
                                             </div>
-                                            <div className="w-[33.3%] pr-2">
+                                            <div className="w-1/3 pr-2 flex flex-col">
                                                 <p className="text-left">Consultation:</p>
-                                                <div className="w-full h-[88%] pr-2 border border-black bg-gray-100 text-left p-2">
+                                                <div className="w-full h-full pr-2 border border-black bg-gray-100 text-left p-2 whitespace-pre-wrap">
                                                     {consultation.data().consultation}
                                                 </div>
                                             </div>
-                                            <div className="w-[33.3%] pr-2">
+                                            <div className="w-1/3 pr-2 flex flex-col">
                                                 <p className="text-left">Frontdesk Message:</p>
-                                                <div className="w-full h-full pr-2 border border-black bg-gray-100 text-left p-2">
+                                                <div className="w-full h-full pr-2 border border-black bg-gray-100 text-left p-2 whitespace-pre-wrap">
                                                     {consultation.data().frontDeskMessage}
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="w-[40%] pb-2">
+                                        <div className="w-2/5 flex flex-col">
                                             <p className="text-left">Items:</p>
                                             <table className="table-gray">
                                                 <thead>

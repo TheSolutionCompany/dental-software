@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useRef } from "react"
 import { useDatabase } from "../contexts/DatabaseContext"
 import { useNavigate } from "react-router-dom"
 import Select from "react-select"
@@ -14,8 +14,9 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
 
     const navigate = useNavigate()
 
+    const selectRef = useRef(null)
+
     const [loading, setLoading] = useState(false)
-    const [saved, setSaved] = useState(false)
     const [edited, setEdited] = useState(false)
 
     const [itemList, setItemList] = useState([])
@@ -25,6 +26,7 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
 
     const [itemId, setItemId] = useState("")
     const [itemName, setItemName] = useState("")
+    const [itemType, setItemType] = useState("")
     const [unitPrice, setUnitPrice] = useState(0)
     const [quantity, setQuantity] = useState(0)
     const [subtotal, setSubtotal] = useState(0)
@@ -47,11 +49,55 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
         setEdited(true)
     }, [itemList, consultation, frontDeskMessage])
 
+    useEffect(() => {
+        setSubtotal(parseInt(unitPrice) * parseInt(quantity))
+    }, [unitPrice, quantity])
+
     function handleSelectItem(e) {
+        document.getElementById("quantity").disabled = false
+        document.getElementById("unitPrice").disabled = false
         setItemId(e.id)
         setItemName(e.value)
         setUnitPrice(e.unitPrice)
+        setItemType(e.type)
         setQuantity(1)
+        if (e.type === "Treatment") {
+            document.getElementById("quantity").disabled = true
+        }
+    }
+
+    function handleAddItem(e) {
+        e.preventDefault()
+        let item
+        if (itemType === "Treatment") {
+            item = {
+                id: itemId,
+                name: itemName,
+                type: itemType,
+                unitPrice: unitPrice,
+                subtotal: subtotal,
+            }
+        } else {
+            item = {
+                id: itemId,
+                name: itemName,
+                type: itemType,
+                unitPrice: unitPrice,
+                quantity: quantity,
+                subtotal: subtotal,
+            }
+        }
+        selectRef.current.setValue("")
+        setItemId("")
+        setItemName("")
+        setItemType("")
+        setUnitPrice(0)
+        setQuantity(0)
+        setSubtotal(0)
+        setItemList([...itemList, item])
+        setGrandTotal(grandTotal + item.subtotal)
+        document.getElementById("quantity").disabled = true
+        document.getElementById("unitPrice").disabled = true
     }
 
     function handleDeleteItem(index) {
@@ -67,7 +113,6 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
         setLoading(true)
         await updateConsultation(patientId, consultationId, consultation, frontDeskMessage, itemList, grandTotal)
         setLoading(false)
-        setSaved(true)
         setEdited(false)
         setRequireUpdate(true)
         toast.success("Consultation updated", {
@@ -88,7 +133,6 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
         setLoading(true)
         await updateStock(itemList)
         await updatePatientStatus(queueId, "pending billing")
-        setLoading(false)
         toast.success("Sent for payment", {
             position: "top-center",
             autoClose: 1000,
@@ -101,15 +145,18 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
         })
         toast.clearWaitingQueue()
         navigate("/queue")
+        setLoading(false)
     }
 
     function generateTable(list) {
         return list.map((item, index) => (
-            <tr key={index}>
+            <tr key={index} className={`${item.quantity > inventory.filter((i) => i.id === item.id)[0].data().stock ? "text-red-500" : ""}`}>
                 <td>{item.name}</td>
-                <td>{item.unitPrice}</td>
-                <td>{item.quantity}</td>
-                <td>{item.subtotal}</td>
+                <td className="text-right px-2">{item.unitPrice}</td>
+                <td className="text-right px-2">
+                    {item.quantity} / {inventory.filter((i) => i.id === item.id)[0].data().stock}
+                </td>
+                <td className="text-right px-2">{item.subtotal}</td>
                 <td>
                     <button type="button" className="hover:text-red-500" onClick={() => handleDeleteItem(index)}>
                         <svg
@@ -132,41 +179,22 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
         ))
     }
 
-    useEffect(() => {
-        setSubtotal(parseInt(unitPrice) * parseInt(quantity))
-    }, [unitPrice, quantity])
-
-    function handleAddItem(e) {
-        e.preventDefault()
-        let item = {
-            id: itemId,
-            name: itemName,
-            unitPrice: unitPrice,
-            quantity: quantity,
-            subtotal: subtotal,
-        }
-        console.log(item)
-        setItemName("")
-        setUnitPrice(0)
-        setQuantity(0)
-        setSubtotal(0)
-        setItemList([...itemList, item])
-        setGrandTotal(grandTotal + item.subtotal)
-    }
-
     return (
-        <div className="flex flex-row">
-            <div className="w-[50%] pr-4">
+        <div className="flex px-8 h-4/5">
+            <div className="w-1/2 pr-4">
                 <form className="flex flex-col" onSubmit={handleSave}>
-                    <div className="flex flex-row pb-4">
+                    <div className="flex pb-4">
                         <div className="flex flex-col w-full pr-2">
                             <label>Complains</label>
-                            <textarea rows={6} value={complains} readOnly></textarea>
+                            <textarea 
+                                rows={10} 
+                                value={complains} 
+                                readOnly></textarea>
                         </div>
                         <div className="flex flex-col w-full pl-2">
                             <label>Frontdesk Message</label>
                             <textarea
-                                rows={6}
+                                rows={10}
                                 defaultValue={frontDeskMessage}
                                 onChange={(e) => setFrontDeskMessage(e.target.value)}
                             ></textarea>
@@ -174,28 +202,33 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
                     </div>
                     <label>Consultation</label>
                     <textarea
-                        rows={20}
+                        rows={12}
                         value={consultation}
                         onChange={(e) => setConsultation(e.target.value)}
-                    ></textarea>
-                    <button type="submit" disabled={loading} hidden={!edited}>
-                        Save
-                    </button>
-                    <button type="button" disabled={loading} hidden={edited} onClick={handleSendForPayment}>
-                        Send for payment
-                    </button>
+                    >
+                    </textarea>
+                    <div className="p-4">
+                        <button className="button-green" type="submit" disabled={loading} hidden={!edited}>
+                            Save
+                        </button>
+                        <button className="button-green" type="button" disabled={loading} hidden={edited} onClick={handleSendForPayment}>
+                            Send for payment
+                        </button>
+                    </div>
                 </form>
             </div>
-            <div className="w-[50%] pl-4">
-                <form className="flex flex-row pb-8" id="addItemForm" onSubmit={handleAddItem}>
+            <div className="w-1/2 pl-4">
+                <form className="flex pb-8" id="addItemForm" onSubmit={handleAddItem}>
                     <div className="flex flex-col w-full">
                         <label>Name</label>
                         <Select
+                            ref={selectRef}
                             options={inventory.map((res) => {
                                 return {
                                     value: res.data().name,
                                     label: res.data().name,
                                     unitPrice: res.data().unitPrice,
+                                    type: res.data().type,
                                     id: res.id,
                                 }
                             })}
@@ -213,11 +246,21 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
                     </div>
                     <div className="flex flex-col w-28">
                         <label>Unit price</label>
-                        <input type="number" value={unitPrice} onChange={(e) => setUnitPrice(e.target.value)} />
+                        <input
+                            id="unitPrice"
+                            type="number"
+                            value={unitPrice}
+                            onChange={(e) => setUnitPrice(e.target.value)}
+                        />
                     </div>
                     <div className="flex flex-col w-28">
                         <label>Quantity</label>
-                        <input type="number" value={quantity} onChange={(e) => setQuantity(e.target.value)} />
+                        <input
+                            id="quantity"
+                            type="number"
+                            value={quantity}
+                            onChange={(e) => setQuantity(e.target.value)}
+                        />
                     </div>
                     <div className="flex flex-col w-28">
                         <label>Subtotal</label>
@@ -227,25 +270,28 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
                         Add
                     </button>
                 </form>
-                <table className="table-gray">
-                    <thead>
-                        <tr>
-                            <th className="w-[47%]">Treatment/Medicine/Product</th>
-                            <th className="w-[14%]">Unit Price</th>
-                            <th className="w-[14%]">Quantity</th>
-                            <th className="w-[14%]">Subtotal</th>
-                            <th className="w-[11%]">Delete</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {generateTable(itemList)}
-                        <tr>
-                            <td colSpan="3">Grand Total</td>
-                            <td>{grandTotal}</td>
-                            <td></td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div className="flex flex-col w-full h-3/5 overflow-auto">
+                    <table className="table-gray">
+                        <thead>
+                            <tr>
+                                <th className="w-[47%]">Treatment/Medicine/Product</th>
+                                <th className="w-[14%]">Unit Price</th>
+                                <th className="w-[14%]">Quantity</th>
+                                <th className="w-[14%]">Subtotal</th>
+                                <th className="w-[11%]">Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {generateTable(itemList)}
+                        </tbody>
+                    </table>
+                </div>
+                <div className="text-2xl pt-4 flex flex-col items-start">
+                    <div>Grand Total: </div>
+                    <div className="text-right">
+                        {grandTotal}
+                    </div>
+                </div>
             </div>
             <ToastContainer limit={1}/>
         </div>

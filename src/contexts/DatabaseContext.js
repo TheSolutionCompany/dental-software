@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useState } from "react";
-import { db } from "../firebase";
-import { useAuth } from "./AuthContext";
+import React, { useContext, useEffect, useState } from "react"
+import { db } from "../firebase"
+import { useAuth } from "./AuthContext"
 import {
     collection,
     query,
@@ -18,15 +18,15 @@ import {
     increment,
 } from "firebase/firestore";
 
-const DatabaseContext = React.createContext();
+const DatabaseContext = React.createContext()
 
 export function useDatabase() {
-    return useContext(DatabaseContext);
+    return useContext(DatabaseContext)
 }
 
 export function DatabaseProvider({ children }) {
     // Variables in AuthContext
-    const { user } = useAuth();
+    const { user } = useAuth()
 
     const [loading, setLoading] = useState(true);
     const [availableDoctors, setAvailableDoctors] = useState([]);
@@ -54,44 +54,48 @@ export function DatabaseProvider({ children }) {
 
     useEffect(() => {
         const timer = setInterval(() => {
-            const newDate = new Date();
+            const newDate = new Date()
             if (
                 date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() !==
                 newDate.getFullYear() + "-" + (newDate.getMonth() + 1) + "-" + newDate.getDate()
             ) {
-                setDate(new Date());
-                console.log("date changed");
+                setDate(new Date())
+                console.log("date changed")
             }
-        }, 1000);
-        return () => clearInterval(timer);
-    }, [date]);
+        }, 1000)
+        return () => clearInterval(timer)
+    }, [date])
 
     useEffect(() => {
         // Employees Listener
-        const employeesQ = query(employeeRef);
+        const employeesQ = query(employeeRef)
         onSnapshot(employeesQ, (querySnapshot) => {
-            setEmployees([]);
-            setAvailableDoctors([]);
+            setEmployees([])
+            setAvailableDoctors([])
             querySnapshot.forEach((doc) => {
-                setEmployees((prev) => [...prev, doc]);
+                setEmployees((prev) => [...prev, doc])
                 if (doc.data().position === "Doctor" || doc.data().position === "Locum Doctor") {
-                    setAvailableDoctors((prev) => [...prev, doc]);
+                    setAvailableDoctors((prev) => [...prev, doc])
                 }
-            });
-        });
-
-        // Waiting Queue Size Listener
-        const q1 = query(
-            collection(dayQueueRef, date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate(), "queue"),
-            where("status", "==", "waiting"),
-            where("doctorId", "==", user.uid)
-        );
-        onSnapshot(q1, (querySnapshot) => {
-            console.log("waiting queue size listener");
-            setWaitingQueueSize(querySnapshot.size);
-        });
+            })
+        })
 
         if (user) {
+            // Waiting Queue Size Listener
+            const q1 = query(
+                collection(
+                    dayQueueRef,
+                    date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate(),
+                    "queue"
+                ),
+                where("status", "==", "waiting"),
+                where("doctorId", "==", user.uid)
+            )
+            onSnapshot(q1, (querySnapshot) => {
+                console.log("waiting queue size listener")
+                setWaitingQueueSize(querySnapshot.size)
+            })
+
             // Queue Listener
             const q2 = query(
                 collection(
@@ -136,7 +140,7 @@ export function DatabaseProvider({ children }) {
         }
 
         // Inventory Listener
-        const inventoryQ = query(collection(db, "inventory"));
+        const inventoryQ = query(collection(db, "inventory"))
         onSnapshot(inventoryQ, (querySnapshot) => {
             console.log("inventory listener");
             setInventory([]);
@@ -144,16 +148,16 @@ export function DatabaseProvider({ children }) {
             setTreatmentInventory([]);
             setOtherInventory([]);
             querySnapshot.forEach((doc) => {
-                setInventory((prev) => [...prev, doc]);
+                setInventory((prev) => [...prev, doc])
                 if (doc.data().type === "Medicine") {
-                    setMedicineInventory((prev) => [...prev, doc]);
+                    setMedicineInventory((prev) => [...prev, doc])
                 } else if (doc.data().type === "Treatment") {
-                    setTreatmentInventory((prev) => [...prev, doc]);
+                    setTreatmentInventory((prev) => [...prev, doc])
                 } else if (doc.data().type === "Other Product") {
-                    setOtherInventory((prev) => [...prev, doc]);
+                    setOtherInventory((prev) => [...prev, doc])
                 }
-            });
-        });
+            })
+        })
 
         setLoading(false);
     }, [user, date]);
@@ -182,18 +186,18 @@ export function DatabaseProvider({ children }) {
             const result = (await getDocs(q)).docs.map((doc) => doc);
             return Object.values(result);
         } else if (mobileNumber) {
-            const start = mobileNumber;
-            const end = start.replace(/.$/, (c) => String.fromCharCode(c.charCodeAt(0) + 1));
+            const start = mobileNumber
+            const end = start.replace(/.$/, (c) => String.fromCharCode(c.charCodeAt(0) + 1))
             const q = query(
                 collection(db, "patients"),
                 where("mobileNumber", ">=", start),
                 where("mobileNumber", "<", end),
                 orderBy("mobileNumber", "asc")
-            );
-            const result = (await getDocs(q)).docs.map((doc) => doc);
-            return Object.values(result);
+            )
+            const result = (await getDocs(q)).docs.map((doc) => doc)
+            return Object.values(result)
         } else {
-            return [];
+            return []
         }
     }
 
@@ -220,8 +224,8 @@ export function DatabaseProvider({ children }) {
             doctorId,
             complains,
             status,
-        });
-        const consultationLocRef = collection(db, "patients", patientId, "consultation");
+        })
+        const consultationLocRef = collection(db, "patients", patientId, "consultation")
         // Create a new consultation document
         const consultationRef = await addDoc(consultationLocRef, {
             queueId: queueRef.id,
@@ -235,12 +239,12 @@ export function DatabaseProvider({ children }) {
         // Update the queue document with the consultation id
         await updateDoc(doc(dayQueueRef, nowDate, "queue", queueRef.id), {
             consultationId: consultationRef.id,
-        });
+        })
     }
 
     async function checkRepeatedIc(ic) {
-        const q = query(collection(db, "patients"), where("ic", "==", ic));
-        return (await getCountFromServer(q)).data().count === 0 ? false : true;
+        const q = query(collection(db, "patients"), where("ic", "==", ic))
+        return (await getCountFromServer(q)).data().count === 0 ? false : true
     }
 
     async function issueMc(patientId, doctorId, fromDate, toDate, remark) {
@@ -250,7 +254,7 @@ export function DatabaseProvider({ children }) {
             fromDate,
             toDate,
             remark,
-        });
+        })
     }
 
     async function registerNewPatient(
@@ -319,7 +323,7 @@ export function DatabaseProvider({ children }) {
         const docRef = doc(subCollectionRef, queueId);
         await updateDoc(docRef, {
             status: status,
-        });
+        })
     }
 
     async function getCurrentConsultation(patientId, queueId) {
@@ -348,23 +352,26 @@ export function DatabaseProvider({ children }) {
 
     async function updateStock(itemList) {
         for (let item of itemList) {
-            const docRef = doc(db, "inventory", item.id);
-            await updateDoc(docRef, {
-                stock: increment(-item.quantity),
-            });
+            if (item.type !== "Treatment") {
+                const docRef = doc(db, "inventory", item.id)
+                await updateDoc(docRef, {
+                    stock: increment(-item.quantity),
+                })
+            }
         }
     }
 
-    async function makePayment(patientId, queueId, consultationId, remarks, payment, different) {
-        const collectionRef = collection(db, "payments");
+    async function makePayment(patientId, queueId, consultationId, remarks, payment, different, creationDate) {
+        const collectionRef = collection(db, "payments")
         const docRef = await addDoc(collectionRef, {
             patientId,
             queueId,
             consultationId,
             remarks,
             payment,
-        });
-        const consultationRef = doc(db, "patients", patientId, "consultation", consultationId);
+            creationDate,
+        })
+        const consultationRef = doc(db, "patients", patientId, "consultation", consultationId)
         await updateDoc(consultationRef, {
             paymentId: docRef.id,
         });
@@ -378,33 +385,37 @@ export function DatabaseProvider({ children }) {
 
     async function addInventoryItem(name, type, unitPrice, stock, threshold) {
         try {
-            await addDoc(inventoryRef, { name, type, unitPrice, stock, threshold });
-            return true;
+            if (type === "Treatment") {
+                await addDoc(inventoryRef, { name, type, unitPrice })
+            } else {
+                await addDoc(inventoryRef, { name, type, unitPrice, stock, threshold })
+            }
+            return true
         } catch (e) {
-            console.log(e);
-            return false;
+            console.log(e)
+            return false
         }
     }
 
     async function editInventoryItem(id, name, type, unitPrice, stock, threshold) {
         try {
-            await updateDoc(doc(db, "inventory", id), { name, type, unitPrice, stock, threshold });
-            return true;
+            await updateDoc(doc(db, "inventory", id), { name, type, unitPrice, stock, threshold })
+            return true
         } catch (e) {
-            console.log(e);
-            return false;
+            console.log(e)
+            return false
         }
     }
 
     async function addEmployee(displayName, email, position, password) {
         try {
-            let workingHours = { 0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
+            let workingHours = { 0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] }
             //await signupWithName(email, password, displayName)
-            await addDoc(employeeRef, { displayName, email, position, workingHours });
-            return true;
+            await addDoc(employeeRef, { displayName, email, position, workingHours })
+            return true
         } catch (e) {
-            console.log(e);
-            return false;
+            console.log(e)
+            return false
         }
     }
 
@@ -413,11 +424,11 @@ export function DatabaseProvider({ children }) {
     // tab in firebase thru auth context lol
     async function editWorkingHours(id, workingHours) {
         try {
-            await updateDoc(doc(db, "users", id), { workingHours });
-            return true;
+            await updateDoc(doc(db, "users", id), { workingHours })
+            return true
         } catch (e) {
-            console.log(e);
-            return false;
+            console.log(e)
+            return false
         }
     }
     // write another function that allows users to edit their own email under profile page
@@ -446,11 +457,11 @@ export function DatabaseProvider({ children }) {
 
     async function deleteObject(docName, id) {
         try {
-            await deleteDoc(doc(db, docName, id));
-            return true;
+            await deleteDoc(doc(db, docName, id))
+            return true
         } catch (e) {
-            console.log(e);
-            return false;
+            console.log(e)
+            return false
         }
     }
 
@@ -488,5 +499,5 @@ export function DatabaseProvider({ children }) {
         updateApptStatus,
     };
 
-    return <DatabaseContext.Provider value={value}>{!loading && children}</DatabaseContext.Provider>;
+    return <DatabaseContext.Provider value={value}>{!loading && children}</DatabaseContext.Provider>
 }
