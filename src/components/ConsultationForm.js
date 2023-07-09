@@ -16,6 +16,7 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
 
     const [loading, setLoading] = useState(false)
     const [saved, setSaved] = useState(false)
+    const [edited, setEdited] = useState(false)
 
     const [itemList, setItemList] = useState([])
     const [consultation, setConsultation] = useState("")
@@ -42,6 +43,10 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
         })
     }, [])
 
+    useEffect(() => {
+        setEdited(true)
+    }, [itemList, consultation, frontDeskMessage])
+
     function handleSelectItem(e) {
         setItemId(e.id)
         setItemName(e.value)
@@ -63,6 +68,7 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
         await updateConsultation(patientId, consultationId, consultation, frontDeskMessage, itemList, grandTotal)
         setLoading(false)
         setSaved(true)
+        setEdited(false)
         setRequireUpdate(true)
         toast.success("Consultation updated", {
             position: "top-center",
@@ -83,6 +89,17 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
         await updateStock(itemList)
         await updatePatientStatus(queueId, "pending billing")
         setLoading(false)
+        toast.success("Sent for payment", {
+            position: "top-center",
+            autoClose: 1000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+        })
+        toast.clearWaitingQueue()
         navigate("/queue")
     }
 
@@ -166,10 +183,10 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
                     >
                     </textarea>
                     <div className="p-4">
-                        <button className="button-green" type="submit" disabled={loading} hidden={saved}>
+                        <button className="button-green" type="submit" disabled={loading} hidden={!edited}>
                             Save
                         </button>
-                        <button className="button-green" type="button" disabled={loading} hidden={!saved} onClick={handleSendForPayment}>
+                        <button className="button-green" type="button" disabled={loading} hidden={edited} onClick={handleSendForPayment}>
                             Send for payment
                         </button>
                     </div>
@@ -239,7 +256,7 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
                     </div>
                 </div>
             </div>
-            <ToastContainer />
+            <ToastContainer limit={1}/>
         </div>
     )
 }
