@@ -152,11 +152,11 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
         return list.map((item, index) => (
             <tr key={index}>
                 <td>{item.name}</td>
-                <td>{item.unitPrice}</td>
-                <td>
+                <td className="text-right px-2">{item.unitPrice}</td>
+                <td className="text-right px-2">
                     {item.quantity} {inventory.filter((i) => i.id === item.id)[0].data().stock}
                 </td>
-                <td>{item.subtotal}</td>
+                <td className="text-right px-2">{item.subtotal}</td>
                 <td>
                     <button type="button" className="hover:text-red-500" onClick={() => handleDeleteItem(index)}>
                         <svg
@@ -180,18 +180,21 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
     }
 
     return (
-        <div className="flex flex-row">
-            <div className="w-[50%] pr-4">
+        <div className="flex px-8 h-4/5">
+            <div className="w-1/2 pr-4">
                 <form className="flex flex-col" onSubmit={handleSave}>
-                    <div className="flex flex-row pb-4">
+                    <div className="flex pb-4">
                         <div className="flex flex-col w-full pr-2">
                             <label>Complains</label>
-                            <textarea rows={6} value={complains} readOnly></textarea>
+                            <textarea 
+                                rows={10} 
+                                value={complains} 
+                                readOnly></textarea>
                         </div>
                         <div className="flex flex-col w-full pl-2">
                             <label>Frontdesk Message</label>
                             <textarea
-                                rows={6}
+                                rows={10}
                                 defaultValue={frontDeskMessage}
                                 onChange={(e) => setFrontDeskMessage(e.target.value)}
                             ></textarea>
@@ -199,20 +202,23 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
                     </div>
                     <label>Consultation</label>
                     <textarea
-                        rows={20}
+                        rows={12}
                         value={consultation}
                         onChange={(e) => setConsultation(e.target.value)}
-                    ></textarea>
-                    <button type="submit" disabled={loading} hidden={!edited}>
-                        Save
-                    </button>
-                    <button type="button" disabled={loading} hidden={edited} onClick={handleSendForPayment}>
-                        Send for payment
-                    </button>
+                    >
+                    </textarea>
+                    <div className="p-4">
+                        <button className="button-green" type="submit" disabled={loading} hidden={!edited}>
+                            Save
+                        </button>
+                        <button className="button-green" type="button" disabled={loading} hidden={edited} onClick={handleSendForPayment}>
+                            Send for payment
+                        </button>
+                    </div>
                 </form>
             </div>
-            <div className="w-[50%] pl-4">
-                <form className="flex flex-row pb-8" id="addItemForm" onSubmit={handleAddItem}>
+            <div className="w-1/2 pl-4">
+                <form className="flex pb-8" id="addItemForm" onSubmit={handleAddItem}>
                     <div className="flex flex-col w-full">
                         <label>Name</label>
                         <Select
@@ -264,27 +270,30 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
                         Add
                     </button>
                 </form>
-                <table className="table-gray">
-                    <thead>
-                        <tr>
-                            <th className="w-[47%]">Treatment/Medicine/Product</th>
-                            <th className="w-[14%]">Unit Price</th>
-                            <th className="w-[14%]">Quantity</th>
-                            <th className="w-[14%]">Subtotal</th>
-                            <th className="w-[11%]">Delete</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {generateTable(itemList)}
-                        <tr>
-                            <td colSpan="3">Grand Total</td>
-                            <td>{grandTotal}</td>
-                            <td></td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div className="flex flex-col w-full h-3/5 overflow-auto">
+                    <table className="table-gray">
+                        <thead>
+                            <tr>
+                                <th className="w-[47%]">Treatment/Medicine/Product</th>
+                                <th className="w-[14%]">Unit Price</th>
+                                <th className="w-[14%]">Quantity</th>
+                                <th className="w-[14%]">Subtotal</th>
+                                <th className="w-[11%]">Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {generateTable(itemList)}
+                        </tbody>
+                    </table>
+                </div>
+                <div className="text-2xl pt-4 flex flex-col items-start">
+                    <div>Grand Total: </div>
+                    <div className="text-right">
+                        {grandTotal}
+                    </div>
+                </div>
             </div>
-            <ToastContainer limit={1} />
+            <ToastContainer limit={1}/>
         </div>
     )
 }
