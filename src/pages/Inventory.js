@@ -7,6 +7,8 @@ import { useDatabase } from "../contexts/DatabaseContext";
 import InventoryForm from "../components/InventoryForm";
 import DeleteConfirmation from "../components/DeleteConfirmation";
 import AddStockForm from "../components/AddStockForm";
+import { Icon } from "react-icons-kit";
+import { sort } from "react-icons-kit/fa/sort";
 
 const Inventory = () => {
     const navigate = useNavigate();
@@ -19,6 +21,8 @@ const Inventory = () => {
     const [search, setSearch] = useState("");
 
     const [order, setOrder] = useState("DSC");
+    const [currSort, setCurrSort] = useState("name");
+    const [col, setCol] = useState("name");
     const [sortByLowStock, setSortByLowStock] = useState(false);
     const [inv, setInv] = useState([medicineInventory]);
 
@@ -37,9 +41,9 @@ const Inventory = () => {
     }, [filter, medicineInventory, otherInventory, treatmentInventory]);
 
     const sorting = (col) => {
-        console.log(inv);
-
         if (col === "name") {
+            setCurrSort("name");
+            setCol("name");
             if (order === "ASC") {
                 inv[0].sort((a, b) => (a.data().name.toLocaleLowerCase() > b.data().name.toLocaleLowerCase() ? 1 : -1));
                 setOrder("DSC");
@@ -50,6 +54,8 @@ const Inventory = () => {
                 setOrder("ASC");
             }
         } else if (col === "unitPrice") {
+            setCurrSort("unitPrice");
+            setCol("unitPrice");
             if (order === "ASC") {
                 inv[0].sort((a, b) => (a.data().unitPrice > b.data().unitPrice ? 1 : -1));
                 setOrder("DSC");
@@ -60,6 +66,8 @@ const Inventory = () => {
                 setOrder("ASC");
             }
         } else {
+            setCurrSort("stock");
+            setCol("stock");
             if (order === "ASC") {
                 inv[0].sort((a, b) => (a.data().stock > b.data().stock ? 1 : -1));
                 setOrder("DSC");
@@ -83,7 +91,27 @@ const Inventory = () => {
     };
 
     const handleChange = () => {
-        !sortByLowStock ? setSortByLowStock(true) : setSortByLowStock(false);
+        if (!sortByLowStock) {
+            setSortByLowStock(true);
+            inv[0].sort((a, b) => {
+                if (a.data().stock <= a.data().threshold && b.data().stock > b.data().threshold) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            });
+        } else {
+            setSortByLowStock(false);
+            col === "name"
+                ? inv[0].sort((a, b) =>
+                      a.data().name.toLocaleLowerCase() > b.data().name.toLocaleLowerCase() ? 1 : -1
+                  )
+                : col === "unitPrice"
+                ? inv[0].sort((a, b) => (a.data().unitPrice > b.data().unitPrice ? 1 : -1))
+                : inv[0].sort((a, b) => (a.data().stock > b.data().stock ? 1 : -1));
+        }
+
+        return order === "ASC" ? setOrder("DSC") : "";
     };
 
     async function handleLogout() {
@@ -203,7 +231,7 @@ const Inventory = () => {
                                 onChange={(e) => setSearch(e.target.value)}
                             />
                             <label>Sort by low stock </label>
-                            <input className="flex justify-center" type="checkbox" onChange={handleChange} />
+                            <input type="checkbox" onChange={handleChange} />
                         </div>
                         <div className="flex flex-col w-full h-[77vh] overflow-auto">
                             <table className="table-gray">
@@ -223,19 +251,49 @@ const Inventory = () => {
                                         >
                                             Name
                                             <span className="cursor-pointer" onClick={() => sorting("name")}>
-                                                {order === "ASC" ? "▲" : "▼"}
+                                                {currSort === "name" ? (
+                                                    order === "ASC" ? (
+                                                        "▲"
+                                                    ) : (
+                                                        "▼"
+                                                    )
+                                                ) : order === "ASC" ? (
+                                                    <Icon icon={sort} />
+                                                ) : (
+                                                    <Icon icon={sort} />
+                                                )}
                                             </span>
                                         </th>
                                         <th className="w-[20%]">
                                             Unit Price(RM)
                                             <span className="cursor-pointer" onClick={() => sorting("unitPrice")}>
-                                                {order === "ASC" ? "▲" : "▼"}
+                                                {currSort === "unitPrice" ? (
+                                                    order === "ASC" ? (
+                                                        "▲"
+                                                    ) : (
+                                                        "▼"
+                                                    )
+                                                ) : order === "ASC" ? (
+                                                    <Icon icon={sort} />
+                                                ) : (
+                                                    <Icon icon={sort} />
+                                                )}
                                             </span>
                                         </th>
                                         <th className="w-[15%]">
                                             Stock
                                             <span className="cursor-pointer" onClick={() => sorting("stock")}>
-                                                {order === "ASC" ? "▲" : "▼"}
+                                                {currSort === "stock" ? (
+                                                    order === "ASC" ? (
+                                                        "▲"
+                                                    ) : (
+                                                        "▼"
+                                                    )
+                                                ) : order === "ASC" ? (
+                                                    <Icon icon={sort} />
+                                                ) : (
+                                                    <Icon icon={sort} />
+                                                )}
                                             </span>
                                         </th>
                                         <th className="w-[10%]">Add Stock</th>
