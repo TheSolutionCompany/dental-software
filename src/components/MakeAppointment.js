@@ -25,6 +25,7 @@ export default function MakeAppointment(props) {
     const today = new Date();
     const [apptDate, setApptDate] = useState(today);
     const [apptStartTime, setApptStartTime] = useState("12:00");
+    const [apptMinEndTime, setApptMinEndTime] = useState("12:15");
     const [apptEndTime, setApptEndTime] = useState("12:30");
     const [complaints, setComplaints] = useState("");
 
@@ -51,6 +52,7 @@ export default function MakeAppointment(props) {
             setPatientName("");
             setApptDate(today);
             setApptStartTime("12:00");
+            setApptMinEndTime("12:15");
             setApptEndTime("12:30");
             setComplaints("");
         }
@@ -198,9 +200,10 @@ export default function MakeAppointment(props) {
                                 type="date"
                                 value={apptDate}
                                 onChange={(e) => {
-                                    setApptDate(e.target.valueAsDate);
+                                    setApptDate(e.target.value);
                                 }}
                                 required
+                                min={new Date().toISOString().split("T")[0]}
                             />
 
                             <label style={{ marginTop: "20px" }}>Appointment Starting Time</label>
