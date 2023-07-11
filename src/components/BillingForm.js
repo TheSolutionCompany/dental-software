@@ -17,6 +17,7 @@ const BillingForm = ({ queueId, patientId, patientName }) => {
     const [grandTotal, setGrandTotal] = useState(0)
     const [frontDeskMessage, setFrontDeskMessage] = useState("")
     const [creationDate, setCreationDate] = useState("")
+    const [consultationId, setConsultationId] = useState("")
 
     const [remarks, setRemarks] = useState("")
     const [paymentMethod, setPaymentMethod] = useState([{
@@ -32,7 +33,7 @@ const BillingForm = ({ queueId, patientId, patientName }) => {
         //limit the number of payment method to 4
         //if the minus button is clicked, remove the current payment method
         
-        if (index != 0) {
+        if (index !== 0) {
             let newPaymentMethod = [...paymentMethod]
             newPaymentMethod.splice(index, 1)
             setPaymentMethod(newPaymentMethod)
@@ -64,11 +65,11 @@ const BillingForm = ({ queueId, patientId, patientName }) => {
         let payment = []
         //filter out the empty payment method
         paymentMethod.map((item) => {
-            if (item.method != "" && item.amount != 0) {
+            if (item.method !== "" && item.amount !== 0) {
                 payment.push(item)
             }
         })
-        let total = Number(paymentAmount1) + Number(paymentAmount2) + Number(paymentAmount3) + Number(paymentAmount4)
+        let total = payment.map((item) => parseInt(item.amount)).reduce((a, b) => a + b, 0)
         let different = total - grandTotal
         await makePayment(patientId, queueId, consultationId, remarks, payment, different, creationDate)
         await updatePatientStatus(queueId, "completed")
@@ -152,7 +153,7 @@ const BillingForm = ({ queueId, patientId, patientName }) => {
                                             />
                                         </div>
                                         <div className="flex items-end pl-2">
-                                            {index == 0 ?
+                                            {index === 0 ?
                                             // Add button
                                             <button
                                             title="Add payment method"
