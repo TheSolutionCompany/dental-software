@@ -45,12 +45,15 @@ export function DatabaseProvider({ children }) {
     const [treatmentInventory, setTreatmentInventory] = useState([]);
     const [otherInventory, setOtherInventory] = useState([]);
 
-    const [date, setDate] = useState(new Date());
-    const dayQueueRef = collection(db, "queues");
-    const inventoryRef = collection(db, "inventory");
-    const employeeRef = collection(db, "users");
-
     const [appointments, setAppointments] = useState([]);
+    const [commonVariables, setCommonVariables] = useState([])
+
+    const [date, setDate] = useState(new Date())
+    const dayQueueRef = collection(db, "queues")
+    const inventoryRef = collection(db, "inventory")
+    const employeeRef = collection(db, "users")
+
+    const commonVariablesRef = collection(db, "commonvariables")
 
     useEffect(() => {
         const timer = setInterval(() => {
@@ -159,8 +162,16 @@ export function DatabaseProvider({ children }) {
             })
         })
 
-        setLoading(false);
-    }, [user, date]);
+        // Common Variables Listener
+        const commonVarQ = query(commonVariablesRef)
+        onSnapshot(commonVarQ, (querySnapshot) => {
+            console.log("common variables listener")
+            setCommonVariables([])
+            querySnapshot.forEach((doc) => {setCommonVariables((prev) => [...prev, doc])})
+        })
+
+        setLoading(false)
+    }, [user, date])
 
     async function search(name, ic, mobileNumber) {
         if (name) {
@@ -454,6 +465,16 @@ export function DatabaseProvider({ children }) {
             return false;
         }
     }
+    
+    async function setBusinessHours(details) {
+        try {
+            await updateDoc(doc(db, "commonvariables", "businessHours"), {details})
+            return true
+        } catch (e) {
+            console.log(e)
+            return false
+        }
+    }
 
     async function deleteObject(docName, id) {
         try {
@@ -479,6 +500,7 @@ export function DatabaseProvider({ children }) {
         waitingQueueSize: waitingQueueSize,
         employees: employees,
         appointments: appointments,
+        commonVariables: commonVariables,
         search,
         addToQueue,
         checkRepeatedIc,
@@ -497,7 +519,8 @@ export function DatabaseProvider({ children }) {
         makePayment,
         makeAppointment,
         updateApptStatus,
-    };
+        setBusinessHours
+    }
 
     return <DatabaseContext.Provider value={value}>{!loading && children}</DatabaseContext.Provider>
 }

@@ -3,6 +3,7 @@ import RegisterExisting from "./RegisterExisting"
 import RegisterNew from "./RegisterNew"
 import MedicalCertificate from "./MedicalCertificate"
 import MakeAppointment from "./MakeAppointment"
+import BusinessHourForm from "./BusinessHourForm"
 
 const SideBar = () => {
     return (
@@ -13,6 +14,7 @@ const SideBar = () => {
         >
             <div className="h-full px-3 py-3 overflow-y-auto bg-gray-600">
                 <ul className="space-y-2 font-medium">
+                    <BusinessHourForm />
                     <RegisterExisting />
                     <RegisterNew />
                     <MedicalCertificate />
