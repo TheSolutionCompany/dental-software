@@ -7,30 +7,45 @@ import SideBar from "../components/SideBar"
 import BillingForm from "../components/BillingForm"
 
 export const Queue = () => {
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     // Functions in AuthContext
-    const { logout } = useAuth()
+    const { logout } = useAuth();
 
     // Variables in DatabaseContext
-    const { allQueue, waitingQueue, inProgressQueue, pendingBillingQueue, completedQueue } = useDatabase()
+    const { allQueue, waitingQueue, inProgressQueue, pendingBillingQueue, completedQueue } = useDatabase();
 
     // Functions in DatabaseContext
-    const { updatePatientStatus } = useDatabase()
+    const { updatePatientStatus } = useDatabase();
 
-    const [filter, setFilter] = useState("waiting")
+    const [filter, setFilter] = useState("waiting");
+
+    const [search, setSearch] = useState("");
 
     function generateQueue(queues) {
-        return queues.map((row) => (
-            <tr
-                key={row.id}
-            >
-                <td className="w-[20%]">{row.data().patientName}</td>
-                <td className="w-[10%]">{row.data().gender}</td>
-                <td className="w-[5%] ">{row.data().age}</td>
-                <td className="w-[18%]">{row.data().ic}</td>
-                <td className="w-[30%]">{row.data().complains}</td>
-                <td className="w-[10%]">{row.data().status}</td>
-                <td className="w-[7%]">
+        return queues
+            .filter((item) => {
+                return search.toLocaleLowerCase() === ""
+                    ? item
+                    : item.data().patientName.toLocaleLowerCase().includes(search);
+            })
+            .map((row) => (
+                <tr
+                    className={`cursor-pointer
+                ${onFocusIndex === row.id ? "tr-focus" : ""}`}
+                    key={row.id}
+                    onClick={() => {
+                        row.id === onFocusIndex ? setOnFocusIndex(null) : setOnFocusIndex(row.id);
+                    }}
+                    // The onDoubleClick is for testing purposes. It will be removed later.
+                    onDoubleClick={() => handlePatientProfile(row.data().patientId, row.id)}
+                >
+                    <td className="w-[20%]">{row.data().patientName}</td>
+                    <td className="w-[10%]">{row.data().gender}</td>
+                    <td className="w-[5%] ">{row.data().age}</td>
+                    <td className="w-[18%]">{row.data().ic}</td>
+                    <td className="w-[30%]">{row.data().complains}</td>
+                    <td className="w-[10%]">{row.data().status}</td>
+                    <td className="w-[7%]">
                     {row.data().status === "waiting" && (
                         <button
                             className="hover:text-green-500"
@@ -87,14 +102,14 @@ export const Queue = () => {
                         />
                     )}
                 </td>
-            </tr>
-        ))
+                </tr>
+            ));
     }
 
     const handlePatientCall = async (patientId, queueId) => {
-        await updatePatientStatus(queueId, "in progress")
-        handlePatientProfile(patientId, queueId)
-    }
+        await updatePatientStatus(queueId, "in progress");
+        handlePatientProfile(patientId, queueId);
+    };
 
     const handlePatientProfile = (patientId, queueId) => {
         navigate("/PatientProfile", { state: { patientId: patientId, mode: "consult", queueId: queueId } })
@@ -102,16 +117,16 @@ export const Queue = () => {
 
     async function handleLogout() {
         try {
-            await logout()
-            navigate("/")
+            await logout();
+            navigate("/");
         } catch (error) {
-            console.log(error)
+            console.log(error);
         }
     }
 
     const handleFilter = (e) => {
-        setFilter(e.target.value)
-    }
+        setFilter(e.target.value);
+    };
 
     return (
         <div className="flex flex-col h-full">
@@ -129,6 +144,15 @@ export const Queue = () => {
                                 <option value="pendingBilling">Pending Billing</option>
                                 <option value="completed">Completed</option>
                             </select>
+                        </div>
+                        <div>
+                            <form>
+                                <input
+                                    type="search"
+                                    placeholder="Search by name"
+                                    onChange={(e) => setSearch(e.target.value)}
+                                />
+                            </form>
                         </div>
                         <div className="flex flex-col w-full border-black overflow-auto">
                             <table className="table-gray">
@@ -156,7 +180,7 @@ export const Queue = () => {
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default Queue
+export default Queue;
