@@ -78,7 +78,7 @@ const Header = ({ currentPage, handleLogout }) => {
 
                     Queue
                     {waitingQueueSize > 0 && (
-                        <span className="flex items-center justify-center w-3 h-3 p-3 ml-2 text-sm font-medium text-red-200 bg-red-600 rounded-full">
+                        <span className="flex items-center justify-center w-3 h-3 p-3 ml-2 text-sm font-medium text-white bg-red-600 rounded-full">
                             {waitingQueueSize}
                         </span>
                     )}
@@ -122,7 +122,7 @@ const Header = ({ currentPage, handleLogout }) => {
                         <ul
                             onMouseEnter={() => setIsShown(true)}
                             onMouseLeave={() => setIsShown(false)}
-                            className="cursor-pointer absolute text-white top-14 bg-gray-800"
+                            className="cursor-pointer absolute text-white top-14 bg-gray-800 z-50"
                         >
                             <li className="px-4 py-2 hover:bg-gray-700" onClick={handleProfilePage}>
                                 Profile

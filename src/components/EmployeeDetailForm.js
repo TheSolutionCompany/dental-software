@@ -1,35 +1,35 @@
-import React, { useEffect, useState } from "react";
-import { useDatabase } from "../contexts/DatabaseContext";
-import Modal from "react-modal";
-import CloseButton from "./CloseButton";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import React, { useEffect, useState } from "react"
+import { useDatabase } from "../contexts/DatabaseContext"
+import Modal from "react-modal"
+import CloseButton from "./CloseButton"
+import { ToastContainer, toast } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
 
-Modal.setAppElement("#root");
+Modal.setAppElement("#root")
 
 export default function EmployeeDetailForm() {
-    const [isOpen, setIsOpen] = useState(false);
-    const { addEmployee } = useDatabase();
+    const [isOpen, setIsOpen] = useState(false)
+    const { addEmployee } = useDatabase()
 
     const toggleModal = () => {
-        setIsOpen(!isOpen);
-    };
+        setIsOpen(!isOpen)
+    }
 
-    const [displayName, setDisplayName] = useState("");
-    const [isDisplayNameValid, setIsDisplayNameValid] = useState(false);
+    const [displayName, setDisplayName] = useState("")
+    const [isDisplayNameValid, setIsDisplayNameValid] = useState(false)
 
-    const [email, setEmail] = useState("");
-    const [isEmailValid, setIsEmailValid] = useState(false);
-    const [isEmailEmpty, setIsEmailEmpty] = useState(false);
+    const [email, setEmail] = useState("")
+    const [isEmailValid, setIsEmailValid] = useState(false)
+    const [isEmailEmpty, setIsEmailEmpty] = useState(false)
 
-    const [password, setPassword] = useState("");
-    const [isPasswordValid, setIsPasswordValid] = useState(false);
+    const [password, setPassword] = useState("")
+    const [isPasswordValid, setIsPasswordValid] = useState(false)
 
-    const [position, setPosition] = useState("Doctor");
+    const [position, setPosition] = useState("Doctor")
 
-    const [isValidInput, setIsValidInput] = useState(false);
+    const [isValidInput, setIsValidInput] = useState(false)
 
-    const title = "Add New Employee";
+    const title = "Add New Employee"
 
     const smallModal = {
         content: {
@@ -39,17 +39,17 @@ export default function EmployeeDetailForm() {
             width: "30%",
             padding: "40px",
         },
-    };
+    }
 
     const handleSubmit = async (event) => {
-        event.preventDefault();
+        event.preventDefault()
 
-        document.getElementById("name").disabled = true;
-        document.getElementById("position").disabled = true;
-        document.getElementById("email").disabled = true;
-        document.getElementById("password").disabled = true;
+        document.getElementById("name").disabled = true
+        document.getElementById("position").disabled = true
+        document.getElementById("email").disabled = true
+        document.getElementById("password").disabled = true
         if (await addEmployee(displayName, email, position, password)) {
-            toggleModal();
+            toggleModal()
             toast.success("Employee added successfully", {
                 position: "top-center",
                 autoClose: 1000,
@@ -59,14 +59,14 @@ export default function EmployeeDetailForm() {
                 draggable: true,
                 progress: undefined,
                 theme: "colored",
-            });
-            toast.clearWaitingQueue();
-            resetForm();
+            })
+            toast.clearWaitingQueue()
+            resetForm()
         } else {
-            document.getElementById("name").disabled = false;
-            document.getElementById("email").disabled = false;
-            document.getElementById("position").disabled = false;
-            document.getElementById("password").disabled = false;
+            document.getElementById("name").disabled = false
+            document.getElementById("email").disabled = false
+            document.getElementById("position").disabled = false
+            document.getElementById("password").disabled = false
             toast.error("Failed to add item. Please try again later.", {
                 position: "top-center",
                 autoClose: 1000,
@@ -76,33 +76,33 @@ export default function EmployeeDetailForm() {
                 draggable: true,
                 progress: undefined,
                 theme: "colored",
-            });
-            toast.clearWaitingQueue();
+            })
+            toast.clearWaitingQueue()
         }
-    };
+    }
 
     const resetForm = () => {
-        setDisplayName("");
-        setPosition("Doctor");
-        setEmail("");
-        setPassword("");
-    };
+        setDisplayName("")
+        setPosition("Doctor")
+        setEmail("")
+        setPassword("")
+    }
 
     useEffect(() => {
-        let isNameNonEmpty = displayName !== "" && displayName !== null && displayName !== undefined;
-        setIsDisplayNameValid(isNameNonEmpty);
+        let isNameNonEmpty = displayName !== "" && displayName !== null && displayName !== undefined
+        setIsDisplayNameValid(isNameNonEmpty)
 
-        let isEmailNonEmpty = email !== "" && email !== null && email !== undefined;
-        setIsEmailEmpty(!isEmailNonEmpty);
-        let isEmailValid = isEmailNonEmpty && /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email);
-        setIsEmailValid(isEmailValid);
+        let isEmailNonEmpty = email !== "" && email !== null && email !== undefined
+        setIsEmailEmpty(!isEmailNonEmpty)
+        let isEmailValid = isEmailNonEmpty && /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(email)
+        setIsEmailValid(isEmailValid)
 
         // pls change to regex tqvm
-        let isPasswordValid = password !== null && password !== undefined && password.length >= 6;
-        setIsPasswordValid(isPasswordValid);
+        let isPasswordValid = password !== null && password !== undefined && password.length >= 6
+        setIsPasswordValid(isPasswordValid)
 
-        setIsValidInput(!(isNameNonEmpty && isEmailValid && isPasswordValid));
-    }, [displayName, email, password, position]);
+        setIsValidInput(!(isNameNonEmpty && isEmailValid && isPasswordValid))
+    }, [displayName, email, password, position])
 
     return (
         <div className="">
@@ -126,7 +126,7 @@ export default function EmployeeDetailForm() {
                                 id="name"
                                 value={displayName}
                                 onChange={(e) => {
-                                    setDisplayName(e.target.value);
+                                    setDisplayName(e.target.value)
                                 }}
                                 required
                             />
@@ -140,7 +140,7 @@ export default function EmployeeDetailForm() {
                                 value={position}
                                 className="select-dropdown"
                                 onChange={(e) => {
-                                    setPosition(e.target.value);
+                                    setPosition(e.target.value)
                                 }}
                                 required
                             >
@@ -155,7 +155,7 @@ export default function EmployeeDetailForm() {
                                 id="email"
                                 value={email}
                                 onChange={(e) => {
-                                    setEmail(e.target.value);
+                                    setEmail(e.target.value)
                                 }}
                                 required
                                 type="email"
@@ -172,7 +172,7 @@ export default function EmployeeDetailForm() {
                                 id="password"
                                 value={password}
                                 onChange={(e) => {
-                                    setPassword(e.target.value);
+                                    setPassword(e.target.value)
                                 }}
                                 type="password"
                             />
@@ -195,5 +195,5 @@ export default function EmployeeDetailForm() {
             </Modal>
             <ToastContainer limit={1} />
         </div>
-    );
+    )
 }
