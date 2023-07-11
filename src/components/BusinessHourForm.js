@@ -8,28 +8,24 @@ import { Calendar } from "@fullcalendar/core";
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-
-import { changeToCurrentWeek } from "../util/TimeUtil";
+import { extractTimeFromDate, getStartOfWeek } from "../util/TimeUtil";
 
 Modal.setAppElement("#root");
 
-// I am so sorry to those who need to read this piece of code (other than me)
-// You can tell this feature is held tgt with a lot of bandaids...
-export default function WorkingHourForm(props) {
+export default function BusinessHourForm(props) {
     const [isOpen, setIsOpen] = useState(false);
-
     const [isInnerOpen, setIsInnerOpen] = useState(false);
     const [innerModalPosition, setInnerModalPosition] = useState([0, 0]);
     const [activeEventId, setActiveEventId] = useState("");
 
-    const { editWorkingHours, commonVariables } = useDatabase();
-
-    const activeEmployee = props.activeEmployee;
-
     const [timeslots, setTimeslots] = useState([]);
     const [timeslotCounter, setTimeslotCounter] = useState(1);
 
-    const [businessHours, setBusinessHours] = useState([]);
+    const calendarRef = useRef();
+
+    const { commonVariables, setBusinessHours } = useDatabase();
+
+    const title = "Set Business Hours";
 
     const toggleModal = () => {
         setIsOpen(!isOpen);
@@ -39,55 +35,84 @@ export default function WorkingHourForm(props) {
         setIsInnerOpen(!isInnerOpen);
     };
 
-    const title = "Edit Working Hours";
-
-    const calendarRef = useRef();
-
     useEffect(() => {
-        let flattened = Object.values(activeEmployee.workingHours).reduce(
-            (acc, newTimeslots) => acc.concat(newTimeslots),
-            []
-        );
-        flattened.sort(compareTwoTimeslots);
-        if (flattened.length > 0) {
-            // this is to help with the event id... i know, another strange code here...
-            let lastTimeslotIndex = Number(flattened[flattened.length - 1].id.split("_")[1]);
-            setTimeslotCounter(lastTimeslotIndex + 1);
-        }
-        flattened.forEach((timeslot) => {
-            timeslot.start = changeToCurrentWeek(timeslot.start);
-            timeslot.end = changeToCurrentWeek(timeslot.end);
-            timeslot.editable = true;
-        });
-        setTimeslots(flattened);
-
         let currBusinessHours = commonVariables.find((element) => element.id === "businessHours")
-        if(currBusinessHours){
-            setBusinessHours(currBusinessHours.data().details);
+        if (currBusinessHours) {
+            parseToEventsFormat(currBusinessHours.data().details);
         }
-    }, [activeEmployee.workingHours, commonVariables]);
+    }, [commonVariables]);
 
-    function compareTwoTimeslots(timeslot1, timeslot2) {
-        let timeslotNumber1 = Number(timeslot1.id.split("_")[1]);
-        let timeslotNumber2 = Number(timeslot2.id.split("_")[1]);
-        if (timeslotNumber1 < timeslotNumber2) {
-            return -1;
-        } else if (timeslotNumber1 > timeslotNumber2) {
-            return 1;
-        } else {
-            return 0;
+    function handleSelect(selectionInfo) {
+        let calendarApi = calendarRef.current.getApi();
+        let newEvent = {
+            id: `Business Hours_${timeslotCounter}`,
+            start: selectionInfo.start,
+            end: selectionInfo.end,
+            editable: true,
+            title: "Business Hours",
+        };
+        setTimeslotCounter(timeslotCounter + 1);
+        calendarApi.addEvent(newEvent);
+    }
+
+    // events ==> business hours
+    function parseToBusinessHoursFormat(events) {
+        let result = [];
+        for (let timeslot of events) {
+            let slot = {
+                daysOfWeek: [timeslot.start.getDay()],
+                startTime: extractTimeFromDate(timeslot.start),
+                endTime: extractTimeFromDate(timeslot.end),
+            };
+            result.push(slot);
         }
+        return result;
+    }
+
+    // business hours ==> events
+    function parseToEventsFormat(businessHours) {
+        let startOfWeek = getStartOfWeek(new Date());
+        let currentCounter = 1;
+        let result = [];
+        for (let slot of businessHours) {
+            for (let day of slot.daysOfWeek) {
+                // see FullCalendar's documentation on the format of businessHours
+                let workingDay = new Date(startOfWeek.setDate(startOfWeek.getDate() + day));
+
+                let startHours = Number(slot.startTime.split(":")[0]);
+                let startMinutes = Number(slot.startTime.split(":")[1]);
+                let startTime = new Date(workingDay).setHours(startHours, startMinutes);
+
+                let endHours = Number(slot.endTime.split(":")[0]);
+                let endMinutes = Number(slot.endTime.split(":")[1]);
+                let endTime = new Date(workingDay).setHours(endHours, endMinutes);
+
+                let newEvent = {
+                    id: `Business Hours_${currentCounter}`,
+                    start: startTime,
+                    end: endTime,
+                    editable: true,
+                    title: "Business Hours",
+                };
+                currentCounter++;
+                setTimeslotCounter((prev) => prev + 1);
+                result.push(newEvent);
+                startOfWeek = getStartOfWeek(new Date());
+            }
+        }
+        setTimeslots(result);
     }
 
     async function handleSubmit() {
-        let calendarApi = calendarRef.current.getApi();
-        let finalWorkingHours = parseEventArrayToMap(calendarApi.getEvents());
+        let calendarApi = calendarRef.current.getApi()
+        let allTimeSlots = calendarApi.getEvents();
+        let newBusinessHours = parseToBusinessHoursFormat(allTimeSlots);
 
         document.getElementById("submitButton").disabled = true;
 
-        if (await editWorkingHours(activeEmployee.id, finalWorkingHours)) {
+        if (await setBusinessHours(newBusinessHours)) {
             toggleModal();
-            toast.success("Working hours edited successfully", {
+            toast.success("Business hours edited successfully", {
                 position: "top-center",
                 autoClose: 1000,
                 hideProgressBar: true,
@@ -98,7 +123,7 @@ export default function WorkingHourForm(props) {
                 theme: "colored",
             });
             toast.clearWaitingQueue();
-        } else {
+        }else {
             document.getElementById("submitButton").disabled = false;
             toast.error("Failed to edit working hours. Please try again later.", {
                 position: "top-center",
@@ -114,34 +139,6 @@ export default function WorkingHourForm(props) {
         }
     }
 
-    // firebase cant support nested arrays. yup.
-    function parseEventArrayToMap(eventArray) {
-        let simplifiedList = eventArray.map((event) => ({
-            id: event.id,
-            start: event.start,
-            end: event.end,
-            title: event.title,
-        }));
-        let result = { 0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
-        for (let item of simplifiedList) {
-            result[item.start.getDay()].push(item);
-        }
-        return result;
-    }
-
-    function handleSelect(selectionInfo) {
-        let calendarApi = calendarRef.current.getApi();
-        let newEvent = {
-            id: `${activeEmployee.id}_${timeslotCounter}`,
-            start: selectionInfo.start,
-            end: selectionInfo.end,
-            editable: true,
-            title: "Working Hours",
-        };
-        setTimeslotCounter(timeslotCounter + 1);
-        calendarApi.addEvent(newEvent);
-    }
-
     function handleEventClicked(selectionInfo) {
         setInnerModalPosition([selectionInfo.jsEvent.x, selectionInfo.jsEvent.y]);
         setActiveEventId(selectionInfo.event.id);
@@ -155,18 +152,20 @@ export default function WorkingHourForm(props) {
     }
 
     return (
-        <div className="">
-            <div>
-                <button onClick={toggleModal}>{title}</button>
+        <div className="App">
+            <div className="cursor-pointer select-none">
+                <button
+                    onClick={toggleModal}
+                    className="flex w-full items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                    <span className="text-left flex-1 ml-3 whitespace-nowrap">Set Business Hours</span>
+                </button>
             </div>
 
             <Modal isOpen={isOpen} onRequestClose={toggleModal} contentLabel={title} shouldCloseOnOverlayClick={false}>
                 <CloseButton name={title} func={toggleModal} />
                 <div className="grid grid-cols-1 gap-1">
                     <div className="flex flex-col">
-                        <p>
-                            Employee name: <b>{activeEmployee.displayName}</b>
-                        </p>
                         <FullCalendar
                             plugins={[timeGridPlugin, interactionPlugin]}
                             dayHeaderFormat={{ weekday: "long" }}
@@ -177,8 +176,6 @@ export default function WorkingHourForm(props) {
                             eventClick={handleEventClicked}
                             events={timeslots}
                             allDaySlot={false}
-                            businessHours={businessHours}
-                            selectConstraint={"businessHours"}
                         />
                         <button onClick={handleSubmit} className="button-green rounded" id="submitButton">
                             Submit
