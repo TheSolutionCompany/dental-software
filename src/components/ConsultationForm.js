@@ -55,12 +55,13 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
         for (let item of itemList) {
             if (item.type !== "Treatment") {
                 if (item.quantity > inventory.filter((i) => i.id === item.id)[0].data().stock) {
+                    setEdited(true)
                     setOutOfStock(true)
                     break
                 }
             }
         }
-    }, [itemList])
+    }, [itemList, inventory])
 
     useEffect(() => {
         setSubtotal(parseInt(unitPrice) * parseInt(quantity))
