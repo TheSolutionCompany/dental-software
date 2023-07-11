@@ -68,6 +68,7 @@ const BillingForm = ({ queueId, patientId, patientName }) => {
             if (item.method !== "" && item.amount !== 0) {
                 payment.push(item)
             }
+
         })
         let total = payment.map((item) => parseInt(item.amount)).reduce((a, b) => a + b, 0)
         let different = total - grandTotal

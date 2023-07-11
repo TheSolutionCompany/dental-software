@@ -33,6 +33,7 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
     const [grandTotal, setGrandTotal] = useState(0)
 
     const [consultationId, setConsultationId] = useState("")
+    const [outOfStock, setOutOfStock] = useState(false)
 
     useEffect(() => {
         getCurrentConsultation(patientId, queueId).then((res) => {
@@ -48,6 +49,18 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
     useEffect(() => {
         setEdited(true)
     }, [itemList, consultation, frontDeskMessage])
+
+    useEffect(() => {
+        setOutOfStock(false)
+        for (let item of itemList) {
+            if (item.type !== "Treatment") {
+                if (item.quantity > inventory.filter((i) => i.id === item.id)[0].data().stock) {
+                    setOutOfStock(true)
+                    break
+                }
+            }
+        }
+    }, [itemList])
 
     useEffect(() => {
         setSubtotal(parseInt(unitPrice) * parseInt(quantity))
@@ -111,21 +124,35 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
     async function handleSave(e) {
         e.preventDefault()
         setLoading(true)
-        await updateConsultation(patientId, consultationId, consultation, frontDeskMessage, itemList, grandTotal)
+        if (outOfStock) {
+            toast.error("Some item is out of stock", {
+                position: "top-center",
+                autoClose: 1000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            })
+            toast.clearWaitingQueue()
+        } else {
+            await updateConsultation(patientId, consultationId, consultation, frontDeskMessage, itemList, grandTotal)
+            setEdited(false)
+            setRequireUpdate(true)
+            toast.success("Consultation updated", {
+                position: "top-center",
+                autoClose: 1000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            })
+            toast.clearWaitingQueue()
+        }
         setLoading(false)
-        setEdited(false)
-        setRequireUpdate(true)
-        toast.success("Consultation updated", {
-            position: "top-center",
-            autoClose: 1000,
-            hideProgressBar: true,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "colored",
-        })
-        toast.clearWaitingQueue()
     }
 
     async function handleSendForPayment(e) {
@@ -150,7 +177,12 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
 
     function generateTable(list) {
         return list.map((item, index) => (
-            <tr key={index} className={`${item.quantity > inventory.filter((i) => i.id === item.id)[0].data().stock ? "text-red-500" : ""}`}>
+            <tr
+                key={index}
+                className={`${
+                    item.quantity > inventory.filter((i) => i.id === item.id)[0].data().stock ? "text-red-500" : ""
+                }`}
+            >
                 <td>{item.name}</td>
                 <td className="text-right px-2">{item.unitPrice}</td>
                 <td className="text-right px-2">
@@ -186,10 +218,7 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
                     <div className="flex pb-4">
                         <div className="flex flex-col w-full pr-2">
                             <label>Complains</label>
-                            <textarea 
-                                rows={10} 
-                                value={complains} 
-                                readOnly></textarea>
+                            <textarea rows={10} value={complains} readOnly></textarea>
                         </div>
                         <div className="flex flex-col w-full pl-2">
                             <label>Frontdesk Message</label>
@@ -205,13 +234,18 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
                         rows={12}
                         value={consultation}
                         onChange={(e) => setConsultation(e.target.value)}
-                    >
-                    </textarea>
+                    ></textarea>
                     <div className="p-4">
                         <button className="button-green" type="submit" disabled={loading} hidden={!edited}>
                             Save
                         </button>
-                        <button className="button-green" type="button" disabled={loading} hidden={edited} onClick={handleSendForPayment}>
+                        <button
+                            className="button-green"
+                            type="button"
+                            disabled={loading}
+                            hidden={edited}
+                            onClick={handleSendForPayment}
+                        >
                             Send for payment
                         </button>
                     </div>
@@ -281,19 +315,15 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
                                 <th className="w-[11%]">Delete</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            {generateTable(itemList)}
-                        </tbody>
+                        <tbody>{generateTable(itemList)}</tbody>
                     </table>
                 </div>
                 <div className="text-2xl pt-4 flex flex-col items-start">
                     <div>Grand Total: </div>
-                    <div className="text-right">
-                        {grandTotal}
-                    </div>
+                    <div className="text-right">{grandTotal}</div>
                 </div>
             </div>
-            <ToastContainer limit={1}/>
+            <ToastContainer limit={1} />
         </div>
     )
 }

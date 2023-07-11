@@ -209,7 +209,7 @@ export const RegisterExisting = () => {
                             </div>
                             <div className="flex flex-col">
                                 <p>Complains:</p>
-                                <textarea rows={4} onChange={(e) => setComplains(e.target.value)} />
+                                <textarea rows={4} onChange={(e) => setComplains(e.target.value)} required />
                                 <p>Doctor:</p>
                                 <select
                                     className="select-dropdown"
@@ -218,7 +218,7 @@ export const RegisterExisting = () => {
                                 >
                                     <option disabled selected></option>
                                     {availableDoctors.map((doctor) => (
-                                        <option value={doctor.id}>{doctor.data().displayName}</option>
+                                        <option value={doctor.id}>{doctor.data().displayName} </option>
                                     ))}
                                 </select>
                             </div>
