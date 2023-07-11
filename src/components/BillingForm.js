@@ -19,18 +19,34 @@ const BillingForm = ({ queueId, patientId, patientName }) => {
     const [creationDate, setCreationDate] = useState("")
 
     const [remarks, setRemarks] = useState("")
-    const [consultationId, setConsultationId] = useState("")
-    const [paymentMethod1, setPaymentMethod1] = useState("")
-    const [paymentMethod2, setPaymentMethod2] = useState("")
-    const [paymentMethod3, setPaymentMethod3] = useState("")
-    const [paymentMethod4, setPaymentMethod4] = useState("")
-    const [paymentAmount1, setPaymentAmount1] = useState(0)
-    const [paymentAmount2, setPaymentAmount2] = useState(0)
-    const [paymentAmount3, setPaymentAmount3] = useState(0)
-    const [paymentAmount4, setPaymentAmount4] = useState(0)
-
+    const [paymentMethod, setPaymentMethod] = useState([{
+        method: "",
+        amount: 0   
+    }])    
+    const [warnShowPaymentLimit, setWarnShowPaymentLimit] = useState(false)
     function toggleModal() {
         setIsOpen(!isOpen)
+    }
+
+    const handleAddPaymentMethod = (index) => {
+        //limit the number of payment method to 4
+        //if the minus button is clicked, remove the current payment method
+        
+        if (index != 0) {
+            let newPaymentMethod = [...paymentMethod]
+            newPaymentMethod.splice(index, 1)
+            setPaymentMethod(newPaymentMethod)
+            setWarnShowPaymentLimit(false)
+            console.log(paymentMethod)
+            return
+        }
+        if (paymentMethod.length >= 4) {
+            setWarnShowPaymentLimit(true)
+            return
+        }
+        //if the last payment method is not empty, add new payment method
+        setPaymentMethod([...paymentMethod, { method: "", amount: 0 }])
+        console.log(paymentMethod)
     }
 
     useEffect(() => {
@@ -45,19 +61,13 @@ const BillingForm = ({ queueId, patientId, patientName }) => {
 
     async function handleSubmit(e) {
         e.preventDefault()
-        let payment = [{
-            method: paymentMethod1,
-            amount: paymentAmount1
-        }, {
-            method: paymentMethod2,
-            amount: paymentAmount2
-        }, {
-            method: paymentMethod3,
-            amount: paymentAmount3
-        }, {
-            method: paymentMethod4,
-            amount: paymentAmount4
-        }]
+        let payment = []
+        //filter out the empty payment method
+        paymentMethod.map((item) => {
+            if (item.method != "" && item.amount != 0) {
+                payment.push(item)
+            }
+        })
         let total = Number(paymentAmount1) + Number(paymentAmount2) + Number(paymentAmount3) + Number(paymentAmount4)
         let different = total - grandTotal
         await makePayment(patientId, queueId, consultationId, remarks, payment, different, creationDate)
@@ -98,102 +108,96 @@ const BillingForm = ({ queueId, patientId, patientName }) => {
                 <CloseButton name="Payment Summary" func={toggleModal} />
                 <div className="flex flex-row">
                     <div className="flex flex-col w-1/2 p-2">
-                        <p>
-                            Patient name: <b>{patientName}</b>
+                        <p className="border border-black p-2 w-fit mb-4">
+                            Patient name: <br></br> <b>{patientName}</b>
                         </p>
-                        <form onSubmit={handleSubmit}>
-                            <label>Remark</label>
-                            <input
-                                type="text"
-                                className="border border-gray-300 rounded-md"
-                                value={remarks}
-                                onChange={(e) => setRemarks(e.target.value)}
-                            />
-                            <div className="flex flex-row">
-                                <label>Payment method 1</label>
-                                <select
-                                    className="border border-gray-300 rounded-md"
-                                    value={paymentMethod1}
-                                    onChange={(e) => setPaymentMethod1(e.target.value)}
-                                >
-                                    <option value=""></option>
-                                    <option value="Cash">Cash</option>
-                                    <option value="Card">Credit Card</option>
-                                    <option value="Cheque">Debit Card</option>
-                                    <option value="QRPay">QR Pay</option>
-                                </select>
-                                <label>Payment amount 1</label>
-                                <input
-                                    type="number"
-                                    className="border border-gray-300 rounded-md"
-                                    value={paymentAmount1}
-                                    onChange={(e) => setPaymentAmount1(e.target.value)}
+                        <form>
+                            {paymentMethod.map((item, index) => {
+                                return (
+                                    <div className="flex">
+                                        <div className="flex flex-col pr-4">
+                                            <label>Payment method {index + 1}</label>
+                                            <select
+                                                className="border border-gray-500 rounded-md h-10"
+                                                value={paymentMethod[index].method}
+                                                onChange={
+                                                    (e) => {
+                                                        let newPaymentMethod = [...paymentMethod]
+                                                        newPaymentMethod[index].method = e.target.value
+                                                        setPaymentMethod(newPaymentMethod)
+                                                    }
+                                                }
+                                            >
+                                                <option value=""></option>
+                                                <option value="Cash">Cash</option>
+                                                <option value="Card">Credit Card</option>
+                                                <option value="Cheque">Debit Card</option>
+                                                <option value="QRPay">QR Pay</option>
+                                            </select>
+                                        </div>
+                                        <div className="flex flex-col ">
+
+                                            <label>Amount</label>
+                                            <input
+                                                type="number"
+                                                className="border border-gray-500 rounded-md"
+                                                value={paymentMethod[index].amount}
+                                                onChange={
+                                                    (e) => {
+                                                        let newPaymentMethod = [...paymentMethod]
+                                                        newPaymentMethod[index].amount = e.target.value
+                                                        setPaymentMethod(newPaymentMethod)
+                                                    }
+                                                }
+                                            />
+                                        </div>
+                                        <div className="flex items-end pl-2">
+                                            {index == 0 ?
+                                            // Add button
+                                            <button
+                                            title="Add payment method"
+                                            type="button"
+                                                onClick={ () => handleAddPaymentMethod(index) }
+                                                className="flex items-center justify-center rounded-full w-10 h-10 bg-green-500 font-bold text-2xl text-center" >
+                                                
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                                </svg>
+                                            </button>
+                                            : 
+                                            // Minus button
+                                            <button
+                                            type="button"
+                                            title="Remove payment method"
+                                                onClick={ () => handleAddPaymentMethod(index) }
+                                                className="flex items-center justify-center rounded-full w-10 h-10 bg-red-500 font-bold text-2xl text-center" >
+                                                
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12h-15" />
+                                                </svg>
+
+                                            </button>
+                                            }
+                                        </div>
+                                    </div>
+                                )
+                            })
+                            }
+                            {
+                                warnShowPaymentLimit && <p className="text-red-500">You have reached the maximum number of payment method</p>
+                            }
+                            <div className="flex flex-col my-4">
+
+                                <label>Remark</label>
+                                <textarea
+                                    rows={4}
+                                    type="text"
+                                    className="border border-gray-500 rounded-md"
+                                    value={remarks}
+                                    onChange={(e) => setRemarks(e.target.value)}
                                 />
                             </div>
-                            <div className="flex flex-row">
-                                <label>Payment method 2</label>
-                                <select
-                                    className="border border-gray-300 rounded-md"
-                                    value={paymentMethod2}
-                                    onChange={(e) => setPaymentMethod2(e.target.value)}
-                                >
-                                    <option value=""></option>
-                                    <option value="Cash">Cash</option>
-                                    <option value="Card">Credit Card</option>
-                                    <option value="Cheque">Debit Card</option>
-                                    <option value="QRPay">QR Pay</option>
-                                </select>
-                                <label>Payment amount 2</label>
-                                <input
-                                    type="number"
-                                    className="border border-gray-300 rounded-md"
-                                    value={paymentAmount2}
-                                    onChange={(e) => setPaymentAmount2(e.target.value)}
-                                />
-                            </div>
-                            <div className="flex flex-row">
-                                <label>Payment method 3</label>
-                                <select
-                                    className="border border-gray-300 rounded-md"
-                                    value={paymentMethod3}
-                                    onChange={(e) => setPaymentMethod3(e.target.value)}
-                                >
-                                    <option value=""></option>
-                                    <option value="Cash">Cash</option>
-                                    <option value="Card">Credit Card</option>
-                                    <option value="Cheque">Debit Card</option>
-                                    <option value="QRPay">QR Pay</option>
-                                </select>
-                                <label>Payment amount 3</label>
-                                <input
-                                    type="number"
-                                    className="border border-gray-300 rounded-md"
-                                    value={paymentAmount3}
-                                    onChange={(e) => setPaymentAmount3(e.target.value)}
-                                />
-                            </div>
-                            <div className="flex flex-row">
-                                <label>Payment method 4</label>
-                                <select
-                                    className="border border-gray-300 rounded-md"
-                                    value={paymentMethod4}
-                                    onChange={(e) => setPaymentMethod4(e.target.value)}
-                                >
-                                    <option value=""></option>
-                                    <option value="Cash">Cash</option>
-                                    <option value="Card">Credit Card</option>
-                                    <option value="Cheque">Debit Card</option>
-                                    <option value="QRPay">QR Pay</option>
-                                </select>
-                                <label>Payment amount 4</label>
-                                <input
-                                    type="number"
-                                    className="border border-gray-300 rounded-md"
-                                    value={paymentAmount4}
-                                    onChange={(e) => setPaymentAmount4(e.target.value)}
-                                />
-                            </div>
-                            <button type="submit"> Submit </button>
+                            <button className="button-green" onClick={handleSubmit}> Submit </button>
                         </form>
                     </div>
                     <div className="flex flex-col w-1/2 p-2">
