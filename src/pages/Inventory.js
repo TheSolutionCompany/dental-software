@@ -241,11 +241,11 @@ const Inventory = () => {
                                             className="w-[35%]"
                                             onClick={() => {
                                                 if (filter === "medicine") {
-                                                    setInv([medicineInventory]);
+                                                    setInv([medicineInventory])
                                                 } else if (filter === "product") {
-                                                    setInv([otherInventory]);
+                                                    setInv([otherInventory])
                                                 } else {
-                                                    setInv([treatmentInventory]);
+                                                    setInv([treatmentInventory])
                                                 }
                                             }}
                                         >
@@ -257,14 +257,12 @@ const Inventory = () => {
                                                     ) : (
                                                         "▼"
                                                     )
-                                                ) : order === "ASC" ? (
-                                                    <Icon icon={sort} />
                                                 ) : (
                                                     <Icon icon={sort} />
                                                 )}
                                             </span>
                                         </th>
-                                        <th className="w-[20%]">
+                                        <th className="w-[20%] whitespace-nowrap">
                                             Unit Price(RM)
                                             <span className="cursor-pointer" onClick={() => sorting("unitPrice")}>
                                                 {currSort === "unitPrice" ? (
@@ -273,8 +271,6 @@ const Inventory = () => {
                                                     ) : (
                                                         "▼"
                                                     )
-                                                ) : order === "ASC" ? (
-                                                    <Icon icon={sort} />
                                                 ) : (
                                                     <Icon icon={sort} />
                                                 )}
@@ -289,8 +285,6 @@ const Inventory = () => {
                                                     ) : (
                                                         "▼"
                                                     )
-                                                ) : order === "ASC" ? (
-                                                    <Icon icon={sort} />
                                                 ) : (
                                                     <Icon icon={sort} />
                                                 )}
@@ -312,7 +306,7 @@ const Inventory = () => {
                 </div>
             </div>
         </div>
-    );
+    )
 };
 
 export default Inventory;
