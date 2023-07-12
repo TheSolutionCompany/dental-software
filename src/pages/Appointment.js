@@ -12,6 +12,8 @@ import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 
+// TODO: for admin, have a dropdown of doctors, then can check their appointments
+// this feature is meant for rescheduling appointments... reeeeeeeee (gah just make the admin cancel and rebook lollll)
 const Appointment = () => {
     const navigate = useNavigate();
 
@@ -46,12 +48,6 @@ const Appointment = () => {
 
     const red = "#f00707";
     const green = "#07f017";
-
-    let testEvents = [
-        { id: 1, start: "2023-07-09T06:00:00", end: "2023-07-09T09:00:00", title: "Consultation - xxxxx" },
-        { id: 2, start: "2023-07-10T06:00:00", end: "2023-07-10T09:00:00", title: "Consultation - yyyyy" },
-        { id: 3, start: "2023-07-09T10:00:00", end: "2023-07-09T12:00:00", title: "Consultation - zzzzz" },
-    ];
 
     // the id that will be used for calendar will be the same as the one provided by firebase
     const [eventifiedAppts, setEventifiedAppts] = useState([]);

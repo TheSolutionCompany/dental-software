@@ -4,14 +4,22 @@ import { useDatabase } from "../contexts/DatabaseContext";
 import CloseButton from "./CloseButton";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Calendar } from "@fullcalendar/core";
+import FullCalendar from "@fullcalendar/react";
+import timeGridPlugin from "@fullcalendar/timegrid";
+import interactionPlugin from "@fullcalendar/interaction";
+import { changeToCurrentWeek, extractTimeFromDate } from "../util/TimeUtil";
 
 Modal.setAppElement("#root");
 
 export default function MakeAppointment(props) {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [isInnerOpen, setIsInnerOpen] = useState(false);
+    const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+    const [deleteModalPosition, setDeleteModalPosition] = useState([0, 0]);
 
     const { availableDoctors, search, makeAppointment } = useDatabase();
+    const [objectifiedDoctors, setObjectifiedDoctors] = useState();
 
     const [searchByName, setSearchByName] = useState("");
     const [searchByIc, setSearchByIc] = useState("");
@@ -22,12 +30,17 @@ export default function MakeAppointment(props) {
     const [patientName, setPatientName] = useState("");
 
     const [doctorId, setDoctorId] = useState("");
-    const today = new Date();
-    const [apptDate, setApptDate] = useState(today);
-    const [apptStartTime, setApptStartTime] = useState("12:00");
-    const [apptMinEndTime, setApptMinEndTime] = useState("12:15");
-    const [apptEndTime, setApptEndTime] = useState("12:30");
+    const [isDoctorSelected, setIsDoctorSelected] = useState(false);
+    const [workingHours, setWorkingHours] = useState([]);
+
+    const [timeslot, setTimeslot] = useState({});
+    const [isTimeslotSelected, setIsTimeslotSelected] = useState(false);
+
     const [complaints, setComplaints] = useState("");
+
+    const [isValidInput, setIsValidInput] = useState(false);
+
+    const calendarRef = useRef();
 
     useEffect(() => {
         search(searchByName, searchByIc, searchByMobileNumber).then((result) => {
@@ -50,13 +63,17 @@ export default function MakeAppointment(props) {
             setDoctorId("");
             setPatientId("");
             setPatientName("");
-            setApptDate(today);
-            setApptStartTime("12:00");
-            setApptMinEndTime("12:15");
-            setApptEndTime("12:30");
             setComplaints("");
         }
         setIsInnerOpen(!isInnerOpen);
+
+        if (isDeleteOpen) {
+            setIsDeleteOpen(!isDeleteOpen);
+        }
+    };
+
+    const toggleDeleteModal = () => {
+        setIsDeleteOpen(!isDeleteOpen);
     };
 
     const toUpperCase = (event) => {
@@ -76,6 +93,42 @@ export default function MakeAppointment(props) {
         setsearchByMobileNumber(event.target.value);
     };
 
+    // events ==> business hours
+    function parseToBusinessHoursFormat(events) {
+        let result = [];
+        for (let timeslot of events) {
+            let newStart = changeToCurrentWeek(timeslot.start);
+            let newEnd = changeToCurrentWeek(timeslot.end);
+            let slot = {
+                daysOfWeek: [newStart.getDay()],
+                startTime: extractTimeFromDate(newStart),
+                endTime: extractTimeFromDate(newEnd),
+            };
+            result.push(slot);
+        }
+        return result;
+    }
+
+    // for the sake of my sanity tqvm
+    useEffect(() => {
+        let result = {}
+        for (let doctor of availableDoctors) {
+            result[doctor.id] = doctor.data();
+        }
+        setObjectifiedDoctors(result);
+    }, [availableDoctors])
+
+    useEffect(() => {
+        if (doctorId) {
+            let flattened = Object.values(objectifiedDoctors[doctorId].workingHours).reduce(
+                (acc, newTimeslots) => acc.concat(newTimeslots),
+                []
+            );
+            let result = parseToBusinessHoursFormat(flattened);
+            setWorkingHours(result);
+        }
+    }, [doctorId])
+
     function handleMakeAppt(patient) {
         setPatientId(patient.id);
         setPatientName(patient.data().name);
@@ -83,11 +136,78 @@ export default function MakeAppointment(props) {
     }
 
     useEffect(() => {
-        // do validation here...
-    }, [apptDate, apptStartTime, apptEndTime, complaints, doctorId])
+        let isDoctorSelected = doctorId !== "" && doctorId != null && doctorId != undefined;
+        let isTimeslotSelected = timeslot.id && timeslot != null && timeslot != undefined;
+        setIsDoctorSelected(isDoctorSelected);
+        setIsTimeslotSelected(isTimeslotSelected);
+        setIsValidInput(isDoctorSelected && isTimeslotSelected);
+    }, [doctorId, timeslot])
 
-    function handleSubmitAppt() {
-        // submit appt here...
+    async function handleSubmitAppt(event) {
+        event.preventDefault();
+
+        let calendarApi = calendarRef.current.getApi();
+        let timeslot = calendarApi.getEventById("appt");
+
+        document.getElementById("submitButton").disabled = true;
+
+        if (await makeAppointment(doctorId, patientId, patientName, timeslot.start, timeslot.end, complaints)) {
+            toggleSearchModal();
+            toggleInnerModal();
+            toast.success("Appointment made successfully", {
+                position: "top-center",
+                autoClose: 1000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            });
+            toast.clearWaitingQueue();
+        } else {
+            document.getElementById("submitButton").disabled = false;
+            toast.error("Failed to make appointment. Please try again later.", {
+                position: "top-center",
+                autoClose: 1000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            });
+            toast.clearWaitingQueue();
+        }
+    }
+
+    function handleSelect(selectionInfo) {
+        let calendarApi = calendarRef.current.getApi();
+        let currAppt = calendarApi.getEventById("appt");
+        if (currAppt) {
+            currAppt.remove();
+        }
+        let newEvent = {
+            id: "appt",
+            start: selectionInfo.start,
+            end: selectionInfo.end,
+            editable: true,
+            title: `Appointment - ${patientName}`,
+        };
+        calendarApi.addEvent(newEvent);
+        setTimeslot(newEvent);
+    }
+
+    // just in case, but prolly admin wont need it lol
+    function handleEventClicked(selectionInfo) {
+        setDeleteModalPosition([selectionInfo.jsEvent.x, selectionInfo.jsEvent.y]);
+        toggleDeleteModal();
+    }
+
+    function handleDelete() {
+        let calendarApi = calendarRef.current.getApi();
+        calendarApi.getEventById("appt").remove();
+        toggleDeleteModal();
     }
 
     return (
@@ -106,6 +226,7 @@ export default function MakeAppointment(props) {
                 onRequestClose={toggleSearchModal}
                 contentLabel="Make A New Appointment"
                 shouldCloseOnOverlayClick={false}
+                style={{ overlay: { zIndex: "999" } }}
             >
                 <CloseButton name="Make A New Appointment" func={toggleSearchModal} />
                 <div className="w-full">
@@ -176,12 +297,11 @@ export default function MakeAppointment(props) {
                                 left: 0,
                                 right: 0,
                                 bottom: 0,
-                                backgroundColor: "rgba(255, 255, 255, 0.75)",
+                                backgroundColor: "rgba(255, 255, 255, 0)",
+                                zIndex: "999",
                             },
                             content: {
                                 position: "absolute",
-                                left: "500px",
-                                right: "500px",
                                 border: "1px solid #ccc",
                                 background: "#fff",
                                 overflow: "auto",
@@ -193,56 +313,78 @@ export default function MakeAppointment(props) {
                         }}
                     >
                         <CloseButton func={toggleInnerModal} />
-                        <form className="flex flex-col" onSubmit={handleSubmitAppt}>
-                            <p>Patient Name: <strong>{patientName}</strong></p>
-                            <label style={{ marginTop: "20px" }}>Appointment Date</label>
-                            <input
-                                type="date"
-                                value={apptDate}
-                                onChange={(e) => {
-                                    setApptDate(e.target.value);
-                                }}
-                                required
-                                min={new Date().toISOString().split("T")[0]}
-                            />
+                        <form onSubmit={handleSubmitAppt}>
+                            <div className="grid grid-cols-2 gap-10">
+                                <div className="grid grid-cols-1 gap-1 h-3/5">
+                                    <p>
+                                        Patient Name: <strong>{patientName}</strong>
+                                    </p>
 
-                            <label style={{ marginTop: "20px" }}>Appointment Starting Time</label>
-                            <input
-                                type="time"
-                                value={apptStartTime}
-                                onChange={(e) => {
-                                    setApptStartTime(e.target.value);
-                                }}
-                                required
-                            />
+                                    <label>Attending Doctor</label>
+                                    <select
+                                        className="select-dropdown"
+                                        onChange={(e) => setDoctorId(e.target.value)}
+                                        required
+                                    >
+                                        <option disabled selected></option>
+                                        {availableDoctors.map((doctor) => (
+                                            <option value={doctor.id}>{doctor.data().displayName}</option>
+                                        ))}
+                                    </select>
+                                    <p hidden={isDoctorSelected}>Please select a doctor</p>
 
-                            <label style={{ marginTop: "20px" }}>Appointment Ending Time</label>
-                            <input
-                                type="time"
-                                value={apptEndTime}
-                                onChange={(e) => {
-                                    setApptEndTime(e.target.value);
-                                }}
-                                required
-                            />
+                                    <label style={{ marginTop: "20px" }}>Complaints</label>
+                                    <textarea
+                                        value={complaints}
+                                        onChange={(e) => setComplaints(e.target.value)}
+                                        rows={10}
+                                    ></textarea>
+                                </div>
 
-                            <label style={{ marginTop: "20px" }}>Complaints</label>
-                            <textarea value={complaints} onChange={(e) => setComplaints(e.target.value)}></textarea>
+                                <div>
+                                    <b>Preferred Timeslot</b>
+                                    <br/>
+                                    <p hidden={isTimeslotSelected}>Please select a timeslot.</p>
+                                    <FullCalendar
+                                        plugins={[timeGridPlugin, interactionPlugin]}
+                                        selectable={true}
+                                        select={handleSelect}
+                                        ref={calendarRef}
+                                        eventClick={handleEventClicked}
+                                        allDaySlot={false}
+                                        businessHours={workingHours}
+                                        selectConstraint={"businessHours"}
+                                        validRange={{start: new Date()}}
+                                    />
 
-                            <label>Attending Doctor</label>
-                            <select className="select-dropdown" onChange={(e) => setDoctorId(e.target.value)} required>
-                                <option disabled selected></option>
-                                {availableDoctors.map((doctor) => (
-                                    <option value={doctor.id}>{doctor.data().displayName}</option>
-                                ))}
-                            </select>
-
-                            <div className="flex justify-center pt-4" style={{ marginTop: "20px" }}>
-                                <button className="button-green rounded" type="submit">
-                                    Schedule Appointment
-                                </button>
+                                    <div className="flex float-right pt-4">
+                                        <button className="button-green rounded" type="submit" id="submitButton" disabled={!isValidInput}>
+                                            Schedule Appointment
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </form>
+                    </Modal>
+
+                    <Modal
+                        isOpen={isDeleteOpen}
+                        onRequestClose={toggleDeleteModal}
+                        style={{
+                            content: {
+                                width: "9%",
+                                height: "9%",
+                                left: `${deleteModalPosition[0]}px`,
+                                top: `${deleteModalPosition[1]}px`,
+                                textAlign: "center",
+                            },
+                            overlay: {
+                                backgroundColor: "rgba(0, 0, 0, 0)",
+                                zIndex: "999"
+                            },
+                        }}
+                    >
+                        <button onClick={handleDelete}>Delete</button>
                     </Modal>
                 </div>
             </Modal>
