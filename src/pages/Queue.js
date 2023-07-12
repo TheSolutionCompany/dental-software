@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom"
 import Header from "../components/Header"
 import SideBar from "../components/SideBar"
 import BillingForm from "../components/BillingForm"
+import InvoiceForm from "../components/InvoiceForm"
 
 export const Queue = () => {
     const navigate = useNavigate()
@@ -90,6 +91,15 @@ export const Queue = () => {
                                 queueId={row.id}
                                 patientId={row.data().patientId}
                                 patientName={row.data().patientName}
+                            />
+                        )}
+                        {row.data().status === "completed" && (
+                            <InvoiceForm
+                                queueId={row.id}
+                                patientId={row.data().patientId}
+                                patientName={row.data().patientName}
+                                paymentId={row.data().paymentId}
+                                doctorId={row.data().doctorId}
                             />
                         )}
                     </td>

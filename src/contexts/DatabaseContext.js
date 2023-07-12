@@ -156,7 +156,9 @@ export function DatabaseProvider({ children }) {
         onSnapshot(commonVarQ, (querySnapshot) => {
             console.log("common variables listener")
             setCommonVariables([])
-            querySnapshot.forEach((doc) => {setCommonVariables((prev) => [...prev, doc])})
+            querySnapshot.forEach((doc) => {
+                setCommonVariables((prev) => [...prev, doc])
+            })
         })
 
         setLoading(false)
@@ -375,11 +377,30 @@ export function DatabaseProvider({ children }) {
         await updateDoc(consultationRef, {
             paymentId: docRef.id,
         })
+        const queueRef = doc(
+            dayQueueRef,
+            date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate(),
+            "queue",
+            queueId
+        )
+        await updateDoc(queueRef, {
+            paymentId: docRef.id,
+        })
         if (different !== 0) {
             const patientRef = doc(db, "patients", patientId)
             await updateDoc(patientRef, {
                 balance: increment(different),
             })
+        }
+    }
+
+    async function getPaymentDetails(paymentId) {
+        const docRef = doc(db, "payments", paymentId)
+        const docSnap = await getDoc(docRef)
+        if (docSnap.exists()) {
+            return docSnap.data()
+        } else {
+            return null
         }
     }
 
@@ -435,7 +456,7 @@ export function DatabaseProvider({ children }) {
 
     async function setBusinessHours(details) {
         try {
-            await updateDoc(doc(db, "commonvariables", "businessHours"), {details})
+            await updateDoc(doc(db, "commonvariables", "businessHours"), { details })
             return true
         } catch (e) {
             console.log(e)
@@ -454,6 +475,7 @@ export function DatabaseProvider({ children }) {
     }
 
     const value = {
+        date: date,
         availableDoctors: availableDoctors,
         allQueue: allQueue,
         waitingQueue: waitingQueue,
@@ -483,7 +505,8 @@ export function DatabaseProvider({ children }) {
         getConsultationHistory,
         updateConsultation,
         makePayment,
-        setBusinessHours
+        getPaymentDetails,
+        setBusinessHours,
     }
 
     return <DatabaseContext.Provider value={value}>{!loading && children}</DatabaseContext.Provider>
