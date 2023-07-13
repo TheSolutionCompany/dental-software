@@ -206,6 +206,14 @@ export function DatabaseProvider({ children }) {
     async function addToQueue(patientId, patientName, age, ic, gender, doctorId, complains, status) {
         // Used a nowDate variable to prevent the date from changing when the function is running
         const nowDate = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate()
+        const consultationNoQ = doc(commonVariablesRef, "consultationNo")
+        var consultationNo = (await getDoc(consultationNoQ))
+        if (!consultationNo.exists()) {
+            await setDoc(consultationNoQ, { consultationNo: 1 })
+        } else {
+            await updateDoc(consultationNoQ, { consultationNo: increment(1) })
+        }
+        consultationNo = (await getDoc(consultationNoQ)).data().consultationNo
         const creationDate = Date.now()
         const q = doc(dayQueueRef, nowDate)
         var res = await getDoc(q)
@@ -230,6 +238,7 @@ export function DatabaseProvider({ children }) {
         const consultationLocRef = collection(db, "patients", patientId, "consultation")
         // Create a new consultation document
         const consultationRef = await addDoc(consultationLocRef, {
+            consultationNo,
             queueId: queueRef.id,
             creationDate,
             consultation: "",
@@ -363,7 +372,7 @@ export function DatabaseProvider({ children }) {
         }
     }
 
-    async function makePayment(patientId, queueId, consultationId, remarks, payment, different, creationDate) {
+    async function makePayment(patientId, queueId, userId, consultationId, remarks, payment, different, creationDate) {
         const collectionRef = collection(db, "payments")
         const docRef = await addDoc(collectionRef, {
             patientId,
@@ -372,6 +381,7 @@ export function DatabaseProvider({ children }) {
             remarks,
             payment,
             creationDate,
+            personHandled: userId,
         })
         const consultationRef = doc(db, "patients", patientId, "consultation", consultationId)
         await updateDoc(consultationRef, {
@@ -398,7 +408,7 @@ export function DatabaseProvider({ children }) {
         const docRef = doc(db, "payments", paymentId)
         const docSnap = await getDoc(docRef)
         if (docSnap.exists()) {
-            return docSnap.data()
+            return docSnap
         } else {
             return null
         }

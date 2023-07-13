@@ -141,13 +141,6 @@ export const MedicalCertificate = () => {
         setLoading(false)
     }
 
-    const handlePrintMc = (e) => {
-        e.preventDefault()
-        toggleModal()
-        toggleInnerModal()
-        toggleInnerInnerModal()
-    }
-
     const handlePrint = useReactToPrint({
         content: () => toPrintRef.current,
         documentTitle: { patientName },

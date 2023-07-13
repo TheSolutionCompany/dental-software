@@ -15,16 +15,20 @@ const InvoiceForm = ({ queueId, patientId, patientName, paymentId, doctorId }) =
 
     const [doctor, setDoctor] = useState("")
     const [isOpen, setIsOpen] = useState(false)
+    const [consultationNo, setConsultationNo] = useState("")
+    const [personHandled, setPersonHandled] = useState("")
     const [itemList, setItemList] = useState([])
     const [paymentDetails, setPaymentDetails] = useState([])
     const toPrintRef = useRef()
 
     useEffect(() => {
-        setDoctor(availableDoctors.find((item) => item.id === doctorId).data().name)
+        setDoctor(availableDoctors.find((item) => item.id === doctorId).data().displayName)
         getPaymentDetails(paymentId).then((result) => {
-            setPaymentDetails(result.payment)
+            setPaymentDetails(result.data().payment)
+            setPersonHandled(result.data().personHandled)
         })
         getCurrentConsultation(patientId, queueId).then((result) => {
+            setConsultationNo(result.data().consultationNo)
             setItemList(result.data().items)
         })
     }, [])
@@ -103,10 +107,9 @@ const InvoiceForm = ({ queueId, patientId, patientName, paymentId, doctorId }) =
                         <br />
                         <div className="flex flex-col">
                             <div>Date: {date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate()}</div>
-                            <div>Receipt no:</div>
-                            <div>Treatment no:</div>
+                            <div>Consultation No: {consultationNo}</div>
                             <div>Doctor: {doctor}</div>
-                            <div>Collected by: {}</div>
+                            <div>Collected by: {personHandled}</div>
                         </div>
                         <br />
                         <p className="font-bold">{patientName}</p>

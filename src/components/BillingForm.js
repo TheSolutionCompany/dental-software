@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react"
+import { useAuth } from "../contexts/AuthContext"
 import { useDatabase } from "../contexts/DatabaseContext"
 import Modal from "react-modal"
 import CloseButton from "./CloseButton"
@@ -8,6 +9,9 @@ import "react-toastify/dist/ReactToastify.css"
 Modal.setAppElement("#root")
 
 const BillingForm = ({ queueId, patientId, patientName }) => {
+    // Variables in AuthContext
+    const { user } = useAuth()
+
     // Functions in DatabaseContext
     const { getCurrentConsultation, makePayment, updatePatientStatus } = useDatabase()
 
@@ -72,7 +76,7 @@ const BillingForm = ({ queueId, patientId, patientName }) => {
         })
         let total = payment.map((item) => parseInt(item.amount)).reduce((a, b) => a + b, 0)
         let different = total - grandTotal
-        await makePayment(patientId, queueId, consultationId, remarks, payment, different, creationDate)
+        await makePayment(patientId, queueId, user.displayName, consultationId, remarks, payment, different, creationDate)
         await updatePatientStatus(queueId, "completed")
         toggleModal()
         toast.success("Payment done", {

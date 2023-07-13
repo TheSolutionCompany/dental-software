@@ -184,7 +184,7 @@ const PatientProfile = () => {
                                         </div>
                                         <div className="w-2/5 flex flex-col">
                                             <p className="text-left">Items:</p>
-                                            <table className="table-gray">
+                                            <table className="table-gray-non-scrollable">
                                                 <thead>
                                                     <tr>
                                                         <th className="w-[49%]">Item</th>
