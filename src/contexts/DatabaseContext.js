@@ -33,6 +33,8 @@ export function DatabaseProvider({ children }) {
 
     const [employees, setEmployees] = useState([])
 
+    const [patients, setPatients] = useState([])
+
     const [allQueue, setAllQueue] = useState([])
     const [waitingQueue, setWaitingQueue] = useState([])
     const [inProgressQueue, setInProgressQueue] = useState([])
@@ -131,6 +133,16 @@ export function DatabaseProvider({ children }) {
             })
         }
 
+        // Patients Listener
+        const patientsQ = query(collection(db, "patients"))
+        onSnapshot(patientsQ, (querySnapshot) => {
+            console.log("patients listener")
+            setPatients([])
+            querySnapshot.forEach((doc) => {
+                setPatients((prev) => [...prev, doc])
+            })
+        })
+
         // Inventory Listener
         const inventoryQ = query(collection(db, "inventory"))
         onSnapshot(inventoryQ, (querySnapshot) => {
@@ -168,36 +180,21 @@ export function DatabaseProvider({ children }) {
         if (name) {
             const start = name
             const end = start.replace(/.$/, (c) => String.fromCharCode(c.charCodeAt(0) + 1))
-            const q = query(
-                collection(db, "patients"),
-                where("name", ">=", start),
-                where("name", "<", end),
-                orderBy("name", "asc")
-            )
-            const result = (await getDocs(q)).docs.map((doc) => doc)
-            return Object.values(result)
+            return patients
+                .filter((patient) => patient.data().name >= start && patient.data().name < end)
+                .sort((a, b) => a.data().name.localeCompare(b.data().name))
         } else if (ic) {
             const start = ic
             const end = start.replace(/.$/, (c) => String.fromCharCode(c.charCodeAt(0) + 1))
-            const q = query(
-                collection(db, "patients"),
-                where("ic", ">=", start),
-                where("ic", "<", end),
-                orderBy("ic", "asc")
-            )
-            const result = (await getDocs(q)).docs.map((doc) => doc)
-            return Object.values(result)
+            return patients
+                .filter((patient) => patient.data().ic >= start && patient.data().ic < end)
+                .sort((a, b) => a.data().ic.localeCompare(b.data().ic))
         } else if (mobileNumber) {
             const start = mobileNumber
             const end = start.replace(/.$/, (c) => String.fromCharCode(c.charCodeAt(0) + 1))
-            const q = query(
-                collection(db, "patients"),
-                where("mobileNumber", ">=", start),
-                where("mobileNumber", "<", end),
-                orderBy("mobileNumber", "asc")
-            )
-            const result = (await getDocs(q)).docs.map((doc) => doc)
-            return Object.values(result)
+            return patients
+                .filter((patient) => patient.data().mobileNumber >= start && patient.data().mobileNumber < end)
+                .sort((a, b) => a.data().mobileNumber.localeCompare(b.data().mobileNumber))
         } else {
             return []
         }
@@ -207,7 +204,7 @@ export function DatabaseProvider({ children }) {
         // Used a nowDate variable to prevent the date from changing when the function is running
         const nowDate = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate()
         const consultationNoQ = doc(commonVariablesRef, "consultationNo")
-        var consultationNo = (await getDoc(consultationNoQ))
+        var consultationNo = await getDoc(consultationNoQ)
         if (!consultationNo.exists()) {
             await setDoc(consultationNoQ, { consultationNo: 1 })
         } else {
