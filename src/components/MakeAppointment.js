@@ -15,10 +15,8 @@ Modal.setAppElement("#root");
 export default function MakeAppointment(props) {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [isInnerOpen, setIsInnerOpen] = useState(false);
-    const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-    const [deleteModalPosition, setDeleteModalPosition] = useState([0, 0]);
 
-    const { availableDoctors, search, makeAppointment } = useDatabase();
+    const { availableDoctors, search, getAppointments, makeAppointment } = useDatabase();
     const [objectifiedDoctors, setObjectifiedDoctors] = useState();
 
     const [searchByName, setSearchByName] = useState("");
@@ -34,6 +32,7 @@ export default function MakeAppointment(props) {
 
     const [doctorId, setDoctorId] = useState("");
     const [isDoctorSelected, setIsDoctorSelected] = useState(false);
+    const [doctorAppts, setDoctorAppts] = useState([]);
     const [workingHours, setWorkingHours] = useState([]);
 
     const [timeslot, setTimeslot] = useState({});
@@ -72,14 +71,6 @@ export default function MakeAppointment(props) {
             setComplaints("");
         }
         setIsInnerOpen(!isInnerOpen);
-
-        if (isDeleteOpen) {
-            setIsDeleteOpen(!isDeleteOpen);
-        }
-    };
-
-    const toggleDeleteModal = () => {
-        setIsDeleteOpen(!isDeleteOpen);
     };
 
     const toUpperCase = (event) => {
@@ -219,26 +210,23 @@ export default function MakeAppointment(props) {
         setTimeslot(newEvent);
     }
 
-    // just in case, but prolly admin wont need it lol
-    function handleEventClicked(selectionInfo) {
-        setDeleteModalPosition([selectionInfo.jsEvent.x, selectionInfo.jsEvent.y]);
-        toggleDeleteModal();
-    }
-
-    function handleDelete() {
-        let calendarApi = calendarRef.current.getApi();
-        calendarApi.getEventById("appt").remove();
-        toggleDeleteModal();
-    }
-
     function onDoctorChange(event) {
         setDoctorId(event.target.value);
 
         let calendarApi = calendarRef.current.getApi();
-        let currAppt = calendarApi.getEventById("appt");
-        if (currAppt) {
-            currAppt.remove();
-        }
+        let allTimeSlots = calendarApi.getEvents();
+        allTimeSlots.forEach(event => event.remove());
+
+        getAppointments(event.target.value).then((appts) => {
+            for (let appt of appts) {
+                let apptData = appt.data();
+                let start = new Date(apptData.startTime.seconds * 1000);
+                let end = new Date(apptData.endTime.seconds * 1000);
+                let title = `Booked by ${apptData.patientName}`;
+                let color = "#36454f";
+                calendarApi.addEvent({id: appt.id, start, end, title, color})
+            }
+        })
     }
 
     return (
@@ -381,11 +369,11 @@ export default function MakeAppointment(props) {
                                         selectable={true}
                                         select={handleSelect}
                                         ref={calendarRef}
-                                        eventClick={handleEventClicked}
                                         allDaySlot={false}
                                         businessHours={workingHours}
                                         selectConstraint={"businessHours"}
                                         validRange={{ start: new Date() }}
+                                        eventOverlap={false}
                                     />
 
                                     <div className="flex float-right pt-4">
@@ -401,26 +389,6 @@ export default function MakeAppointment(props) {
                                 </div>
                             </div>
                         </form>
-                    </Modal>
-
-                    <Modal
-                        isOpen={isDeleteOpen}
-                        onRequestClose={toggleDeleteModal}
-                        style={{
-                            content: {
-                                width: "9%",
-                                height: "9%",
-                                left: `${deleteModalPosition[0]}px`,
-                                top: `${deleteModalPosition[1]}px`,
-                                textAlign: "center",
-                            },
-                            overlay: {
-                                backgroundColor: "rgba(0, 0, 0, 0)",
-                                zIndex: "999",
-                            },
-                        }}
-                    >
-                        <button onClick={handleDelete}>Delete</button>
                     </Modal>
                 </div>
             </Modal>

@@ -11,6 +11,7 @@ import Header from "../components/Header";
 import SideBar from "../components/SideBar";
 import { Calendar } from "@fullcalendar/core";
 import FullCalendar from "@fullcalendar/react";
+import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 
@@ -182,12 +183,13 @@ const Appointment = () => {
                 <SideBar />
                 <div className="w-full bg-gray-200" style={{ padding: "40px" }}>
                     <FullCalendar
-                        plugins={[timeGridPlugin, interactionPlugin]}
+                        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
                         ref={calendarRef}
                         allDaySlot={false}
                         aspectRatio={2.25}
                         events={eventifiedAppts}
                         nowIndicator={true}
+                        headerToolbar={{start: 'dayGridMonth,timeGridWeek,timeGridDay', center: 'title', end: 'today prev,next'}}
                         eventClick={handleEventClicked}
                     />
 

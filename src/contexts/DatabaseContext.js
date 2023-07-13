@@ -446,6 +446,12 @@ export function DatabaseProvider({ children }) {
     }
     // write another function that allows users to edit their own email under profile page
 
+    async function getAppointments(doctorId) {
+        const apptCollnRef = collection(db, "users", doctorId, "appointments");
+        const result = (await getDocs(query(apptCollnRef))).docs.map((doc) => doc);
+        return Object.values(result);
+    }
+
     async function makeAppointment(doctorId, patientId, patientName, age, ic, gender, startTime, endTime, complaints) {
         const apptCollnRef = collection(db, "users", doctorId, "appointments");
         try {
@@ -560,10 +566,11 @@ export function DatabaseProvider({ children }) {
         getConsultationHistory,
         updateConsultation,
         makePayment,
+        getAppointments,
         makeAppointment,
         updateApptDetails,
         updateApptStatus,
-        changeDoctor: changeApptDoctor,
+        changeApptDoctor,
         setBusinessHours,
     };
 
