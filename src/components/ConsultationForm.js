@@ -173,7 +173,7 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
                     item.quantity > inventory.filter((i) => i.id === item.id)[0].data().stock ? "text-red-500" : ""
                 }`}
             >
-                <td>{item.name}</td>
+                <td className="text-left pl-2">{item.name}</td>
                 <td className="text-right px-2">{Number(item.unitPrice).toFixed(2)}</td>
                 <td className="text-right px-2">
                     {item.quantity} / {inventory.filter((i) => i.id === item.id)[0].data().stock}

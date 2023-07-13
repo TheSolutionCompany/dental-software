@@ -162,7 +162,15 @@ const PatientProfile = () => {
                                     <div className="flex flex-col">
                                         <p className="text-left pl-2">
                                             Date:{" "}
-                                            {date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes()}
+                                            {date.getFullYear() +
+                                                "-" +
+                                                (date.getMonth() + 1) +
+                                                "-" +
+                                                date.getDate() +
+                                                " " +
+                                                date.getHours() +
+                                                ":" +
+                                                date.getMinutes()}
                                         </p>
                                         <div className="border-black border p-2 mb-4 flex flex-row bg-white">
                                             <div className="w-3/5 flex flex-row">
@@ -199,15 +207,21 @@ const PatientProfile = () => {
                                                     <tbody>
                                                         {consultation.data().items.map((item, index) => (
                                                             <tr key={index}>
-                                                                <td>{item.name}</td>
-                                                                <td>{item.unitPrice}</td>
-                                                                <td>{item.quantity}</td>
-                                                                <td>{item.subtotal}</td>
+                                                                <td className="text-left pl-2">{item.name}</td>
+                                                                <td className="text-right pr-2">
+                                                                    {Number(item.unitPrice).toFixed(2)}
+                                                                </td>
+                                                                <td className="text-right pr-2">{item.quantity}</td>
+                                                                <td className="text-right pr-2">
+                                                                    {Number(item.subtotal).toFixed(2)}
+                                                                </td>
                                                             </tr>
                                                         ))}
                                                         <tr>
-                                                            <td colSpan="3">Grand Total</td>
-                                                            <td>{consultation.data().grandTotal}</td>
+                                                            <td colSpan="3" className="text-left pl-2">Grand Total</td>
+                                                            <td className="text-right pr-2">
+                                                                {Number(consultation.data().grandTotal).toFixed(2)}
+                                                            </td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
