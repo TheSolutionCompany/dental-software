@@ -94,7 +94,7 @@ const BillingForm = ({ queueId, patientId, patientName }) => {
 
     return (
         <div>
-            <button type="button" className="hover:text-green-500" onClick={toggleModal}>
+            <button type="button" className="hover:text-blue-500" onClick={toggleModal}>
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"

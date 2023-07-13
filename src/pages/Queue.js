@@ -40,7 +40,7 @@ export const Queue = () => {
                     <td className="w-[7%]">
                         {row.data().status === "waiting" && (
                             <button
-                                className="hover:text-green-500"
+                                className="hover:text-blue-500"
                                 onClick={(e) => {
                                     handlePatientCall(row.data().patientId, row.id)
                                 }}
@@ -65,7 +65,7 @@ export const Queue = () => {
                         )}
                         {row.data().status === "in progress" && (
                             <button
-                                className="hover:text-green-500"
+                                className="hover:text-blue-500"
                                 onClick={(e) => {
                                     handlePatientProfile(row.data().patientId, row.id)
                                 }}

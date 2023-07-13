@@ -64,7 +64,7 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
     }, [itemList, inventory])
 
     useEffect(() => {
-        setSubtotal(parseInt(unitPrice) * parseInt(quantity))
+        setSubtotal((Number(unitPrice) * Number(quantity)).toFixed(2))
     }, [unitPrice, quantity])
 
     function handleSelectItem(e) {
@@ -72,7 +72,7 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
         document.getElementById("unitPrice").disabled = false
         setItemId(e.id)
         setItemName(e.value)
-        setUnitPrice(e.unitPrice)
+        setUnitPrice(Number(e.unitPrice).toFixed(2))
         setItemType(e.type)
         setQuantity(1)
         if (e.type === "Treatment") {
@@ -98,7 +98,7 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
         setQuantity(0)
         setSubtotal(0)
         setItemList([...itemList, item])
-        setGrandTotal(grandTotal + item.subtotal)
+        setGrandTotal(grandTotal + Number(item.subtotal))
         document.getElementById("quantity").disabled = true
         document.getElementById("unitPrice").disabled = true
     }
@@ -180,7 +180,7 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
                 </td>
                 <td className="text-right px-2">{Number(item.subtotal).toFixed(2)}</td>
                 <td>
-                    <button type="button" className="hover:text-red-500" onClick={() => handleDeleteItem(index)}>
+                    <button type="button" className="hover:text-blue-500" onClick={() => handleDeleteItem(index)}>
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"

@@ -48,7 +48,7 @@ const InvoiceForm = ({ queueId, patientId, patientName, paymentId, doctorId }) =
 
     return (
         <div>
-            <button className="hover:text-green-500">
+            <button className="hover:text-blue-500">
                 <div onClick={toggleModal}>
                     <svg
                         xmlns="http://www.w3.org/2000/svg"

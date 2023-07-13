@@ -84,7 +84,7 @@ export default function AddStockForm(props) {
     return (
         <div className="">
             <div>
-                <button onClick={toggleModal}>
+                <button onClick={toggleModal} className="hover:text-blue-500">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
