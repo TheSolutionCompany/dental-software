@@ -215,18 +215,20 @@ export default function MakeAppointment(props) {
 
         let calendarApi = calendarRef.current.getApi();
         let allTimeSlots = calendarApi.getEvents();
-        allTimeSlots.forEach(event => event.remove());
+        allTimeSlots.forEach((event) => event.remove());
 
         getAppointments(event.target.value).then((appts) => {
             for (let appt of appts) {
                 let apptData = appt.data();
-                let start = new Date(apptData.startTime.seconds * 1000);
-                let end = new Date(apptData.endTime.seconds * 1000);
-                let title = `Booked by ${apptData.patientName}`;
-                let color = "#36454f";
-                calendarApi.addEvent({id: appt.id, start, end, title, color})
+                if (apptData.status !== "cancelled") {
+                    let start = new Date(apptData.startTime.seconds * 1000);
+                    let end = new Date(apptData.endTime.seconds * 1000);
+                    let title = `Booked by ${apptData.patientName}`;
+                    let color = "#36454f";
+                    calendarApi.addEvent({ id: appt.id, start, end, title, color });
+                }
             }
-        })
+        });
     }
 
     return (
@@ -340,11 +342,7 @@ export default function MakeAppointment(props) {
                                     </p>
 
                                     <label>Attending Doctor</label>
-                                    <select
-                                        className="select-dropdown"
-                                        onChange={onDoctorChange}
-                                        required
-                                    >
+                                    <select className="select-dropdown" onChange={onDoctorChange} required>
                                         <option disabled selected></option>
                                         {availableDoctors.map((doctor) => (
                                             <option value={doctor.id}>{doctor.data().displayName}</option>

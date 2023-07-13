@@ -541,6 +541,17 @@ export function DatabaseProvider({ children }) {
         }
     }
 
+    async function updateCancelledApptRemark(doctorId, appointmentId, remark) {
+        const apptRef = doc(db, "users", doctorId, "appointments", appointmentId);
+        try {
+            await updateDoc(apptRef, {remark});
+            return true;
+        } catch (e) {
+            console.log(e);
+            return false;
+        }
+    }
+
     async function setBusinessHours(details) {
         try {
             await updateDoc(doc(db, "commonvariables", "businessHours"), { details })
@@ -598,6 +609,7 @@ export function DatabaseProvider({ children }) {
         updateApptDetails,
         updateApptStatus,
         changeApptDoctor,
+        updateCancelledApptRemark,
         getPaymentDetails,
         setBusinessHours,
     };
