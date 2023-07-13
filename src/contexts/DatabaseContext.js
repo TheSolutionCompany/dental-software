@@ -446,10 +446,20 @@ export function DatabaseProvider({ children }) {
     }
     // write another function that allows users to edit their own email under profile page
 
-    async function makeAppointment(doctorId, patientId, patientName, startTime, endTime, complaints) {
+    async function makeAppointment(doctorId, patientId, patientName, age, ic, gender, startTime, endTime, complaints) {
         const apptCollnRef = collection(db, "users", doctorId, "appointments");
         try {
-            await addDoc(apptCollnRef, { patientId, patientName, startTime, endTime, complaints, status: "Appt made" });
+            await addDoc(apptCollnRef, {
+                patientId,
+                patientName,
+                age,
+                ic,
+                gender,
+                startTime,
+                endTime,
+                complaints,
+                status: "Appt made",
+            });
             return true;
         } catch (e) {
             console.log(e);

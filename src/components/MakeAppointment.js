@@ -28,6 +28,9 @@ export default function MakeAppointment(props) {
     const [patientsList, setPatientsList] = useState([]);
     const [patientId, setPatientId] = useState("");
     const [patientName, setPatientName] = useState("");
+    const [patientGender, setPatientGender] = useState("");
+    const [patientAge, setPatientAge] = useState("");
+    const [patientIc, setPatientIc] = useState("");
 
     const [doctorId, setDoctorId] = useState("");
     const [isDoctorSelected, setIsDoctorSelected] = useState(false);
@@ -63,6 +66,9 @@ export default function MakeAppointment(props) {
             setDoctorId("");
             setPatientId("");
             setPatientName("");
+            setPatientGender("");
+            setPatientAge("");
+            setPatientIc("");
             setComplaints("");
         }
         setIsInnerOpen(!isInnerOpen);
@@ -111,12 +117,12 @@ export default function MakeAppointment(props) {
 
     // for the sake of my sanity tqvm
     useEffect(() => {
-        let result = {}
+        let result = {};
         for (let doctor of availableDoctors) {
             result[doctor.id] = doctor.data();
         }
         setObjectifiedDoctors(result);
-    }, [availableDoctors])
+    }, [availableDoctors]);
 
     useEffect(() => {
         if (doctorId) {
@@ -127,11 +133,14 @@ export default function MakeAppointment(props) {
             let result = parseToBusinessHoursFormat(flattened);
             setWorkingHours(result);
         }
-    }, [doctorId])
+    }, [doctorId]);
 
     function handleMakeAppt(patient) {
         setPatientId(patient.id);
         setPatientName(patient.data().name);
+        setPatientGender(patient.data().gender);
+        setPatientAge(patient.data().age);
+        setPatientIc(patient.data().ic);
         toggleInnerModal();
     }
 
@@ -141,7 +150,7 @@ export default function MakeAppointment(props) {
         setIsDoctorSelected(isDoctorSelected);
         setIsTimeslotSelected(isTimeslotSelected);
         setIsValidInput(isDoctorSelected && isTimeslotSelected);
-    }, [doctorId, timeslot])
+    }, [doctorId, timeslot]);
 
     async function handleSubmitAppt(event) {
         event.preventDefault();
@@ -151,7 +160,19 @@ export default function MakeAppointment(props) {
 
         document.getElementById("submitButton").disabled = true;
 
-        if (await makeAppointment(doctorId, patientId, patientName, timeslot.start, timeslot.end, complaints)) {
+        if (
+            await makeAppointment(
+                doctorId,
+                patientId,
+                patientName,
+                patientAge,
+                patientIc,
+                patientGender,
+                timeslot.start,
+                timeslot.end,
+                complaints
+            )
+        ) {
             toggleSearchModal();
             toggleInnerModal();
             toast.success("Appointment made successfully", {
@@ -208,6 +229,16 @@ export default function MakeAppointment(props) {
         let calendarApi = calendarRef.current.getApi();
         calendarApi.getEventById("appt").remove();
         toggleDeleteModal();
+    }
+
+    function onDoctorChange(event) {
+        setDoctorId(event.target.value);
+
+        let calendarApi = calendarRef.current.getApi();
+        let currAppt = calendarApi.getEventById("appt");
+        if (currAppt) {
+            currAppt.remove();
+        }
     }
 
     return (
@@ -323,7 +354,7 @@ export default function MakeAppointment(props) {
                                     <label>Attending Doctor</label>
                                     <select
                                         className="select-dropdown"
-                                        onChange={(e) => setDoctorId(e.target.value)}
+                                        onChange={onDoctorChange}
                                         required
                                     >
                                         <option disabled selected></option>
@@ -343,7 +374,7 @@ export default function MakeAppointment(props) {
 
                                 <div>
                                     <b>Preferred Timeslot</b>
-                                    <br/>
+                                    <br />
                                     <p hidden={isTimeslotSelected}>Please select a timeslot.</p>
                                     <FullCalendar
                                         plugins={[timeGridPlugin, interactionPlugin]}
@@ -354,11 +385,16 @@ export default function MakeAppointment(props) {
                                         allDaySlot={false}
                                         businessHours={workingHours}
                                         selectConstraint={"businessHours"}
-                                        validRange={{start: new Date()}}
+                                        validRange={{ start: new Date() }}
                                     />
 
                                     <div className="flex float-right pt-4">
-                                        <button className="button-green rounded" type="submit" id="submitButton" disabled={!isValidInput}>
+                                        <button
+                                            className="button-green rounded"
+                                            type="submit"
+                                            id="submitButton"
+                                            disabled={!isValidInput}
+                                        >
                                             Schedule Appointment
                                         </button>
                                     </div>
@@ -380,7 +416,7 @@ export default function MakeAppointment(props) {
                             },
                             overlay: {
                                 backgroundColor: "rgba(0, 0, 0, 0)",
-                                zIndex: "999"
+                                zIndex: "999",
                             },
                         }}
                     >
