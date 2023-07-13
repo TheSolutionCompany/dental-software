@@ -227,16 +227,16 @@ const BillingForm = ({ queueId, patientId, patientName }) => {
                                 <tbody>
                                     {itemList.map((item) => (
                                         <tr>
-                                            <td className="pl-2">{item.name}</td>
+                                            <td className="text-left pl-2">{item.name}</td>
                                             <td className="text-right pr-2">{item.quantity}</td>
-                                            <td className="text-right pr-2">{item.subtotal}</td>
+                                            <td className="text-right pr-2">{Number(item.subtotal).toFixed(2)}</td>
                                         </tr>
                                     ))}
                                     <tr>
                                         <td className="pl-2" colSpan="2">
                                             Grand total
                                         </td>
-                                        <td className="text-right pr-2">{grandTotal}</td>
+                                        <td className="text-right pr-2">{Number(grandTotal).toFixed(2)}</td>
                                     </tr>
                                 </tbody>
                             </table>

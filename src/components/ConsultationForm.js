@@ -82,24 +82,13 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
 
     function handleAddItem(e) {
         e.preventDefault()
-        let item
-        if (itemType === "Treatment") {
-            item = {
-                id: itemId,
-                name: itemName,
-                type: itemType,
-                unitPrice: unitPrice,
-                subtotal: subtotal,
-            }
-        } else {
-            item = {
-                id: itemId,
-                name: itemName,
-                type: itemType,
-                unitPrice: unitPrice,
-                quantity: quantity,
-                subtotal: subtotal,
-            }
+        let item = {
+            id: itemId,
+            name: itemName,
+            type: itemType,
+            unitPrice: unitPrice,
+            quantity: `${itemType === "Treatment" ? "-" : quantity}`,
+            subtotal: subtotal,
         }
         selectRef.current.setValue("")
         setItemId("")
@@ -185,11 +174,11 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
                 }`}
             >
                 <td>{item.name}</td>
-                <td className="text-right px-2">{item.unitPrice}</td>
+                <td className="text-right px-2">{Number(item.unitPrice).toFixed(2)}</td>
                 <td className="text-right px-2">
                     {item.quantity} / {inventory.filter((i) => i.id === item.id)[0].data().stock}
                 </td>
-                <td className="text-right px-2">{item.subtotal}</td>
+                <td className="text-right px-2">{Number(item.subtotal).toFixed(2)}</td>
                 <td>
                     <button type="button" className="hover:text-red-500" onClick={() => handleDeleteItem(index)}>
                         <svg
@@ -321,7 +310,7 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
                 </div>
                 <div className="text-2xl pt-4 flex flex-col items-start">
                     <div>Grand Total: </div>
-                    <div className="text-right">{grandTotal}</div>
+                    <div className="text-right">{Number(grandTotal).toFixed(2)}</div>
                 </div>
             </div>
             <ToastContainer limit={1} />

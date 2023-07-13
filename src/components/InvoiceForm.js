@@ -17,6 +17,8 @@ const InvoiceForm = ({ queueId, patientId, patientName, paymentId, doctorId }) =
     const [isOpen, setIsOpen] = useState(false)
     const [consultationNo, setConsultationNo] = useState("")
     const [personHandled, setPersonHandled] = useState("")
+    const [grandTotal, setGrandTotal] = useState(0)
+    const [creationDate, setCreationDate] = useState(new Date())
     const [itemList, setItemList] = useState([])
     const [paymentDetails, setPaymentDetails] = useState([])
     const toPrintRef = useRef()
@@ -30,6 +32,8 @@ const InvoiceForm = ({ queueId, patientId, patientName, paymentId, doctorId }) =
         getCurrentConsultation(patientId, queueId).then((result) => {
             setConsultationNo(result.data().consultationNo)
             setItemList(result.data().items)
+            setGrandTotal(result.data().grandTotal)
+            setCreationDate(new Date(result.data().creationDate))
         })
     }, [])
 
@@ -105,15 +109,79 @@ const InvoiceForm = ({ queueId, patientId, patientName, paymentId, doctorId }) =
                             <p className="text-align-center">019-9468987</p>
                         </div>
                         <br />
-                        <div className="flex flex-col">
-                            <div>Date: {date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate()}</div>
-                            <div>Consultation No: {consultationNo}</div>
-                            <div>Doctor: {doctor}</div>
-                            <div>Collected by: {personHandled}</div>
+                        <div className="flex flex-row">
+                            <div className="w-[70%] place-content-end">
+                                <p className="font-bold">{patientName}</p>
+                            </div>
+                            <div className="flex flex-col w-[30%]">
+                                <div className="grid grid-cols-2">
+                                    <p>Date:</p>
+                                    <p className="text-right">
+                                        {creationDate.getFullYear() +
+                                            "-" +
+                                            (creationDate.getMonth() + 1) +
+                                            "-" +
+                                            creationDate.getDate() +
+                                            " " +
+                                            creationDate.getHours() +
+                                            ":" +
+                                            creationDate.getMinutes()}
+                                    </p>
+                                </div>
+                                <div className="grid grid-cols-2">
+                                    <p>Consultation no:</p>
+                                    <p className="text-right">{consultationNo}</p>
+                                </div>
+                                <div className="grid grid-cols-2">
+                                    <p>Doctor:</p>
+                                    <p className="text-right">{doctor}</p>
+                                </div>
+                                <div className="grid grid-cols-2">
+                                    <p>Collected by:</p>
+                                    <p className="text-right">{personHandled}</p>
+                                </div>
+                            </div>
                         </div>
                         <br />
-                        <p className="font-bold">{patientName}</p>
                         <br />
+                        <div>
+                            <table className="w-full">
+                                <thead>
+                                    <tr className="border-b border-black">
+                                        <th className="w-[5%] text-left">#</th>
+                                        <th className="w-[50%] text-left">Description</th>
+                                        <th className="w-[15%] text-right">Unit price</th>
+                                        <th className="w-[15%] text-right">Quantity</th>
+                                        <th className="w-[15%] text-right">Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {itemList.map((item) => (
+                                        <tr className="border-b border-black">
+                                            <td>{itemList.indexOf(item) + 1}</td>
+                                            <td>{item.name}</td>
+                                            <td className="text-right">{Number(item.unitPrice).toFixed(2)}</td>
+                                            <td className="text-right">{item.quantity}</td>
+                                            <td className="text-right">{Number(item.subtotal).toFixed(2)}</td>
+                                        </tr>
+                                    ))}
+                                    <tr>
+                                        <td colSpan="4" className="text-right">
+                                            <b>Grand total</b>
+                                        </td>
+                                        <td className="text-right">{Number(grandTotal).toFixed(2)}</td>
+                                    </tr>
+                                    {paymentDetails.map((payment) => (
+                                        <tr>
+                                            <td colSpan="4" className="text-right">
+                                                Paid by {payment.method}
+                                            </td>
+                                            <td className="text-right">{Number(payment.amount).toFixed(2)}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                         <br />
                         <div className="flex flex-col justify-center items-center">
                             <p className="text-align-center">

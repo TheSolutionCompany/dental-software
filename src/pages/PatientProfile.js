@@ -156,62 +156,66 @@ const PatientProfile = () => {
                     )}
                     {page === "history" && (
                         <div className="flex flex-col overflow-auto h-3/4 mx-8">
-                            {consultationHistory.map((consultation) => (
-                                <div className="flex flex-col">
-                                    <p className="text-left pl-2">
-                                        Date: {new Date(consultation.data().creationDate).toDateString()}
-                                    </p>
-                                    <div className="border-black border p-2 mb-4 flex flex-row bg-white">
-                                        <div className="w-3/5 flex flex-row">
-                                            <div className="w-1/3 pr-2 flex flex-col">
-                                                <p className="text-left">Complains:</p>
-                                                <div className="w-full h-full pr-2 border border-black bg-gray-100 text-left p-2 whitespace-pre-wrap">
-                                                    {consultation.data().complains}
+                            {consultationHistory.map((consultation) => {
+                                const date = new Date(consultation.data().creationDate)
+                                return (
+                                    <div className="flex flex-col">
+                                        <p className="text-left pl-2">
+                                            Date:{" "}
+                                            {date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes()}
+                                        </p>
+                                        <div className="border-black border p-2 mb-4 flex flex-row bg-white">
+                                            <div className="w-3/5 flex flex-row">
+                                                <div className="w-1/3 pr-2 flex flex-col">
+                                                    <p className="text-left">Complains:</p>
+                                                    <div className="w-full h-full pr-2 border border-black bg-gray-100 text-left p-2 whitespace-pre-wrap">
+                                                        {consultation.data().complains}
+                                                    </div>
+                                                </div>
+                                                <div className="w-1/3 pr-2 flex flex-col">
+                                                    <p className="text-left">Consultation:</p>
+                                                    <div className="w-full h-full pr-2 border border-black bg-gray-100 text-left p-2 whitespace-pre-wrap">
+                                                        {consultation.data().consultation}
+                                                    </div>
+                                                </div>
+                                                <div className="w-1/3 pr-2 flex flex-col">
+                                                    <p className="text-left">Frontdesk Message:</p>
+                                                    <div className="w-full h-full pr-2 border border-black bg-gray-100 text-left p-2 whitespace-pre-wrap">
+                                                        {consultation.data().frontDeskMessage}
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <div className="w-1/3 pr-2 flex flex-col">
-                                                <p className="text-left">Consultation:</p>
-                                                <div className="w-full h-full pr-2 border border-black bg-gray-100 text-left p-2 whitespace-pre-wrap">
-                                                    {consultation.data().consultation}
-                                                </div>
-                                            </div>
-                                            <div className="w-1/3 pr-2 flex flex-col">
-                                                <p className="text-left">Frontdesk Message:</p>
-                                                <div className="w-full h-full pr-2 border border-black bg-gray-100 text-left p-2 whitespace-pre-wrap">
-                                                    {consultation.data().frontDeskMessage}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="w-2/5 flex flex-col">
-                                            <p className="text-left">Items:</p>
-                                            <table className="table-gray-non-scrollable">
-                                                <thead>
-                                                    <tr>
-                                                        <th className="w-[49%]">Item</th>
-                                                        <th className="w-[17%]">Price</th>
-                                                        <th className="w-[17%]">Quantity</th>
-                                                        <th className="w-[17%]">Subtotal</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {consultation.data().items.map((item, index) => (
-                                                        <tr key={index}>
-                                                            <td>{item.name}</td>
-                                                            <td>{item.unitPrice}</td>
-                                                            <td>{item.quantity}</td>
-                                                            <td>{item.subtotal}</td>
+                                            <div className="w-2/5 flex flex-col">
+                                                <p className="text-left">Items:</p>
+                                                <table className="table-gray-non-scrollable">
+                                                    <thead>
+                                                        <tr>
+                                                            <th className="w-[49%]">Item</th>
+                                                            <th className="w-[17%]">Price</th>
+                                                            <th className="w-[17%]">Quantity</th>
+                                                            <th className="w-[17%]">Subtotal</th>
                                                         </tr>
-                                                    ))}
-                                                    <tr>
-                                                        <td colSpan="3">Grand Total</td>
-                                                        <td>{consultation.data().grandTotal}</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
+                                                    </thead>
+                                                    <tbody>
+                                                        {consultation.data().items.map((item, index) => (
+                                                            <tr key={index}>
+                                                                <td>{item.name}</td>
+                                                                <td>{item.unitPrice}</td>
+                                                                <td>{item.quantity}</td>
+                                                                <td>{item.subtotal}</td>
+                                                            </tr>
+                                                        ))}
+                                                        <tr>
+                                                            <td colSpan="3">Grand Total</td>
+                                                            <td>{consultation.data().grandTotal}</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            ))}
+                                )
+                            })}
                         </div>
                     )}
                 </div>
