@@ -189,7 +189,11 @@ const Appointment = () => {
                         aspectRatio={2.25}
                         events={eventifiedAppts}
                         nowIndicator={true}
-                        headerToolbar={{start: 'dayGridMonth,timeGridWeek,timeGridDay', center: 'title', end: 'today prev,next'}}
+                        headerToolbar={{
+                            start: "dayGridMonth,timeGridWeek,timeGridDay",
+                            center: "title",
+                            end: "today prev,next",
+                        }}
                         eventClick={handleEventClicked}
                     />
 
