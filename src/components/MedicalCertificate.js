@@ -141,13 +141,6 @@ export const MedicalCertificate = () => {
         setLoading(false)
     }
 
-    const handlePrintMc = (e) => {
-        e.preventDefault()
-        toggleModal()
-        toggleInnerModal()
-        toggleInnerInnerModal()
-    }
-
     const handlePrint = useReactToPrint({
         content: () => toPrintRef.current,
         documentTitle: { patientName },
@@ -357,7 +350,7 @@ export const MedicalCertificate = () => {
                                     toggleInnerModal()
                                 }}
                             />
-                            <form className="border border-black p-5" onSubmit={handlePrintMc}>
+                            <form className="border border-black p-5">
                                 <div ref={toPrintRef}>
                                     <div className="flex flex-col justify-center items-center">
                                         <p className="text-align-center font-bold">Medical Certificate</p>

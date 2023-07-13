@@ -33,12 +33,14 @@ export function DatabaseProvider({ children }) {
 
     const [employees, setEmployees] = useState([]);
 
-    const [allQueue, setAllQueue] = useState([]);
-    const [waitingQueue, setWaitingQueue] = useState([]);
-    const [inProgressQueue, setInProgressQueue] = useState([]);
-    const [pendingBillingQueue, setPendingBillingQueue] = useState([]);
-    const [completedQueue, setCompletedQueue] = useState([]);
-    const [waitingQueueSize, setWaitingQueueSize] = useState(0);
+    const [patients, setPatients] = useState([])
+
+    const [allQueue, setAllQueue] = useState([])
+    const [waitingQueue, setWaitingQueue] = useState([])
+    const [inProgressQueue, setInProgressQueue] = useState([])
+    const [pendingBillingQueue, setPendingBillingQueue] = useState([])
+    const [completedQueue, setCompletedQueue] = useState([])
+    const [waitingQueueSize, setWaitingQueueSize] = useState(0)
 
     const [inventory, setInventory] = useState([]);
     const [medicineInventory, setMedicineInventory] = useState([]);
@@ -142,6 +144,16 @@ export function DatabaseProvider({ children }) {
             });
         }
 
+        // Patients Listener
+        const patientsQ = query(collection(db, "patients"))
+        onSnapshot(patientsQ, (querySnapshot) => {
+            console.log("patients listener")
+            setPatients([])
+            querySnapshot.forEach((doc) => {
+                setPatients((prev) => [...prev, doc])
+            })
+        })
+
         // Inventory Listener
         const inventoryQ = query(collection(db, "inventory"));
         onSnapshot(inventoryQ, (querySnapshot) => {
@@ -165,50 +177,35 @@ export function DatabaseProvider({ children }) {
         // Common Variables Listener
         const commonVarQ = query(commonVariablesRef);
         onSnapshot(commonVarQ, (querySnapshot) => {
-            console.log("common variables listener");
-            setCommonVariables([]);
+            console.log("common variables listener")
+            setCommonVariables([])
             querySnapshot.forEach((doc) => {
-                setCommonVariables((prev) => [...prev, doc]);
-            });
-        });
+                setCommonVariables((prev) => [...prev, doc])
+            })
+        })
 
         setLoading(false);
     }, [user, date]);
 
     async function search(name, ic, mobileNumber) {
         if (name) {
-            const start = name;
-            const end = start.replace(/.$/, (c) => String.fromCharCode(c.charCodeAt(0) + 1));
-            const q = query(
-                collection(db, "patients"),
-                where("name", ">=", start),
-                where("name", "<", end),
-                orderBy("name", "asc")
-            );
-            const result = (await getDocs(q)).docs.map((doc) => doc);
-            return Object.values(result);
+            const start = name
+            const end = start.replace(/.$/, (c) => String.fromCharCode(c.charCodeAt(0) + 1))
+            return patients
+                .filter((patient) => patient.data().name >= start && patient.data().name < end)
+                .sort((a, b) => a.data().name.localeCompare(b.data().name))
         } else if (ic) {
-            const start = ic;
-            const end = start.replace(/.$/, (c) => String.fromCharCode(c.charCodeAt(0) + 1));
-            const q = query(
-                collection(db, "patients"),
-                where("ic", ">=", start),
-                where("ic", "<", end),
-                orderBy("ic", "asc")
-            );
-            const result = (await getDocs(q)).docs.map((doc) => doc);
-            return Object.values(result);
+            const start = ic
+            const end = start.replace(/.$/, (c) => String.fromCharCode(c.charCodeAt(0) + 1))
+            return patients
+                .filter((patient) => patient.data().ic >= start && patient.data().ic < end)
+                .sort((a, b) => a.data().ic.localeCompare(b.data().ic))
         } else if (mobileNumber) {
-            const start = mobileNumber;
-            const end = start.replace(/.$/, (c) => String.fromCharCode(c.charCodeAt(0) + 1));
-            const q = query(
-                collection(db, "patients"),
-                where("mobileNumber", ">=", start),
-                where("mobileNumber", "<", end),
-                orderBy("mobileNumber", "asc")
-            );
-            const result = (await getDocs(q)).docs.map((doc) => doc);
-            return Object.values(result);
+            const start = mobileNumber
+            const end = start.replace(/.$/, (c) => String.fromCharCode(c.charCodeAt(0) + 1))
+            return patients
+                .filter((patient) => patient.data().mobileNumber >= start && patient.data().mobileNumber < end)
+                .sort((a, b) => a.data().mobileNumber.localeCompare(b.data().mobileNumber))
         } else {
             return [];
         }
@@ -216,10 +213,18 @@ export function DatabaseProvider({ children }) {
 
     async function addToQueue(patientId, patientName, age, ic, gender, doctorId, complains, status) {
         // Used a nowDate variable to prevent the date from changing when the function is running
-        const nowDate = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
-        const creationDate = Date.now();
-        const q = doc(dayQueueRef, nowDate);
-        var res = await getDoc(q);
+        const nowDate = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate()
+        const consultationNoQ = doc(commonVariablesRef, "consultationNo")
+        var consultationNo = await getDoc(consultationNoQ)
+        if (!consultationNo.exists()) {
+            await setDoc(consultationNoQ, { consultationNo: 1 })
+        } else {
+            await updateDoc(consultationNoQ, { consultationNo: increment(1) })
+        }
+        consultationNo = (await getDoc(consultationNoQ)).data().consultationNo
+        const creationDate = Date.now()
+        const q = doc(dayQueueRef, nowDate)
+        var res = await getDoc(q)
         if (!res.exists()) {
             await setDoc(q, { queueNumber: 1 });
         } else {
@@ -241,6 +246,7 @@ export function DatabaseProvider({ children }) {
         const consultationLocRef = collection(db, "patients", patientId, "consultation");
         // Create a new consultation document
         const consultationRef = await addDoc(consultationLocRef, {
+            consultationNo,
             queueId: queueRef.id,
             creationDate,
             consultation: "",
@@ -374,8 +380,8 @@ export function DatabaseProvider({ children }) {
         }
     }
 
-    async function makePayment(patientId, queueId, consultationId, remarks, payment, different, creationDate) {
-        const collectionRef = collection(db, "payments");
+    async function makePayment(patientId, queueId, userId, consultationId, remarks, payment, different, creationDate) {
+        const collectionRef = collection(db, "payments")
         const docRef = await addDoc(collectionRef, {
             patientId,
             queueId,
@@ -383,16 +389,36 @@ export function DatabaseProvider({ children }) {
             remarks,
             payment,
             creationDate,
-        });
-        const consultationRef = doc(db, "patients", patientId, "consultation", consultationId);
+            personHandled: userId,
+        })
+        const consultationRef = doc(db, "patients", patientId, "consultation", consultationId)
         await updateDoc(consultationRef, {
             paymentId: docRef.id,
-        });
+        })
+        const queueRef = doc(
+            dayQueueRef,
+            date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate(),
+            "queue",
+            queueId
+        )
+        await updateDoc(queueRef, {
+            paymentId: docRef.id,
+        })
         if (different !== 0) {
             const patientRef = doc(db, "patients", patientId);
             await updateDoc(patientRef, {
                 balance: increment(different),
             });
+        }
+    }
+
+    async function getPaymentDetails(paymentId) {
+        const docRef = doc(db, "payments", paymentId)
+        const docSnap = await getDoc(docRef)
+        if (docSnap.exists()) {
+            return docSnap
+        } else {
+            return null
         }
     }
 
@@ -517,8 +543,8 @@ export function DatabaseProvider({ children }) {
 
     async function setBusinessHours(details) {
         try {
-            await updateDoc(doc(db, "commonvariables", "businessHours"), { details });
-            return true;
+            await updateDoc(doc(db, "commonvariables", "businessHours"), { details })
+            return true
         } catch (e) {
             console.log(e);
             return false;
@@ -536,6 +562,7 @@ export function DatabaseProvider({ children }) {
     }
 
     const value = {
+        date: date,
         availableDoctors: availableDoctors,
         allQueue: allQueue,
         waitingQueue: waitingQueue,
@@ -571,6 +598,7 @@ export function DatabaseProvider({ children }) {
         updateApptDetails,
         updateApptStatus,
         changeApptDoctor,
+        getPaymentDetails,
         setBusinessHours,
     };
 

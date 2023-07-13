@@ -221,7 +221,7 @@ const Inventory = () => {
                             >
                                 <option value="medicine">Medicine</option>
                                 <option value="treatment">Treatment</option>
-                                <option value="product">Other Inventory</option>
+                                <option value="product">Product</option>
                             </select>
                             <InventoryForm data={{ editMode: false, activeItem: null }} />
                             <input

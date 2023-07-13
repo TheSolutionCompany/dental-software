@@ -50,3 +50,31 @@ code {
 .tr-hover {
     @apply hover:bg-green-400 cursor-pointer !important;
 }
+
+.table-gray-non-scrollable {
+    @apply w-full h-10 font-bold border-collapse;
+}
+
+.table-gray-non-scrollable thead tr {
+    @apply w-full h-10 bg-gray-400 font-bold;
+}
+
+.table-gray-non-scrollable tbody tr {
+    @apply w-full h-10 border border-black font-semibold bg-gray-100;
+}
+
+.table-gray-non-scrollable tbody tr:nth-child(odd) {
+    @apply bg-white;
+}
+
+.table-gray-non-scrollable tbody tr:nth-child(even) {
+    @apply bg-gray-100;
+}
+
+.table-gray-non-scrollable th {
+    @apply border-black border-x py-3;
+} 
+
+.table-gray-non-scrollable td {
+    @apply border-black border-x py-2.5;
+}

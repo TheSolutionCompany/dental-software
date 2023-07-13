@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react"
+import { useAuth } from "../contexts/AuthContext"
 import { useDatabase } from "../contexts/DatabaseContext"
 import Modal from "react-modal"
 import CloseButton from "./CloseButton"
@@ -8,6 +9,9 @@ import "react-toastify/dist/ReactToastify.css"
 Modal.setAppElement("#root")
 
 const BillingForm = ({ queueId, patientId, patientName }) => {
+    // Variables in AuthContext
+    const { user } = useAuth()
+
     // Functions in DatabaseContext
     const { getCurrentConsultation, makePayment, updatePatientStatus } = useDatabase()
 
@@ -68,10 +72,11 @@ const BillingForm = ({ queueId, patientId, patientName }) => {
             if (item.method !== "" && item.amount !== 0) {
                 payment.push(item)
             }
+
         })
         let total = payment.map((item) => parseInt(item.amount)).reduce((a, b) => a + b, 0)
         let different = total - grandTotal
-        await makePayment(patientId, queueId, consultationId, remarks, payment, different, creationDate)
+        await makePayment(patientId, queueId, user.displayName, consultationId, remarks, payment, different, creationDate)
         await updatePatientStatus(queueId, "completed")
         toggleModal()
         toast.success("Payment done", {
@@ -222,16 +227,16 @@ const BillingForm = ({ queueId, patientId, patientName }) => {
                                 <tbody>
                                     {itemList.map((item) => (
                                         <tr>
-                                            <td className="pl-2">{item.name}</td>
+                                            <td className="text-left pl-2">{item.name}</td>
                                             <td className="text-right pr-2">{item.quantity}</td>
-                                            <td className="text-right pr-2">{item.subtotal}</td>
+                                            <td className="text-right pr-2">{Number(item.subtotal).toFixed(2)}</td>
                                         </tr>
                                     ))}
                                     <tr>
                                         <td className="pl-2" colSpan="2">
                                             Grand total
                                         </td>
-                                        <td className="text-right pr-2">{grandTotal}</td>
+                                        <td className="text-right pr-2">{Number(grandTotal).toFixed(2)}</td>
                                     </tr>
                                 </tbody>
                             </table>
