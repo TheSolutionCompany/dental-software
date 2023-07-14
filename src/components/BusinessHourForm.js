@@ -162,7 +162,13 @@ export default function BusinessHourForm(props) {
                 </button>
             </div>
 
-            <Modal isOpen={isOpen} onRequestClose={toggleModal} contentLabel={title} shouldCloseOnOverlayClick={false}>
+            <Modal
+                isOpen={isOpen}
+                onRequestClose={toggleModal}
+                contentLabel={title}
+                shouldCloseOnOverlayClick={false}
+                style={{ overlay: { zIndex: "999" } }}
+            >
                 <CloseButton name={title} func={toggleModal} />
                 <div className="grid grid-cols-1 gap-1">
                     <div className="flex flex-col">
@@ -197,11 +203,12 @@ export default function BusinessHourForm(props) {
                     },
                     overlay: {
                         backgroundColor: "rgba(0, 0, 0, 0)",
+                        zIndex: "999",
                     },
                 }}
             >
                 <button onClick={handleDelete}>Delete</button>
             </Modal>
         </div>
-    );
+    )
 }

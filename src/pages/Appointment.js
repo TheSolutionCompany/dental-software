@@ -191,7 +191,7 @@ const Appointment = () => {
             <div className="flex h-full">
                 <SideBar />
                 <div className="w-full bg-gray-200">
-                    <div className="pt-4 pl-8 pr-8 pb-4">
+                    <div className="pt-4 pl-8 pr-8 pb-4 h-full">
                         <div className="flex justify-start py-4">
                             <label>Doctor</label>
                             <select className="select-dropdown ml-5" onChange={(e) => onDoctorChange(e.target.value)}>
@@ -205,7 +205,7 @@ const Appointment = () => {
                             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
                             ref={calendarRef}
                             allDaySlot={false}
-                            aspectRatio={2.5}
+                            height={"90%"}
                             events={eventifiedAppts}
                             nowIndicator={true}
                             headerToolbar={{

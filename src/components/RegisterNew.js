@@ -265,6 +265,7 @@ const RegisterNew = () => {
                 onRequestClose={toggleModal}
                 contentLabel="Register New"
                 shouldCloseOnOverlayClick={false}
+                style={{ overlay: { zIndex: "999" } }}
             >
                 <CloseButton name="Register New" func={toggleModal} />
                 <form onSubmit={handleCreate}>
@@ -514,6 +515,7 @@ const RegisterNew = () => {
                             right: 0,
                             bottom: 0,
                             backgroundColor: "rgba(255, 255, 255, 0.75)",
+                            zIndex: "999"
                         },
                         content: {
                             position: "absolute",
