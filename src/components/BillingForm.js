@@ -68,7 +68,7 @@ const BillingForm = ({ queueId, patientId, patientName }) => {
         e.preventDefault()
         let payment = []
         //filter out the empty payment method
-        paymentMethod.map((item) => {
+        paymentMethod.forEach((item) => {
             if (item.method !== "" && item.amount !== 0) {
                 payment.push(item)
             }
