@@ -139,10 +139,14 @@ export default function BusinessHourForm(props) {
         }
     }
 
-    function handleEventClicked(selectionInfo) {
-        setInnerModalPosition([selectionInfo.jsEvent.x, selectionInfo.jsEvent.y]);
-        setActiveEventId(selectionInfo.event.id);
-        toggleInnerModal();
+    function handleRightClick(selectionInfo) {
+        const eventId = selectionInfo.event.id;
+        selectionInfo.el.addEventListener("contextmenu", (jsEvent) => {
+            jsEvent.preventDefault();
+            setInnerModalPosition([jsEvent.x, jsEvent.y]);
+            setActiveEventId(eventId);
+            toggleInnerModal();
+        })
     }
 
     function handleDelete() {
@@ -179,9 +183,9 @@ export default function BusinessHourForm(props) {
                             select={handleSelect}
                             headerToolbar={{ left: "", right: "" }}
                             ref={calendarRef}
-                            eventClick={handleEventClicked}
                             events={timeslots}
                             allDaySlot={false}
+                            eventDidMount={handleRightClick}
                         />
                         <button onClick={handleSubmit} className="button-green rounded" id="submitButton">
                             Submit
