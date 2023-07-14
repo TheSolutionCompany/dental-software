@@ -78,3 +78,9 @@ code {
 .table-gray-non-scrollable td {
     @apply border-black border-x py-2.5;
 }
+
+.fc-non-business, .fc-day-disabled
+{
+  opacity:0.5;
+  background-color: #797979 !important
+}
