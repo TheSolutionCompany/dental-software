@@ -215,6 +215,7 @@ const Appointment = () => {
                             }}
                             dayMaxEventRows={true}
                             eventClick={handleEventClicked}
+                            droppable={false}
                         />
 
                         <Modal

@@ -79,8 +79,22 @@ code {
     @apply border-black border-x py-2.5;
 }
 
-.fc-non-business, .fc-day-disabled
+.fc-day-disabled
 {
   opacity:0.5;
   background-color: #797979 !important
+}
+
+.fc-col-header-cell, .fc-timegrid-axis{
+    background-color: rgb(156, 163, 175)
+}
+
+.fc-daygrid-day, .fc-timegrid-slot{
+    background-color: rgb(255, 255, 255, 0.7);
+}
+
+:root {
+    --fc-non-business-color: rgba(111, 111, 111, 0.5);
+    --fc-today-bg-color: rgba(31, 41, 55, 0.25);
+    --fc-border-color: rgba(193, 201, 214, 0.75);
 }

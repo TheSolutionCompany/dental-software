@@ -194,6 +194,8 @@ export default function WorkingHourForm(props) {
                             allDaySlot={false}
                             businessHours={businessHours}
                             selectConstraint={"businessHours"}
+                            eventConstraint={"businessHours"}
+                            eventOverlap={false}
                         />
                         <button onClick={handleSubmit} className="button-green rounded" id="submitButton">
                             Submit

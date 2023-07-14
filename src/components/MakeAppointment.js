@@ -370,6 +370,7 @@ export default function MakeAppointment(props) {
                                         allDaySlot={false}
                                         businessHours={workingHours}
                                         selectConstraint={"businessHours"}
+                                        eventConstraint={"businessHours"}
                                         validRange={{ start: new Date() }}
                                         eventOverlap={false}
                                     />
