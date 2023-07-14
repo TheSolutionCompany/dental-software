@@ -34,7 +34,7 @@ const Appointment = () => {
             });
     };
 
-    const { appointments, availableDoctors, updateApptStatus, updateCancelledApptRemark, getAppointments, addToQueue } =
+    const { availableDoctors, updateApptStatus, updateCancelledApptRemark, getAppointments, addToQueue } =
         useDatabase();
 
     const [isDefaultModalOpen, setIsDefaultModalOpen] = useState(false);
