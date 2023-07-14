@@ -161,6 +161,7 @@ export const MedicalCertificate = () => {
                 onRequestClose={toggleModal}
                 contentLabel="Register Existing"
                 shouldCloseOnOverlayClick={false}
+                style={{ overlay: { zIndex: "999" } }}
             >
                 <CloseButton name="Medical Certificate" func={toggleModal} />
                 <div className="w-full">
@@ -203,27 +204,19 @@ export const MedicalCertificate = () => {
                     <div className="flex flex-col w-full h-fit mt-[-1px] overflow-auto">
                         <table className="table-gray">
                             <tbody>
-
-                            {patientsList.map((patient) => (
-                                <tr
-                                    className="tr-hover"
-                                    key={patient.id}
-                                    onClick={() => handleIssue(patient)}
-                                >
-                                    <td key={patient.data().name} className="w-1/3">
-                                        {patient.data().name}
-                                    </td>
-                                    <td key={patient.data().ic} className="bw-1/3">
-                                        {patient.data().ic}
-                                    </td>
-                                    <td
-                                        key={patient.data().mobileNumber}
-                                        className="w-1/3"
-                                        >
-                                        {patient.data().mobileNumber}
-                                    </td>
-                                </tr>
-                            ))}
+                                {patientsList.map((patient) => (
+                                    <tr className="tr-hover" key={patient.id} onClick={() => handleIssue(patient)}>
+                                        <td key={patient.data().name} className="w-1/3">
+                                            {patient.data().name}
+                                        </td>
+                                        <td key={patient.data().ic} className="bw-1/3">
+                                            {patient.data().ic}
+                                        </td>
+                                        <td key={patient.data().mobileNumber} className="w-1/3">
+                                            {patient.data().mobileNumber}
+                                        </td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
                     </div>
@@ -241,6 +234,7 @@ export const MedicalCertificate = () => {
                                 right: 0,
                                 bottom: 0,
                                 backgroundColor: "rgba(255, 255, 255, 0.75)",
+                                zIndex: "999"
                             },
                             content: {
                                 position: "absolute",
@@ -326,6 +320,7 @@ export const MedicalCertificate = () => {
                                     right: 0,
                                     bottom: 0,
                                     backgroundColor: "rgba(255, 255, 255, 0.75)",
+                                    zIndex: "999"
                                 },
                                 content: {
                                     position: "absolute",
