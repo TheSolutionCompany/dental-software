@@ -242,6 +242,7 @@ export function DatabaseProvider({ children }) {
             doctorId,
             complains,
             status,
+            creationDate,
         });
         const consultationLocRef = collection(db, "patients", patientId, "consultation");
         // Create a new consultation document
@@ -381,7 +382,9 @@ export function DatabaseProvider({ children }) {
     }
 
     async function makePayment(patientId, queueId, userId, consultationId, remarks, payment, different, creationDate) {
-        const collectionRef = collection(db, "payments")
+        const yearMonth = new Date(creationDate).getFullYear() + "-" + (new Date(creationDate).getMonth() + 1);
+        const day = new Date(creationDate).getDate() + "";
+        const collectionRef = collection(db, "payments", yearMonth, day);
         const docRef = await addDoc(collectionRef, {
             patientId,
             queueId,
@@ -412,14 +415,12 @@ export function DatabaseProvider({ children }) {
         }
     }
 
-    async function getPaymentDetails(paymentId) {
-        const docRef = doc(db, "payments", paymentId)
+    async function getPaymentDetails(paymentId, creationDate) {
+        const yearMonth = new Date(creationDate).getFullYear() + "-" + (new Date(creationDate).getMonth() + 1);
+        const day = new Date(creationDate).getDate() + "";
+        const docRef = doc(db, "payments", yearMonth, day, paymentId);
         const docSnap = await getDoc(docRef)
-        if (docSnap.exists()) {
-            return docSnap
-        } else {
-            return null
-        }
+        return docSnap
     }
 
     async function addInventoryItem(name, type, unitPrice, stock, threshold) {

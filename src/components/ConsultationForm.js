@@ -150,6 +150,8 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
         setLoading(true)
         await updateStock(itemList)
         await updatePatientStatus(queueId, "pending billing")
+        setLoading(false)
+        navigate("/queue")
         toast.success("Sent for payment", {
             position: "top-center",
             autoClose: 1000,
@@ -161,8 +163,7 @@ const ConsultationForm = ({ patientId, queueId, setRequireUpdate }) => {
             theme: "colored",
         })
         toast.clearWaitingQueue()
-        navigate("/queue")
-        setLoading(false)
+        
     }
 
     function generateTable(list) {

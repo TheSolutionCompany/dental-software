@@ -6,7 +6,7 @@ import CloseButton from "./CloseButton"
 
 Modal.setAppElement("#root")
 
-const InvoiceForm = ({ queueId, patientId, patientName, paymentId, doctorId }) => {
+const InvoiceForm = ({ queueId, patientId, patientName, paymentId, doctorId, creationDate }) => {
     // Variables in DatabaseContext
     const { availableDoctors, date } = useDatabase()
 
@@ -18,14 +18,13 @@ const InvoiceForm = ({ queueId, patientId, patientName, paymentId, doctorId }) =
     const [consultationNo, setConsultationNo] = useState("")
     const [personHandled, setPersonHandled] = useState("")
     const [grandTotal, setGrandTotal] = useState(0)
-    const [creationDate, setCreationDate] = useState(new Date())
     const [itemList, setItemList] = useState([])
     const [paymentDetails, setPaymentDetails] = useState([])
     const toPrintRef = useRef()
 
     useEffect(() => {
         setDoctor(availableDoctors.find((item) => item.id === doctorId).data().displayName)
-        getPaymentDetails(paymentId).then((result) => {
+        getPaymentDetails(paymentId, creationDate).then((result) => {
             setPaymentDetails(result.data().payment)
             setPersonHandled(result.data().personHandled)
         })
@@ -33,7 +32,7 @@ const InvoiceForm = ({ queueId, patientId, patientName, paymentId, doctorId }) =
             setConsultationNo(result.data().consultationNo)
             setItemList(result.data().items)
             setGrandTotal(result.data().grandTotal)
-            setCreationDate(new Date(result.data().creationDate))
+            //setCreationDate(new Date(result.data().creationDate))
         })
     }, [])
 
@@ -117,15 +116,15 @@ const InvoiceForm = ({ queueId, patientId, patientName, paymentId, doctorId }) =
                                 <div className="grid grid-cols-2">
                                     <p>Date:</p>
                                     <p className="text-right">
-                                        {creationDate.getFullYear() +
+                                        {new Date(creationDate).getFullYear() +
                                             "-" +
-                                            (creationDate.getMonth() + 1) +
+                                            (new Date(creationDate).getMonth() + 1) +
                                             "-" +
-                                            creationDate.getDate() +
+                                            new Date(creationDate).getDate() +
                                             " " +
-                                            creationDate.getHours() +
+                                            new Date(creationDate).getHours() +
                                             ":" +
-                                            creationDate.getMinutes()}
+                                            new Date(creationDate).getMinutes()}
                                     </p>
                                 </div>
                                 <div className="grid grid-cols-2">
@@ -156,8 +155,8 @@ const InvoiceForm = ({ queueId, patientId, patientName, paymentId, doctorId }) =
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {itemList.map((item) => (
-                                        <tr className="border-b border-black">
+                                    {itemList.map((item, index) => (
+                                        <tr key={index} className="border-b border-black">
                                             <td>{itemList.indexOf(item) + 1}</td>
                                             <td>{item.name}</td>
                                             <td className="text-right">{Number(item.unitPrice).toFixed(2)}</td>
@@ -171,8 +170,8 @@ const InvoiceForm = ({ queueId, patientId, patientName, paymentId, doctorId }) =
                                         </td>
                                         <td className="text-right">{Number(grandTotal).toFixed(2)}</td>
                                     </tr>
-                                    {paymentDetails.map((payment) => (
-                                        <tr>
+                                    {paymentDetails.map((payment, index) => (
+                                        <tr key={index}>
                                             <td colSpan="4" className="text-right">
                                                 Paid by {payment.method}
                                             </td>

@@ -100,6 +100,7 @@ export const Queue = () => {
                                 patientName={row.data().patientName}
                                 paymentId={row.data().paymentId}
                                 doctorId={row.data().doctorId}
+                                creationDate={row.data().creationDate}
                             />
                         )}
                     </td>
