@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useAuth } from "../contexts/AuthContext";
 import { useDatabase } from "../contexts/DatabaseContext";
 import Modal from "react-modal";
 import CloseButton from "../components/CloseButton";
@@ -15,13 +14,10 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { extractTimeFromDate } from "../util/TimeUtil";
+import EditAppointment from "../components/EditAppointment";
 
-// TODO: for admin, have a dropdown of doctors, then can check their appointments
-// this feature is meant for rescheduling appointments... reeeeeeeee (gah just make the admin cancel and rebook lollll)
 const Appointment = () => {
     const navigate = useNavigate();
-
-    const { user } = useAuth();
 
     const handleLogout = () => {
         signOut(auth)
@@ -34,8 +30,14 @@ const Appointment = () => {
             });
     };
 
-    const { availableDoctors, updateApptStatus, updateCancelledApptRemark, getAppointments, addToQueue } =
-        useDatabase();
+    const {
+        availableDoctors,
+        appointmentFlipFlop,
+        updateApptStatus,
+        updateCancelledApptRemark,
+        getAppointments,
+        addToQueue,
+    } = useDatabase();
 
     const [isDefaultModalOpen, setIsDefaultModalOpen] = useState(false);
     const [isCancelApptRmkOpen, setIsCancelApptRmkOpen] = useState(false);
@@ -58,6 +60,8 @@ const Appointment = () => {
     const [complains, setComplains] = useState("");
     const [remark, setRemark] = useState("");
     const [doctorId, setDoctorId] = useState("");
+    const [doctorName, setDoctorName] = useState("");
+    const [workingHours, setWorkingHours] = useState([]);
 
     const [addToQueueSuccess, setAddToQueueSuccess] = useState(false);
 
@@ -71,6 +75,7 @@ const Appointment = () => {
 
     // this is for my sanity tqvm
     const [objectifiedAppts, setObjectifiedAppts] = useState({});
+    const [objectifiedDoctors, setObjectifiedDoctors] = useState({});
 
     const [isButtonHidden, setIsButtonHidden] = useState(false);
 
@@ -91,6 +96,22 @@ const Appointment = () => {
         toggleQueueModal();
     };
 
+    // for the sake of my sanity tqvm
+    useEffect(() => {
+        let result = {};
+        for (let doctor of availableDoctors) {
+            result[doctor.id] = doctor.data();
+        }
+        setObjectifiedDoctors(result);
+    }, [availableDoctors]);
+
+    // this is how u force rerender lolololol
+    useEffect(() => {
+        if (doctorId) {
+            getAppointments(doctorId).then(processAppointments);
+        }
+    }, [appointmentFlipFlop]);
+
     function handleEventClicked(selectionInfo) {
         if (queuedAppointment.includes(selectionInfo.event.id)) {
             return;
@@ -107,7 +128,8 @@ const Appointment = () => {
         setPatientAge(activeEvent.age);
         setPatientGender(activeEvent.gender);
         setPatientIc(activeEvent.ic);
-        setRemark(objectifiedAppts[activeEventId].remark);
+        setComplains(activeEvent.complaints);
+        setRemark(activeEvent.remark);
         setIsButtonHidden(activeEvent.status === "cancelled");
         toggleDefaultModal();
     }
@@ -182,6 +204,8 @@ const Appointment = () => {
 
     function onDoctorChange(doctorId) {
         setDoctorId(doctorId);
+        setDoctorName(objectifiedDoctors[doctorId].displayName);
+        setWorkingHours(objectifiedDoctors[doctorId].workingHours);
         getAppointments(doctorId).then(processAppointments);
     }
 
@@ -226,8 +250,8 @@ const Appointment = () => {
                                 content: {
                                     position: "absolute",
                                     top: "100px",
-                                    left: "500px",
-                                    right: "500px",
+                                    left: "400px",
+                                    right: "400px",
                                     bottom: "100px",
                                     border: "1px solid #ccc",
                                     background: "#fff",
@@ -241,6 +265,7 @@ const Appointment = () => {
                                     zIndex: "999",
                                 },
                             }}
+                            className="flex-col"
                         >
                             <CloseButton name={"Appointment Details"} func={toggleDefaultModal} />
                             {/*While the button is successfully disabled, pls help to turn it lighter or smth idk..*/}
@@ -261,30 +286,53 @@ const Appointment = () => {
                                 {objectifiedAppts[activeEventId] ? objectifiedAppts[activeEventId].remark : ""}
                             </p>
 
-                            <button
-                                disabled={activeEventStart > tomorrow}
-                                onClick={toggleBothDefaultAndQueue}
-                                className="button-blue rounded absolute bottom-5"
-                                hidden={isButtonHidden}
-                            >
-                                Send To Queue
-                            </button>
+                            <div className="flex justify-between items-end">
+                                <div className="flex absolute bottom-5">
+                                    <button
+                                        disabled={activeEventStart > tomorrow}
+                                        onClick={toggleBothDefaultAndQueue}
+                                        className="button-blue rounded"
+                                        hidden={isButtonHidden}
+                                    >
+                                        Send To Queue
+                                    </button>
 
-                            <button
-                                onClick={toggleCancelApptRmk}
-                                className="button-grey rounded absolute right-5 bottom-5"
-                                hidden={isButtonHidden}
-                            >
-                                Cancel Appointment
-                            </button>
+                                    <EditAppointment
+                                        doctorId={doctorId}
+                                        doctorName={doctorName}
+                                        patientName={patientName}
+                                        appointmentId={activeEventId}
+                                        currTimeslot={{
+                                            id: "appt",
+                                            start: activeEventStart,
+                                            end: activeEventEnd,
+                                            title: "Current Timeslot",
+                                        }}
+                                        hidden={isButtonHidden}
+                                        complaints={complains}
+                                        workingHours={workingHours}
+                                        onClose={toggleDefaultModal}
+                                    />
 
-                            <button
-                                onClick={toggleCancelApptRmk}
-                                className="button-blue rounded absolute bottom-5"
-                                hidden={!isButtonHidden}
-                            >
-                                Update Cancellation Remark
-                            </button>
+                                    <button
+                                        onClick={toggleCancelApptRmk}
+                                        className="button-blue rounded"
+                                        hidden={!isButtonHidden}
+                                    >
+                                        Update Cancellation Remark
+                                    </button>
+                                </div>
+
+                                <div className="absolute bottom-5 right-5">
+                                    <button
+                                        onClick={toggleCancelApptRmk}
+                                        className="button-grey rounded"
+                                        hidden={isButtonHidden}
+                                    >
+                                        Cancel Appointment
+                                    </button>
+                                </div>
+                            </div>
                         </Modal>
                     </div>
 
@@ -331,7 +379,7 @@ const Appointment = () => {
                             </div>
                             <div className="flex flex-col">
                                 <p>Complains:</p>
-                                <textarea rows={4} onChange={(e) => setComplains(e.target.value)} />
+                                <textarea value={complains} rows={4} onChange={(e) => setComplains(e.target.value)} />
                             </div>
                             <div className="flex justify-center pt-4">
                                 <button disabled={addToQueueSuccess} className="button-green rounded" type="submit">

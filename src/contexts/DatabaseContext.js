@@ -48,6 +48,7 @@ export function DatabaseProvider({ children }) {
     const [otherInventory, setOtherInventory] = useState([]);
 
     const [appointments, setAppointments] = useState([]);
+    const [appointmentFlipFlop, setAppointmentFlipFlop] = useState(false);
     const [commonVariables, setCommonVariables] = useState([]);
 
     const [date, setDate] = useState(new Date());
@@ -493,6 +494,7 @@ export function DatabaseProvider({ children }) {
                 complaints,
                 status: "Appt made",
             });
+            setAppointmentFlipFlop(!appointmentFlipFlop);
             return true;
         } catch (e) {
             console.log(e);
@@ -504,27 +506,8 @@ export function DatabaseProvider({ children }) {
         const apptRef = doc(db, "users", doctorId, "appointments", appointmentId);
         try {
             await updateDoc(apptRef, { startTime, endTime, complaints });
+            setAppointmentFlipFlop(!appointmentFlipFlop);
             return true;
-        } catch (e) {
-            console.log(e);
-            return false;
-        }
-    }
-
-    async function changeApptDoctor(
-        oldDoctorId,
-        newDoctorId,
-        appointmentId,
-        patientId,
-        patientName,
-        startTime,
-        endTime,
-        complaints
-    ) {
-        try {
-            const apptRef = doc(db, "users", oldDoctorId, "appointments", appointmentId);
-            await deleteDoc(apptRef);
-            await makeAppointment(newDoctorId, patientId, patientName, startTime, endTime, complaints);
         } catch (e) {
             console.log(e);
             return false;
@@ -535,6 +518,7 @@ export function DatabaseProvider({ children }) {
         const apptRef = doc(db, "users", doctorId, "appointments", appointmentId);
         try {
             await updateDoc(apptRef, { status });
+            setAppointmentFlipFlop(!appointmentFlipFlop);
             return true;
         } catch (e) {
             console.log(e);
@@ -546,6 +530,7 @@ export function DatabaseProvider({ children }) {
         const apptRef = doc(db, "users", doctorId, "appointments", appointmentId);
         try {
             await updateDoc(apptRef, {remark});
+            setAppointmentFlipFlop(!appointmentFlipFlop);
             return true;
         } catch (e) {
             console.log(e);
@@ -589,6 +574,7 @@ export function DatabaseProvider({ children }) {
         employees: employees,
         appointments: appointments,
         commonVariables: commonVariables,
+        appointmentFlipFlop: appointmentFlipFlop,
         search,
         addToQueue,
         checkRepeatedIc,
@@ -609,7 +595,6 @@ export function DatabaseProvider({ children }) {
         makeAppointment,
         updateApptDetails,
         updateApptStatus,
-        changeApptDoctor,
         updateCancelledApptRemark,
         getPaymentDetails,
         setBusinessHours,
