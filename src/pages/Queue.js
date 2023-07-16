@@ -91,6 +91,7 @@ export const Queue = () => {
                                 queueId={row.id}
                                 patientId={row.data().patientId}
                                 patientName={row.data().patientName}
+                                doctorId={row.data().doctorId}
                             />
                         )}
                         {row.data().status === "completed" && (

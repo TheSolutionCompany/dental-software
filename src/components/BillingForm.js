@@ -8,7 +8,7 @@ import "react-toastify/dist/ReactToastify.css"
 
 Modal.setAppElement("#root")
 
-const BillingForm = ({ queueId, patientId, patientName }) => {
+const BillingForm = ({ queueId, patientId, patientName, doctorId }) => {
     // Variables in AuthContext
     const { user } = useAuth()
 
@@ -76,7 +76,7 @@ const BillingForm = ({ queueId, patientId, patientName }) => {
         })
         let total = payment.map((item) => parseInt(item.amount)).reduce((a, b) => a + b, 0)
         let different = total - grandTotal
-        await makePayment(patientId, queueId, user.displayName, consultationId, remarks, payment, different, creationDate)
+        await makePayment(patientId, queueId, user.displayName, doctorId, consultationId, remarks, payment, different, creationDate)
         await updatePatientStatus(queueId, "completed")
         toggleModal()
         toast.success("Payment done", {
