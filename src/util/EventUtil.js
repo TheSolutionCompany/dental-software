@@ -1,13 +1,22 @@
- import { getStartOfWeek, extractTimeFromDate } from "./TimeUtil";
+ import { getStartOfWeek, extractTimeFromDate, changeToCurrentWeek } from "./TimeUtil";
  
  // events ==> business hours
+ // accepts both timestamp and date objects
  export function parseToBusinessHoursFormat(events) {
     let result = [];
     for (let timeslot of events) {
+        let newStart = timeslot.start;
+        let newEnd = timeslot.end;
+        if(timeslot.start.seconds) {
+            newStart = changeToCurrentWeek(timeslot.start);
+        }
+        if(timeslot.end.seconds) {
+            newEnd = changeToCurrentWeek(timeslot.end);
+        }
         let slot = {
-            daysOfWeek: [timeslot.start.getDay()],
-            startTime: extractTimeFromDate(timeslot.start),
-            endTime: extractTimeFromDate(timeslot.end),
+            daysOfWeek: [newStart.getDay()],
+            startTime: extractTimeFromDate(newStart),
+            endTime: extractTimeFromDate(newEnd),
         };
         result.push(slot);
     }

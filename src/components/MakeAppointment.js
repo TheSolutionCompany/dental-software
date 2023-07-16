@@ -8,7 +8,7 @@ import { Calendar } from "@fullcalendar/core";
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import { changeToCurrentWeek, extractTimeFromDate } from "../util/TimeUtil";
+import { parseToBusinessHoursFormat } from "../util/EventUtil";
 
 Modal.setAppElement("#root");
 
@@ -69,6 +69,12 @@ export default function MakeAppointment(props) {
             setPatientAge("");
             setPatientIc("");
             setComplaints("");
+            setWorkingHours([]);
+            setComplaints("");
+            setTimeslot({});
+            setIsDoctorSelected(false);
+            setIsTimeslotSelected(false);
+            setIsValidInput(false);
         }
         setIsInnerOpen(!isInnerOpen);
     };
@@ -89,22 +95,6 @@ export default function MakeAppointment(props) {
     const handlesearchByMobileNumber = (event) => {
         setsearchByMobileNumber(event.target.value);
     };
-
-    // events ==> business hours
-    function parseToBusinessHoursFormat(events) {
-        let result = [];
-        for (let timeslot of events) {
-            let newStart = changeToCurrentWeek(timeslot.start);
-            let newEnd = changeToCurrentWeek(timeslot.end);
-            let slot = {
-                daysOfWeek: [newStart.getDay()],
-                startTime: extractTimeFromDate(newStart),
-                endTime: extractTimeFromDate(newEnd),
-            };
-            result.push(slot);
-        }
-        return result;
-    }
 
     // for the sake of my sanity tqvm
     useEffect(() => {
