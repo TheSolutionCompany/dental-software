@@ -511,26 +511,6 @@ export function DatabaseProvider({ children }) {
         }
     }
 
-    async function changeApptDoctor(
-        oldDoctorId,
-        newDoctorId,
-        appointmentId,
-        patientId,
-        patientName,
-        startTime,
-        endTime,
-        complaints
-    ) {
-        try {
-            const apptRef = doc(db, "users", oldDoctorId, "appointments", appointmentId);
-            await deleteDoc(apptRef);
-            await makeAppointment(newDoctorId, patientId, patientName, startTime, endTime, complaints);
-        } catch (e) {
-            console.log(e);
-            return false;
-        }
-    }
-
     async function updateApptStatus(doctorId, appointmentId, status) {
         const apptRef = doc(db, "users", doctorId, "appointments", appointmentId);
         try {
@@ -609,7 +589,6 @@ export function DatabaseProvider({ children }) {
         makeAppointment,
         updateApptDetails,
         updateApptStatus,
-        changeApptDoctor,
         updateCancelledApptRemark,
         getPaymentDetails,
         setBusinessHours,
