@@ -239,7 +239,7 @@ export default function MakeAppointment(props) {
                 shouldCloseOnOverlayClick={false}
                 style={{ overlay: { zIndex: "999" } }}
             >
-                <CloseButton name="Make A New Appointment" func={toggleSearchModal} />
+                <CloseButton name="Make New Appointment" func={toggleSearchModal} />
                 <div className="w-full">
                     <div className="w-full grid grid-cols-3 h-full gap-4 pb-6">
                         <div className="">

@@ -131,6 +131,9 @@ const PatientProfile = () => {
                         <p className="px-2 border border-black">
                             Mobile number: <br></br> <b>{mobileNumber}</b>
                         </p>
+                        <p className="px-2 border border-black text-red-500">
+                            Allergy: <br></br> <b>{allergy}</b>
+                        </p>
                     </div>
                     <div className="flex flex-row pb-4 px-8">
                         <button
@@ -218,7 +221,9 @@ const PatientProfile = () => {
                                                             </tr>
                                                         ))}
                                                         <tr>
-                                                            <td colSpan="3" className="text-left pl-2">Grand Total</td>
+                                                            <td colSpan="3" className="text-left pl-2">
+                                                                Grand Total
+                                                            </td>
                                                             <td className="text-right pr-2">
                                                                 {Number(consultation.data().grandTotal).toFixed(2)}
                                                             </td>
