@@ -6,9 +6,11 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Calendar } from "@fullcalendar/core";
 import FullCalendar from "@fullcalendar/react";
+import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { parseToBusinessHoursFormat } from "../util/EventUtil";
+import { getStartOfWeek } from "../util/TimeUtil";
 
 Modal.setAppElement("#root");
 
@@ -41,6 +43,11 @@ export default function MakeAppointment(props) {
     const [complaints, setComplaints] = useState("");
 
     const [isValidInput, setIsValidInput] = useState(false);
+
+    const today = new Date(new Date().setHours(0, 0, 0, 0));
+    const [queryStartDate, setQueryStartDate] = useState(today);
+    const threeMonthsLater = new Date(new Date().setDate(today.getDate() + 91));
+    const [queryEndDate, setQueryEndDate] = useState(getStartOfWeek(threeMonthsLater));
 
     const calendarRef = useRef();
 
@@ -75,6 +82,7 @@ export default function MakeAppointment(props) {
             setIsDoctorSelected(false);
             setIsTimeslotSelected(false);
             setIsValidInput(false);
+            setDoctorAppts([]);
         }
         setIsInnerOpen(!isInnerOpen);
     };
@@ -202,24 +210,42 @@ export default function MakeAppointment(props) {
 
     function onDoctorChange(event) {
         setDoctorId(event.target.value);
-
-        let calendarApi = calendarRef.current.getApi();
-        let allTimeSlots = calendarApi.getEvents();
-        allTimeSlots.forEach((event) => event.remove());
-
-        getAppointments(event.target.value).then((appts) => {
-            for (let appt of appts) {
-                let apptData = appt.data();
-                if (apptData.status !== "cancelled") {
-                    let start = new Date(apptData.startTime.seconds * 1000);
-                    let end = new Date(apptData.endTime.seconds * 1000);
-                    let title = `Booked by ${apptData.patientName}`;
-                    let color = "#36454f";
-                    calendarApi.addEvent({ id: appt.id, start, end, title, color });
-                }
-            }
-        });
+        setDoctorAppts([]);
+        getAppointments(event.target.value, queryStartDate, queryEndDate).then(processAppointments);
     }
+
+    function processAppointments(appts) {
+        let doctorApptsResult = [];
+        for (let appt of appts) {
+            let apptData = appt.data();
+            if (apptData.status !== "cancelled") {
+                let start = new Date(apptData.startTime.seconds * 1000);
+                let end = new Date(apptData.endTime.seconds * 1000);
+                let title = `Booked by ${apptData.patientName}`;
+                let color = "#36454f";
+                doctorApptsResult.push({ id: appt.id, start, end, title, color });
+            }
+        }
+        setDoctorAppts(doctorApptsResult);
+    }
+
+    function onDateRangeChange(dateInfo) {
+        let isWithinQueryRange = dateInfo.start >= queryStartDate && dateInfo.end < queryEndDate;
+        if (!isWithinQueryRange) {
+            let tempStartDate = new Date(dateInfo.start.setDate(dateInfo.start.getDate() - 42));
+            let newStartDate = tempStartDate >= today ? tempStartDate : today;
+            let newEndDate = new Date(dateInfo.end.setDate(dateInfo.end.getDate() + 42));
+            setQueryStartDate(newStartDate);
+            setQueryEndDate(newEndDate);
+
+            if (doctorId) {
+                setDoctorAppts([]);
+                getAppointments(doctorId, newStartDate, newEndDate).then(processAppointments);
+            }
+        }
+    }
+
+    function jumpToDate() {}
 
     return (
         <div className="">
@@ -239,7 +265,7 @@ export default function MakeAppointment(props) {
                 shouldCloseOnOverlayClick={false}
                 style={{ overlay: { zIndex: "999" } }}
             >
-                <CloseButton name="Make A New Appointment" func={toggleSearchModal} />
+                <CloseButton name="Make Appointment" func={toggleSearchModal} />
                 <div className="w-full">
                     <div className="w-full grid grid-cols-3 h-full gap-4 pb-6">
                         <div className="">
@@ -323,7 +349,7 @@ export default function MakeAppointment(props) {
                             },
                         }}
                     >
-                        <CloseButton func={toggleInnerModal} />
+                        <CloseButton name="Make Appointment" func={toggleInnerModal} />
                         <form onSubmit={handleSubmitAppt}>
                             <div className="grid grid-cols-2 gap-10">
                                 <div className="grid grid-cols-1 gap-1 h-3/5">
@@ -353,7 +379,7 @@ export default function MakeAppointment(props) {
                                     <br />
                                     <p hidden={isTimeslotSelected}>Please select a timeslot.</p>
                                     <FullCalendar
-                                        plugins={[timeGridPlugin, interactionPlugin]}
+                                        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
                                         selectable={true}
                                         select={handleSelect}
                                         ref={calendarRef}
@@ -361,8 +387,15 @@ export default function MakeAppointment(props) {
                                         businessHours={workingHours}
                                         selectConstraint={"businessHours"}
                                         eventConstraint={"businessHours"}
-                                        validRange={{ start: new Date() }}
+                                        validRange={{ start: today }}
                                         eventOverlap={false}
+                                        datesSet={onDateRangeChange}
+                                        events={doctorAppts}
+                                        headerToolbar={{
+                                            start: "dayGridMonth,timeGridWeek",
+                                            center: "title",
+                                            end: "today prev,next",
+                                        }}
                                     />
 
                                     <div className="flex float-right pt-4">
@@ -372,7 +405,7 @@ export default function MakeAppointment(props) {
                                             id="submitButton"
                                             disabled={!isValidInput}
                                         >
-                                            Schedule Appointment
+                                            Make Appointment
                                         </button>
                                     </div>
                                 </div>

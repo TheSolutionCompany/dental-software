@@ -13,7 +13,7 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import { extractTimeFromDate } from "../util/TimeUtil";
+import { extractTimeFromDate, getStartOfWeek } from "../util/TimeUtil";
 import EditAppointment from "../components/EditAppointment";
 
 const Appointment = () => {
@@ -65,6 +65,11 @@ const Appointment = () => {
 
     const [addToQueueSuccess, setAddToQueueSuccess] = useState(false);
 
+    const today = new Date(new Date().setHours(0, 0, 0, 0));
+    const [queryStartDate, setQueryStartDate] = useState(today);
+    const threeMonthsLater = new Date(new Date().setDate(today.getDate() + 91));
+    const [queryEndDate, setQueryEndDate] = useState(getStartOfWeek(threeMonthsLater));
+
     const calendarRef = useRef();
 
     const red = "#f00707";
@@ -108,7 +113,7 @@ const Appointment = () => {
     // this is how u force rerender lolololol
     useEffect(() => {
         if (doctorId) {
-            getAppointments(doctorId).then(processAppointments);
+            getAppointments(doctorId, queryStartDate, queryEndDate).then(processAppointments);
         }
     }, [appointmentFlipFlop]);
 
@@ -140,7 +145,7 @@ const Appointment = () => {
         toggleCancelApptRmk();
         await updateApptStatus(doctorId, activeEventId, "cancelled");
         await updateCancelledApptRemark(doctorId, activeEventId, remark);
-        getAppointments(doctorId).then(processAppointments);
+        getAppointments(doctorId, queryStartDate, queryEndDate).then(processAppointments);
     }
 
     const handleAddToQueue = async (e) => {
@@ -206,7 +211,25 @@ const Appointment = () => {
         setDoctorId(doctorId);
         setDoctorName(objectifiedDoctors[doctorId].displayName);
         setWorkingHours(objectifiedDoctors[doctorId].workingHours);
-        getAppointments(doctorId).then(processAppointments);
+        getAppointments(doctorId, queryStartDate, queryEndDate).then(processAppointments);
+    }
+
+    function onDateRangeChange(dateInfo) {
+        let isWithinQueryRange = dateInfo.start >= queryStartDate && dateInfo.end < queryEndDate;
+        if (!isWithinQueryRange) {
+            let newStartDate = new Date(dateInfo.start.setDate(dateInfo.start.getDate() - 42));
+            let newEndDate = new Date(dateInfo.end.setDate(dateInfo.end.getDate() + 42));
+            setQueryStartDate(newStartDate);
+            setQueryEndDate(newEndDate);
+
+            if (doctorId) {
+                setEventifiedAppts([]);
+                setQueuedAppointment([]);
+                setObjectifiedAppts({});
+
+                getAppointments(doctorId, newStartDate, newEndDate).then(processAppointments);
+            }
+        }
     }
 
     return (
@@ -240,6 +263,7 @@ const Appointment = () => {
                             dayMaxEventRows={true}
                             eventClick={handleEventClicked}
                             droppable={false}
+                            datesSet={onDateRangeChange}
                         />
 
                         <Modal
