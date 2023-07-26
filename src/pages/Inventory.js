@@ -212,10 +212,16 @@ const Inventory = () => {
                 <SideBar />
                 <div className="w-full h-full bg-gray-200">
                     <div className="p-8">
-                        <div className="flex justify-start py-4">
-                            <p className="">Filter by status</p>
+                        <div className="flex pb-2 text-left border border-black rounded p-2 items-center">
+                            <input
+                                className="ml-5 mr-5 flex-grow rounded border-2 border-black"
+                                type="search"
+                                placeholder="Search for your product"
+                                onChange={(e) => setSearch(e.target.value)}
+                            />
+                            <p className="font-semibold text-lg">Filter by status:</p>
                             <select
-                                className="rounded border-2 border-black"
+                                className="rounded border-2 border-black ml-5"
                                 value={filter}
                                 onChange={(e) => setFilter(e.target.value)}
                             >
@@ -223,15 +229,11 @@ const Inventory = () => {
                                 <option value="treatment">Treatment</option>
                                 <option value="product">Product</option>
                             </select>
+                            <div className="ml-5 mr-5 border border-blue-600 rounded p-2" >
+                                <label>Sort by low stock </label>
+                                <input type="checkbox" onChange={handleChange} style={{ width: "15px", height: "15px" }}/>
+                            </div>    
                             <InventoryForm data={{ editMode: false, activeItem: null }} />
-                            <input
-                                className="w-96"
-                                type="search"
-                                placeholder="search for your product"
-                                onChange={(e) => setSearch(e.target.value)}
-                            />
-                            <label>Sort by low stock </label>
-                            <input type="checkbox" onChange={handleChange} />
                         </div>
                         <div className="flex flex-col w-full h-[77vh] overflow-auto">
                             <table className="table-gray">

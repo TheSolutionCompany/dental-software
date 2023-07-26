@@ -138,24 +138,26 @@ export const Queue = () => {
                 <SideBar />
                 <div className="w-full bg-gray-200 h-full">
                     <div className="p-8">
-                        <div className="pb-8 text-left">
-                            <p className="">Filter by status</p>
-                            <select className="rounded border-2 border-black" value={filter} onChange={handleFilter}>
+                        <div className="flex pb-2 text-left border border-black rounded p-2">
+                            <form>
+                                <input
+                                type="search"
+                                placeholder="Search by name"
+                                onChange={(e) => setSearch(e.target.value)}
+                                className="flex-grow rounded border-2 border-black"
+                                size = "75"
+                                />
+                            </form>
+                            <div className="flex items-center mr-10 ml-10">
+                                <p className="font-semibold text-lg">Filter by status:</p>
+                                <select className="rounded border-2 border-black ml-2" value={filter} onChange={handleFilter}>
                                 <option value="all">All</option>
                                 <option value="waiting">Waiting</option>
                                 <option value="inProgress">In Progress</option>
                                 <option value="pendingBilling">Pending Billing</option>
                                 <option value="completed">Completed</option>
-                            </select>
-                        </div>
-                        <div>
-                            <form>
-                                <input
-                                    type="search"
-                                    placeholder="Search by name"
-                                    onChange={(e) => setSearch(e.target.value)}
-                                />
-                            </form>
+                                </select>
+                            </div>
                         </div>
                         <div className="flex flex-col w-full border-black overflow-auto">
                             <table className="table-gray">
